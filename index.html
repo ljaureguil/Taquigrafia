@@ -8,65 +8,17 @@
 
 <body>
 
-  <canvas id="canvas" width="1000" height="800"></canvas>
+  <canvas id="canvas" width="1000" height="500"></canvas>
+  <input id="imsg" type="text" oninput="this.value=this.value.toLowerCase()" placeholder="Type a short paragraph here"
+    style="width:80%;background-color: aqua;"></input>
+  <button onclick="lj.paragraph(imsg.value);">escribe en taquigrafia</button>
+  <button onclick="clearCanvas">clear</button>
+
 
   <script>
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
-    /*
-
-        var x = 0, y = 0;
-        ctx.lasPoint = { x: 0, y: 0 }
-        // Path 1 - Line
-        const path1 = new Path2D();
-        x = 150; y = 150;
-        path1.moveTo(50, 150);
-        path1.lineTo(150, 150);
-
-        // Path 2 - Arc (starts where path1 ends)
-        const path2 = new Path2D();
-        path2.moveTo(x, y);
-        x += 50;
-        path2.arc(x, y, 50, Math.PI, 0);
-        x += 50;
-
-        // Path 3 - Triangle (starts where path2 ends)
-        const path3 = new Path2D();
-        path3.moveTo(x, y);
-        path3.lineTo(300, 100);
-        path3.lineTo(350, 150);
-
-        //path3.closePath();
-
-        // Path 4 - Bezier Curve (starts where path3 ends)
-        const path4 = new Path2D();
-        path4.moveTo(350, 150);
-        path4.bezierCurveTo(
-          400, 50,
-          500, 250,
-          550, 150
-        );
-
-        // Path 5 - Rectangle (starts where path4 ends)
-        const path5 = new Path2D();
-        path5.moveTo(550, 150);
-        path5.lineTo(550, 100);
-        path5.lineTo(650, 100);
-        path5.lineTo(650, 200);
-        path5.lineTo(550, 200);
-        path5.closePath();
-
-        // Draw each path
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = "blue";
-
-        ctx.stroke(path1);
-        ctx.stroke(path2);
-        ctx.stroke(path3);
-        ctx.stroke(path4);
-        ctx.stroke(path5);
-
-    */
+    ctx.scale(0.5, 0.5);
     var taq = function (params) {
       if (params.inicPoint === undefined) params.lastPoint = {
         x: 120,
@@ -327,27 +279,34 @@
       }
 
     }
-
-    ctx.strokeStyle = "red";
-    ctx.moveTo(0, 110)
-    ctx.lineTo(800, 110)
-    ctx.stroke()
-
-    var lj = new taq({
+    clearCanvas();
+    var params = {
       inicPoint: {
         x: 20,
-        y: 150
+        y: 10
       }
-    });
+    }
+    var lj = new taq(params);
     ctx.strokeStyle = "blue";
 
+
     // lj.word("gfkmfnqmcfm");////////
-    ctx.scale(.5, .5);
 
-    lj.params.inicPoint = { x: 120, y: 200 };
+    //var params =
+    //   lj.params.inicPoint = { x: 120, y: 100 };
 
-    var tx=prompt("Type a short paragraph","type a paragraph")
-    lj.paragraph(tx); ////////
+    //var tx = prompt("Type a short paragraph", "type a paragraph")
+    //lj.paragraph(tx); ////////
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.with, canvas.height)
+
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = .5
+      ctx.moveTo(0, 222)
+      ctx.lineTo(800, 222)
+      ctx.stroke()
+    }
 
   </script>
 
