@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Concatenated Path2D Shapes</title>
+</head>
+
+<body>
+
+  <canvas id="canvas" width="1000" height="800"></canvas>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    /*
+
+        var x = 0, y = 0;
+        ctx.lasPoint = { x: 0, y: 0 }
+        // Path 1 - Line
+        const path1 = new Path2D();
+        x = 150; y = 150;
+        path1.moveTo(50, 150);
+        path1.lineTo(150, 150);
+
+        // Path 2 - Arc (starts where path1 ends)
+        const path2 = new Path2D();
+        path2.moveTo(x, y);
+        x += 50;
+        path2.arc(x, y, 50, Math.PI, 0);
+        x += 50;
+
+        // Path 3 - Triangle (starts where path2 ends)
+        const path3 = new Path2D();
+        path3.moveTo(x, y);
+        path3.lineTo(300, 100);
+        path3.lineTo(350, 150);
+
+        //path3.closePath();
+
+        // Path 4 - Bezier Curve (starts where path3 ends)
+        const path4 = new Path2D();
+        path4.moveTo(350, 150);
+        path4.bezierCurveTo(
+          400, 50,
+          500, 250,
+          550, 150
+        );
+
+        // Path 5 - Rectangle (starts where path4 ends)
+        const path5 = new Path2D();
+        path5.moveTo(550, 150);
+        path5.lineTo(550, 100);
+        path5.lineTo(650, 100);
+        path5.lineTo(650, 200);
+        path5.lineTo(550, 200);
+        path5.closePath();
+
+        // Draw each path
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "blue";
+
+        ctx.stroke(path1);
+        ctx.stroke(path2);
+        ctx.stroke(path3);
+        ctx.stroke(path4);
+        ctx.stroke(path5);
+
+    */
+    var taq = function (params) {
+      if (params.inicPoint === undefined) params.lastPoint = {
+        x: 120,
+        y: 220
+      };
+      else params.lastPoint = params.inicPoint;
+      this.params = params;
+
+      this.params.x = this.params.lastPoint.x
+      this.params.y = this.params.lastPoint.y;
+
+
+      this.paragraph = function (paragraph) {
+        var ar = paragraph.split(" ");
+        for (var i = 0; i < ar.length; i++) {
+
+          this.params.lastPoint.y = 220
+          this.word(ar[i]);
+          this.params.lastPoint.x += 20;
+          this.params.lastPoint.y = 220;
+          //   alert(JSON.stringify(this.params))
+
+        }
+
+      }
+
+      this.word = function (word) {
+
+        word = word.replace(/a/g, "").replace(/e/g, "").replace(/i/g, "").replace(/o/g, "").replace(/u/g, "");
+
+        for (var i = 0; i < word.length; i++) {
+          var l = word[i];
+          this.letter(l);
+        }
+
+
+
+
+      }
+      this.letter = function (l) {
+
+        this.params.letter = l;
+
+        if (l === "p" || l === "b") {
+          this.bp(this.params)
+        } else if (l === "f" || l === "v") {
+          this.fv(this.params)
+        } else if (l === "c" || l === "g" || l === "q" || l === "k") {
+          this.ckq(this.params)
+        } else if (l === "n" || l === "ñ") {
+          this.nñ(this.params)
+        } else if (l === "m") {
+          this.m(this.params)
+        } else if (l === "l" || l === "y" || l === "ll") {
+          this.lyll(this.params)
+        } else if (l === "r" || l === "rr") {
+          this.r(this.params)
+        } else if (l === "j" || l === "ch") {
+          this.j(this.params)
+        } else if (l === "t" || l === "d") {
+          this.dt(this.params)
+        }
+        else if (l === "s" || l === "z") {
+          this.sz(this.params)
+        }
+
+
+        //  this.params.letter = l;
+
+        return;
+
+
+      }
+      this.sz = function (params) {
+        var lineWidth = 1;
+
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        // alert("ok")
+        p.x += 1.5;
+        p.y += 1.5;
+        path.lastPoint = p;
+        //  path.lineTo(p.x, p.y);
+        path.arc(p.x, p.y, 3, 0, 2 * Math.PI);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+
+      }
+
+      this.ckq = function (params) {
+        var lineWidth = 1;
+        if (params.letter == "g") lineWidth = 3;
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        p.x += 30;
+        path.lastPoint = p;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); // alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+
+      }
+      this.nñ = function (params) {
+        var path = new Path2D();
+        //  alert(JSON.stringify(params))   
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "ñ") lineWidth = 3;
+
+
+        path.moveTo(p.x, p.y)
+        p.x += 30;;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 15, p.y + 25, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))rams))
+        params.lastLetter = params.letter;
+      }
+
+      this.m = function (params) {
+        var path = new Path2D();
+        //  alert(JSON.stringify(params))   
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        //  if(params.letter=="ñ") lineWidth=3;
+
+
+        path.moveTo(p.x, p.y)
+        p.x += 30;;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 15, p.y - 20, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))rams))
+        params.lastLetter = params.letter;
+      }
+
+      this.bp = function (params) {
+        var path = new Path2D();
+        //   alert(JSON.stringify(params))
+        var p = params.lastPoint;
+        var lineWidth = 3;
+        if (params.letter == "p") lineWidth = 1;
+
+        path.moveTo(p.x, p.y);
+        p.x += 30;
+        p.y += 30;
+        path.lineTo(p.x, p.y);
+        // path.lastPoint = p;
+        params.lastPoint = p;
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+      this.dt = function (params) {
+        var path = new Path2D();
+        //   alert(JSON.stringify(params))
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "d") lineWidth = 3;
+
+        path.moveTo(p.x, p.y);
+
+        p.y += 30;
+        path.lineTo(p.x, p.y);
+        // path.lastPoint = p;
+        params.lastPoint = p;
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+
+      this.r = function (params) {
+        var path = new Path2D();
+        //   alert(JSON.stringify(params))
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "rr") lineWidth = 3;
+
+        path.moveTo(p.x, p.y);
+        p.x += 30;
+        p.y -= 30;
+        if (params.lastLetter == "j") p.x += 10;;
+        //  alert(JSON.stringify(params))
+        path.lineTo(p.x, p.y);
+        path.lastPoint = p;
+        params.lastPoint = p;
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+
+      this.j = function (params) {
+
+        var path = new Path2D();
+        //   alert(JSON.stringify(params))
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "j") lineWidth = 3;
+
+        path.moveTo(p.x, p.y);
+        p.x -= 30;
+        p.y += 30;
+        if (params.lastLetter == "r") p.x += 10;;
+        path.lineTo(p.x, p.y);
+        // path.lastPoint = p;
+        params.lastPoint = p;
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+
+
+      this.fv = function (params) {
+        var path = new Path2D();
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "v") lineWidth = 3;
+        path.moveTo(p.x, p.y)
+        p.x += 30;
+        p.y += 30;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 25, p.y + 5, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+      this.lyll = function (params) {
+        var path = new Path2D();
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "y" || params.letter == "ll") lineWidth = 3;
+        path.moveTo(p.x, p.y)
+        p.x += 30;
+        p.y -= 30;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 25, p.y - 5, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+    }
+
+    ctx.strokeStyle = "red";
+    ctx.moveTo(0, 110)
+    ctx.lineTo(800, 110)
+    ctx.stroke()
+
+    var lj = new taq({
+      inicPoint: {
+        x: 20,
+        y: 150
+      }
+    });
+    ctx.strokeStyle = "blue";
+
+    // lj.word("gfkmfnqmcfm");////////
+    ctx.scale(.5, .5);
+
+    lj.params.inicPoint = { x: 120, y: 200 };
+
+    var tx=prompt("Type a short paragraph","type a paragraph")
+    lj.paragraph(tx); ////////
+
+  </script>
+
+</body>
+
+</html>
