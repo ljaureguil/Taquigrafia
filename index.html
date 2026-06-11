@@ -1,5 +1,5 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 
 <head>
   <meta name="viewport" content="width=device-width">
@@ -8,357 +8,312 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
-  <style>
-    body {
-      padding: 16px;
-      margin: 5%;
-      background: white;
-    }
-
-    p {
-      font-family: Arial, sans-serif;
-    }
-
-    .cios {
-      width: 5%;
-      background: red;
-      margin: 5px;
-      width: 100px;
-
-
-    }
-
-    #dinputs {
-      font-size: 10px;
-
-    }
-
-    #doutputs {
-      font-size: 10px;
-      width: 45%;
-    }
-
-    #todo {
-      padding: 5px;
-    }
-
-    #logiceditor {
-      width: 95%;
-      height: 150px;
-    }
-
-    #iodescription {
-      position: absolute;
-      right: 15px;
-      top: 0%;
-      font-size: 12px;
-      margin-left: 10px;
-      width: 10%;
-      height: 100px;
-
-    }
-  </style>
 </head>
 
 <body>
-  <div id="todo">
-    <input id="name" type="text" placeholder="My Logic Circuit"></input>name<br>
-    <input id="inputs" type="number" value=8>number of inputs</input></br>
-    <input id="outputs" type="number" value=5>number of outputs</input></br>
-    <button onclick="setUpio()">Set Up ios</button>
-    <div style="border-style:solid;width: 80%;">
-      <div id="dinputs"></div>
-      <textarea id="logiceditor"></textarea>
-      <div id="doutputs"></div>
-    </div>
-    <div id="iodescription"></div>
-    <br>
-    <div id="men">
-      <button onclick="procesar()">Process</button>
-      <button onclick="sendObj()">Send to Web</button>
-      <select id="scirc" oninput="selc(this.value)">
-        <option value="">Select Circuit</option>
-      </select>
-    </div>
-  </div>
+
+  <canvas id="canvas" width="1000" height="500"></canvas>
+  <input id="imsg" type="text" oninput="this.value=this.value.toLowerCase()" placeholder="Type a short paragraph here"
+    style="width:80%;background-color: aqua;"></input>
+  <button onclick="lj.paragraph(imsg.value);">escribe en taquigrafia</button>
+  <button onclick="clearCanvas">clear</button>
+
+
   <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    ctx.scale(0.5, 0.5);
+    var taq = function (params) {
+      if (params.inicPoint === undefined) params.lastPoint = {
+        x: 120,
+        y: 220
+      };
+      else params.lastPoint = params.inicPoint;
+      this.params = params;
 
-    var obj = {}, scr = "", circuito = {}, ari = [], aro = [];
-    circuito.name = "";
-    circuito.inputs = [];
-    circuito.outputs = [];
-    circuito.logic = "";
-    //obj.circuit={name:"",inputs:[],outputs:[]};
-    circuito.inputs = [];
-    circuito.outputs = [];
-
-
-
-
-
-
-
-    function setUpio(v) {
-      iodescription.innerHTML = "";
-      dinputs.innerHTML = ""; doutputs.innerHTML = ""
+      this.params.x = this.params.lastPoint.x
+      this.params.y = this.params.lastPoint.y;
 
 
-      for (var i = 0; i < inputs.value; i++) {
+      this.paragraph = function (paragraph) {
+        var ar = paragraph.split(" ");
+        for (var i = 0; i < ar.length; i++) {
 
-        dinputs.innerHTML += `<input type="radio" id="ii` + i + `" class="cios cin" onclick="check(this)" value="off" ></input>i` + i;
-        iodescription.innerHTML += "i" + i + "<input type='text' onclick='setSrc(this.value," + i + ")' style='width:90%;' placeholder='Value, Desc'></input><br>";
-        var input = {};
-        input.name = "i" + i;
-        input.src = new Boolean(false);
-        input.desc = ""; input.v = false;
-        input.connectTo = function (output) {
-          output.v = this.value;
+          this.params.lastPoint.y = 220
+          this.word(ar[i]);
+          this.params.lastPoint.x += 20;
+          this.params.lastPoint.y = 220;
+          //   alert(JSON.stringify(this.params))
 
         }
-        circuito.inputs.push(input);
-        //ari.push(input.src)
-        eval("i" + i + "=input");
-        eval("ii" + i + ".co=input")
 
       }
 
-      for (var i = 0; i < outputs.value; i++) {
-        doutputs.innerHTML += `<input  type="radio" id="oo` + i + `" class="cios cou" style='color:red;' ></input>o` + i;
-        iodescription.innerHTML += "o" + i + "<input type='text' style='width:90%;' placeholder=''></input>";
+      this.word = function (word) {
 
+        word = word.replace(/a/g, "").replace(/e/g, "").replace(/i/g, "").replace(/o/g, "").replace(/u/g, "");
 
-        var output = {};
-        output.name = "o" + i;
-        output.src = new Boolean(false);
-        output.desc = ""; output.v = false;
-        output.connectFrom = function (input) {
-          this.value = input.v;
+        for (var i = 0; i < word.length; i++) {
+          var l = word[i];
+          this.letter(l);
         }
-        aro.push(output.src);
-        eval("o" + i + "=output");
-        eval("oo" + i + ".co=output")
-        alert(JSON.stringify(eval("oo" + i + ".co")))
-        circuito.outputs.push(output);
 
-        var dd = document.getElementsByClassName("cou");
-        alert("dddddddddddssssssssss\n\n" + JSON.stringify(dd[i].co))
+
+
 
       }
+      this.letter = function (l) {
 
+        this.params.letter = l;
 
-    }
-    ////////////////
-    function setUpio2(v) {
-      iodescription.innerHTML = "";
-      dinputs.innerHTML = ""; doutputs.innerHTML = ""
-
-
-      for (var i = 0; i < inputs.value; i++) {
-
-        dinputs.innerHTML += `<input type="radio" id="ii` + i + `" class="cios cin" onclick="check(this)" value="off" ></input>i` + i;
-        iodescription.innerHTML += "i" + i + "<input type='text' style='width:90%;' placeholder='Desc, value'></input><br>";
-        var input = {};
-        input.name = "i" + i;
-        input.src = new Boolean(false);
-        input.desc = ""; input.v = false;
-        input.connectTo = function (output) {
-          if (this.v) output.v = true;
-          else output.v = false;
+        if (l === "p" || l === "b") {
+          this.bp(this.params)
+        } else if (l === "f" || l === "v") {
+          this.fv(this.params)
+        } else if (l === "c" || l === "g" || l === "q" || l === "k") {
+          this.ckq(this.params)
+        } else if (l === "n" || l === "ñ") {
+          this.nñ(this.params)
+        } else if (l === "m") {
+          this.m(this.params)
+        } else if (l === "l" || l === "y" || l === "ll") {
+          this.lyll(this.params)
+        } else if (l === "r" || l === "rr") {
+          this.r(this.params)
+        } else if (l === "j" || l === "ch") {
+          this.j(this.params)
+        } else if (l === "t" || l === "d") {
+          this.dt(this.params)
         }
-        circuito.inputs.push(input);
-        ari.push(input.src)
-        eval("i" + i + "=new Boolean(false);");
-
-      }
-
-      for (var i = 0; i < outputs.value; i++) {
-        doutputs.innerHTML += `<input  type="radio" id="oo` + i + `" class="cios cou" style='color:red;' ></input>o` + i;
-        iodescription.innerHTML += "o" + i + "<input type='text' style='width:90%;' placeholder='Desc, value'></input>";
-        eval("o" + i + "=new Boolean(false);");
-
-        var output = {};
-        output.name = "o" + i;
-        output.src = new Boolean(false);
-        output.desc = ""; output.v = false;
-        output.connectFrom = function (input) {
-          if (input.v) this.v = true;
-          else thi.v = false;
+        else if (l === "s" || l === "z") {
+          this.sz(this.params)
         }
-        aro.push(output.src);
-        circuito.outputs.push(output);
+
+
+        //  this.params.letter = l;
+
+        return;
+
+
+      }
+      this.sz = function (params) {
+        var lineWidth = 1;
+
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        // alert("ok")
+        p.x += 1.5;
+        p.y += 1.5;
+        path.lastPoint = p;
+        //  path.lineTo(p.x, p.y);
+        path.arc(p.x, p.y, 3, 0, 2 * Math.PI);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
 
       }
 
+      this.ckq = function (params) {
+        var lineWidth = 1;
+        if (params.letter == "g") lineWidth = 3;
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        p.x += 30;
+        path.lastPoint = p;
+        path.lineTo(p.x, p.y);
 
-    }
-
-
-
-    //////////////////////////
-    check = function (e) {
-
-      if (e.value === "on") { e.checked = false; e.value = "off" }
-      else { e.checked = true; e.value = "on" }
-      procesar();
-      // logiceditor.value+=e.id+": "+e.checked+" "
-    }
-
-    function procesar() {
-      var ai = document.getElementsByClassName("cin")
-
-      for (var i = 0; i < ai.length; i++) {
-        eval("i" + i + ".src=" + ai[i].checked);
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); // alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
 
       }
-
-      var ao = document.getElementsByClassName("cou");
-
-
-      for (var i = 0; i < ao.length; i++) {
-        ao[i].checked = false;
-        //ao[i].co.v="";
-        alert("de aqui mero\n" + ao[i].co)
+      this.nñ = function (params) {
+        var path = new Path2D();
+        //  alert(JSON.stringify(params))   
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "ñ") lineWidth = 3;
 
 
-        eval("o" + i + ".src=" + ao[i].checked);//var 
+        path.moveTo(p.x, p.y)
+        p.x += 30;;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 15, p.y + 25, p.x, p.y);
 
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))rams))
+        params.lastLetter = params.letter;
       }
 
-      eval(logiceditor.value);
+      this.m = function (params) {
+        var path = new Path2D();
+        //  alert(JSON.stringify(params))   
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        //  if(params.letter=="ñ") lineWidth=3;
 
-      for (var i = 0; i < ao.length; i++) {
-        //eval("var o"+i+"="+ao[i].checked);
-        ao[i].checked = eval("o" + i + ".src");
-        ao[i].value = eval("o" + i + ".v");
-        alert(JSON.stringify(ao[i].co))
-        //    alert(eval("o"+i+".src"));
 
-      }
-      circuito.logic = logiceditor.value;
+        path.moveTo(p.x, p.y)
+        p.x += 30;;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 15, p.y - 20, p.x, p.y);
 
-    }
-
-    function procesar2() {
-      var ai = document.getElementsByClassName("cin")
-
-      for (var i = 0; i < ai.length; i++) {
-        eval("var i" + i + "=" + ai[i].checked);
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))rams))
+        params.lastLetter = params.letter;
       }
 
-      var ao = document.getElementsByClassName("cou");
-      /*ao.forEach(element => {
-        element.checked=false;
-      });
-      */
+      this.bp = function (params) {
+        var path = new Path2D();
+        //   alert(JSON.stringify(params))
+        var p = params.lastPoint;
+        var lineWidth = 3;
+        if (params.letter == "p") lineWidth = 1;
 
-      for (var i = 0; i < ao.length; i++) {
-        ao[i].checked = false;
-        eval("var o" + i + "=" + ao[i].checked);//var 
+        path.moveTo(p.x, p.y);
+        p.x += 30;
+        p.y += 30;
+        path.lineTo(p.x, p.y);
+        // path.lastPoint = p;
+        params.lastPoint = p;
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
       }
 
-      eval(logiceditor.value);
-      for (var i = 0; i < ao.length; i++) {
-        //eval("var o"+i+"="+ao[i].checked);
-        ao[i].checked = eval("o" + i);
+      this.dt = function (params) {
+        var path = new Path2D();
+        //   alert(JSON.stringify(params))
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "d") lineWidth = 3;
+
+        path.moveTo(p.x, p.y);
+
+        p.y += 30;
+        path.lineTo(p.x, p.y);
+        // path.lastPoint = p;
+        params.lastPoint = p;
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
       }
-      circuito.logic = logiceditor.value;
+
+
+      this.r = function (params) {
+        var path = new Path2D();
+        //   alert(JSON.stringify(params))
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "rr") lineWidth = 3;
+
+        path.moveTo(p.x, p.y);
+        p.x += 30;
+        p.y -= 30;
+        if (params.lastLetter == "j") p.x += 10;;
+        //  alert(JSON.stringify(params))
+        path.lineTo(p.x, p.y);
+        path.lastPoint = p;
+        params.lastPoint = p;
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+
+      this.j = function (params) {
+
+        var path = new Path2D();
+        //   alert(JSON.stringify(params))
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "j") lineWidth = 3;
+
+        path.moveTo(p.x, p.y);
+        p.x -= 30;
+        p.y += 30;
+        if (params.lastLetter == "r") p.x += 10;;
+        path.lineTo(p.x, p.y);
+        // path.lastPoint = p;
+        params.lastPoint = p;
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+
+
+      this.fv = function (params) {
+        var path = new Path2D();
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "v") lineWidth = 3;
+        path.moveTo(p.x, p.y)
+        p.x += 30;
+        p.y += 30;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 25, p.y + 5, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+      this.lyll = function (params) {
+        var path = new Path2D();
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "y" || params.letter == "ll") lineWidth = 3;
+        path.moveTo(p.x, p.y)
+        p.x += 30;
+        p.y -= 30;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 25, p.y - 5, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
 
     }
-
-
-
-    var linklib = "https://raw.githubusercontent.com/ljaureguil/My-Library/refs/heads/master/MyLibmin.js";
-    var link = "https://api.jsonblob.com/019b80ce-bf27-7775-a066-af7b7869e5cf";//https://api.jsonblob.com/019b5163-39dc-74c4-b292-6655ebb3cf98"
-    var GetJson, UpdateJson;
-
-    loadDoc = function (url, callback) {
-
-      var xhttp = new XMLHttpRequest();
-      xhttp.open("GET", url, false);
-      xhttp.send();
-      if (callback != undefined) callback(xhttp.responseText);
-      return xhttp.responseText;
+    clearCanvas();
+    var params = {
+      inicPoint: {
+        x: 20,
+        y: 10
+      }
     }
+    var lj = new taq(params);
+    ctx.strokeStyle = "blue";
 
 
+    // lj.word("gfkmfnqmcfm");////////
 
+    //var params =
+    //   lj.params.inicPoint = { x: 120, y: 100 };
 
+    //var tx = prompt("Type a short paragraph", "type a paragraph")
+    //lj.paragraph(tx); ////////
 
-    loadDoc(linklib, function (data) {
-      //alert(data)
-      scr = data;
-      eval(data);
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.with, canvas.height)
 
-      GetJson(link, function (r) {
-        //area.value=r.cont;
-        ///
-        var fu = UpdateJson;
-        //alert(r.name)
-        UpdateJson = fu;
-        //alert(UpdateJson)
-        obj = r;
-        for (var i = 0; i < obj.circuits.length; i++) {
-          var c = obj.circuits[i];
-          var opt = document.createElement("option");
-          opt.value = c.name;
-          opt.innerHTML = c.name;
-          scirc.appendChild(opt);
-
-
-        };
-      })
-    });
-
-    function sendObj() {
-      eval(scr);
-      //  alert(UpdateJson)
-      //obj.cont=area.value;
-      var n = prompt("Name of the circuit", circuito.name);
-      if (n != null) circuito.name = n;
-      else return;
-      obj.circuits.push(circuito);
-
-      UpdateJson(link, obj, function (r) {
-        alert("all done");
-      });
-    }
-
-    function readData() {
-
-      GetJson(link, function (r) {
-        obj = r;
-        //  area.value=obj.cont;
-      });
-    }
-
-    function selc(v) {
-      if (v == "") return;
-      var c = obj.circuits.find(c => c.name == v);
-      if (c == undefined) return;
-      circuito = c;
-      logiceditor.value = circuito.logic;
-      inputs.value = circuito.inputs.length;
-      outputs.value = circuito.outputs.length;
-      setUpio();
-
-
-    }
-
-    function setSrc(v, i) {
-      var ari = document.getElementsByClassName("cin");
-      var parts = v.split(",");
-      var desc = parts[1];
-      if (desc == undefined) desc = "";
-      var src = parts[0];
-      circuito.inputs[i].desc = desc;
-      circuito.inputs[i].src = src;
-      var ii = eval("i" + i + ".v=src")
-      //alert(JSON.stringify(ii))
-      procesar();
-
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = .5
+      ctx.moveTo(0, 222)
+      ctx.lineTo(800, 222)
+      ctx.stroke()
     }
 
   </script>
+
 </body>
 
 </html>
