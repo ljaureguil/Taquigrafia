@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width">
+  <link rel="icon" href="https://images.icon-icons.com/270/PNG/512/Dictionary_29937.png" type="image/png">
+  <title>Taquigrafia</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+</head>
+
+<body>
+
+  <canvas id="canvas" width="1000" height="500"></canvas>
+  <input id="imsg" type="text" value="" oninput="this.value=this.value.toLowerCase()"
+    placeholder="Type a short paragraph here" style="width:80%;background-color: aqua;"></input>
+  <button onclick="lj.word(imsg.value);gets(imsg.value);">escribe en taquigrafia</button>
+  <button onclick="clearCanvas()">clear</button>
+  <textarea id="shs" style="width:90%;font-size:10px;height:30px;"></textarea>
+
+
+  <script>
+    //imsg.value = "ca co ce da de do fa fe fu ga ge go ja je jo ka ke ko la le lo ma me mo na ne no pa pe po qa qe qu ra re ro sa se so ta te to va ve vo wa we wo xa xe xo za ze zo"
+    imsg.addEventListener("keypress", function (e) { if (e.keyCode == 13) lj.paragraph(imsg.value); })
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    clearCanvas();
+
+
+
+    //  ctx.scale(0.5, 0.5);
+
+    var taq = function (params) {
+
+      var ssi = 'b,c,d,f,g,h,j,k,l,m,n,ñ,p,q,r,s,t,v,w,x,y,x,cl,cr,dr,dl,fl,fr,gl,gr,jr,jl,kr,kl,ll,pl,pr,tl,tr,vl';
+      var conp = 'cen,con,ten,ven,ban,ben,bin,bon,bun,fin,fun,fen,fon,van,sen,sin,cen,sar,ser,cer,ir.men';
+
+      var a = ssi.split(",");
+      var as = [];
+
+      for (var i = 0; i < a.length; i++) {
+        as.push(a[i] + "a");
+        as.push(a[i] + "e")
+        as.push(a[i] + "i");
+        as.push(a[i] + "o")
+        as.push(a[i] + "u");
+
+      }
+      // alert(as.length)
+      as = as.concat(conp.split(","))
+      // alert(as.length)
+
+      /*
+      as.push("con");
+      as.push("cen");
+      as.push("lap");
+      as.push("sar");
+      as.push("men")
+*/
+
+
+      this.silabas = as;
+      //alert(this.silabas)
+      this.getSilabas = function (palabra) {
+
+        palabra = palabra.toLowerCase();
+
+        const vocales = "aeiouáéíóúü";
+        const fuertes = "aáeéoó";
+
+        const gruposInseparables = [
+          "bl", "br", "cl", "cr", "dr",
+          "fl", "fr", "gl", "gr",
+          "pl", "pr", "tl", "tr"
+        ];
+
+        function esVocal(c) {
+          return vocales.includes(c);
+        }
+
+        function esFuerte(c) {
+          return fuertes.includes(c);
+        }
+
+        function esDiptongo(v1, v2) {
+
+          if (!esVocal(v1) || !esVocal(v2))
+            return false;
+
+          const f1 = esFuerte(v1);
+          const f2 = esFuerte(v2);
+
+          // Dos vocales fuertes => hiato
+          if (f1 && f2)
+            return false;
+
+          // Vocal cerrada acentuada rompe diptongo
+          if ("íú".includes(v1) || "íú".includes(v2))
+            return false;
+
+          return true;
+        }
+
+        let silabas = [];
+        let pos = 0;
+
+        while (pos < palabra.length) {
+
+          let inicio = pos;
+
+          // consonantes iniciales
+          while (pos < palabra.length && !esVocal(palabra[pos])) {
+            pos++;
+          }
+
+          // núcleo vocálico
+          while (
+            pos + 1 < palabra.length &&
+            esDiptongo(palabra[pos], palabra[pos + 1])
+          ) {
+            pos++;
+          }
+
+          if (pos < palabra.length)
+            pos++;
+
+          let sigVocal = pos;
+
+          while (
+            sigVocal < palabra.length &&
+            !esVocal(palabra[sigVocal])
+          ) {
+            sigVocal++;
+          }
+
+          const numCons = sigVocal - pos;
+
+          // final de palabra
+          if (sigVocal >= palabra.length) {
+            silabas.push(palabra.slice(inicio));
+            break;
+          }
+
+          if (numCons === 0) {
+
+            silabas.push(palabra.slice(inicio, pos));
+
+          } else if (numCons === 1) {
+
+            silabas.push(palabra.slice(inicio, pos));
+
+          } else if (numCons === 2) {
+
+            const grupo = palabra.slice(pos, pos + 2);
+
+            if (gruposInseparables.includes(grupo)) {
+              silabas.push(palabra.slice(inicio, pos));
+            } else {
+              silabas.push(palabra.slice(inicio, pos + 1));
+              pos += 1;
+            }
+
+          } else if (numCons === 3) {
+
+            const grupoFinal = palabra.slice(pos + 1, pos + 3);
+
+            if (gruposInseparables.includes(grupoFinal)) {
+              silabas.push(palabra.slice(inicio, pos + 1));
+              pos += 1;
+            } else {
+              silabas.push(palabra.slice(inicio, pos + 2));
+              pos += 2;
+            }
+
+          } else {
+
+            // 4 o más consonantes
+            const grupoFinal = palabra.slice(pos + 2, pos + 4);
+
+            if (gruposInseparables.includes(grupoFinal)) {
+              silabas.push(palabra.slice(inicio, pos + 2));
+              pos += 2;
+            } else {
+              silabas.push(palabra.slice(inicio, pos + 3));
+              pos += 3;
+            }
+          }
+        }
+
+        return silabas;
+      }
+
+
+
+
+      if (params.color === undefined) params.color = "blue"
+      this.params = params;
+      params.inicw = false;
+
+      this.params.x = this.params.lastPoint.x
+      this.params.y = this.params.lastPoint.y;
+
+
+      this.paragraph = function (paragraph) {
+        var ar = paragraph.split(" ");
+        for (var i = 0; i < ar.length; i++) {
+
+          this.params.lastPoint.y = 220
+          this.word(ar[i]);
+          this.params.lastPoint.x += 20;
+          this.params.lastPoint.y = 220;
+          //   alert(JSON.stringify(this.params))
+
+        }
+
+      }
+
+
+
+      this.word = function (word) {
+        word = " " + word;
+        params.tx = word;
+        params.inicw = false;
+
+        for (var i = 0; i < word.length; i++) {
+          var l = word[i];
+          params.index = i;
+          params.inicw = true
+
+          this.letter(l, i);
+
+        }
+
+      }
+
+      this.letter = function (l, index) {
+
+        ctx.strokeStyle = params.color
+        params.inicw = false;
+        // alert(params.tx[params.index]+params.index)
+        if (params.index > 0) {
+          if (params.tx[params.index - 1] === " ") {
+            params.lastPoint.y = params.line;
+            params.lastPoint.x += 10;
+            params.inicw = true
+
+          }
+
+        }
+
+        this.params.letter = l;
+
+        if (l === "p" || l === "b") {
+          this.bp(this.params)
+        } else if (l === "f" || l === "v") {
+          this.fv(this.params)
+        } else if (l === "c" || l === "g" || l === "q" || l === "k") {
+          this.ckq(this.params)
+        } else if (l === "n" || l === "ñ") {
+          this.nñ(this.params)
+        } else if (l === "m") {
+          this.m(this.params)
+        } else if (l === "l" || l === "y" || l === "ll") {
+          this.lyll(this.params)
+        } else if (l === "r" || l === "rr") {
+          this.r(this.params)
+        } else if (l === "j" || l === "ch") {
+          this.j(this.params)
+        } else if (l === "t" || l === "d") {
+          this.dt(this.params)
+        }
+        else if (l === "s" || l === "z") {
+          this.sz(this.params)
+        }
+
+
+        //  this.params.letter = l;
+
+        return;
+
+
+      }
+
+      this.sz = function (params) {
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 15
+          if (p === "e" || p === "i") params.lastPoint.y -= 5
+          if (p === "o" || p === "u") params.lastPoint.y += 8
+
+        }
+        //////////////////////////////////
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        // alert("ok")
+        p.x += 1.5;
+        p.y += 1.5;
+        path.lastPoint = p;
+        //  path.lineTo(p.x, p.y);
+        path.arc(p.x, p.y, 4, 0, 2 * Math.PI);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+
+      }
+
+      this.ckq = function (params) {
+        var lineWidth = 1;
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 25
+          if (p === "e" || p === "i") params.lastPoint.y -= 5
+          if (p === "o" || p === "u") params.lastPoint.y += 8
+          //       alert(JSON.stringify(params))
+          params.inicw = false;
+
+        }
+        //////////////////////////////////-   
+        if (params.letter == "g") lineWidth = 3;
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        p.x += 30;
+        path.lastPoint = p;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); // alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+
+      }
+      this.nñ = function (params) {
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 25
+          if (p === "e" || p === "i") params.lastPoint.y -= 16
+          if (p === "o" || p === "u") params.lastPoint.y += 5
+
+        }
+        //////////////////////////////////
+
+        var path = new Path2D();
+        //  alert(JSON.stringify(params))   
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "ñ") lineWidth = 3;
+
+
+        path.moveTo(p.x, p.y)
+        p.x += 30;;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 15, p.y + 25, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))rams))
+        params.lastLetter = params.letter;
+      }
+
+      this.m = function (params) {
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 25
+          if (p === "e" || p === "i") params.lastPoint.y -= 5
+          if (p === "o" || p === "u") params.lastPoint.y += 8
+
+        }
+        //////////////////////////////////
+
+        var path = new Path2D();
+        //  alert(JSON.stringify(params))   
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        //  if(params.letter=="ñ") lineWidth=3;
+
+
+        path.moveTo(p.x, p.y)
+        p.x += 30;;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 15, p.y - 20, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))rams))
+        params.lastLetter = params.letter;
+      }
+
+      this.bp = function (params) {
+
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 45
+          if (p === "e" || p === "i") params.lastPoint.y -= 33
+          if (p === "o" || p === "u") params.lastPoint.y -= 15
+
+        }
+        //////////////////////////////////
+        var path = new Path2D();
+        //   alert(JSON.stringify(params))
+        var p = params.lastPoint;
+        var lineWidth = 3;
+        if (params.letter == "p") lineWidth = 1;
+
+        path.moveTo(p.x, p.y);
+        p.x += 30;
+        p.y += 30;
+        path.lineTo(p.x, p.y);
+        // path.lastPoint = p;
+        params.lastPoint = p;
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+      this.dt = function (params) {
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 45
+          if (p === "e" || p === "i") params.lastPoint.y -= 33
+          if (p === "o" || p === "u") params.lastPoint.y -= 15
+
+        }
+        //////////////////////////////////
+
+        var path = new Path2D();
+        //   alert(JSON.stringify(params))
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "d") lineWidth = 3;
+
+        path.moveTo(p.x, p.y);
+
+        p.y += 30;
+        path.lineTo(p.x, p.y);
+        // path.lastPoint = p;
+        params.lastPoint = p;
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+
+      this.r = function (params) {
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 15
+          if (p === "e" || p === "i") params.lastPoint.y -= 3
+          if (p === "o" || p === "u") params.lastPoint.y += 15
+
+        }
+        //////////////////////////////////
+
+        var path = new Path2D();
+        //   alert(JSON.stringify(params))
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "rr") lineWidth = 3;
+
+        path.moveTo(p.x, p.y);
+        p.x += 30;
+        p.y -= 30;
+        if (params.lastLetter == "j") p.x += 10;;
+        //  alert(JSON.stringify(params))
+        path.lineTo(p.x, p.y);
+        path.lastPoint = p;
+        params.lastPoint = p;
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+
+      this.j = function (params) {
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 45
+          if (p === "e" || p === "i") params.lastPoint.y -= 32
+          if (p === "o" || p === "u") params.lastPoint.y -= 15
+          params.lastPoint.x += 60;
+
+        }
+        //////////////////////////////////
+        var path = new Path2D();
+        //   alert(JSON.stringify(params))
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "j") lineWidth = 3;
+
+        path.moveTo(p.x, p.y);
+        p.x -= 30;
+        p.y += 30;
+        if (params.lastLetter == "r") p.x += 10;;
+        path.lineTo(p.x, p.y);
+        // path.lastPoint = p;
+        params.lastPoint = p;
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+
+
+      this.fv = function (params) {
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 45
+          if (p === "e" || p === "i") params.lastPoint.y -= 33
+          if (p === "o" || p === "u") params.lastPoint.y -= 15
+
+        }
+        //////////////////////////////////
+
+        var path = new Path2D();
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "v") lineWidth = 3;
+        path.moveTo(p.x, p.y)
+        p.x += 30;
+        p.y += 30;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 25, p.y + 5, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+      this.lyll = function (params) {
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 15
+          if (p === "e" || p === "i") params.lastPoint.y -= 3
+          if (p === "o" || p === "u") params.lastPoint.y += 15
+
+        }
+        //////////////////////////////////
+
+        var path = new Path2D();
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "y" || params.letter == "ll") lineWidth = 3;
+        path.moveTo(p.x, p.y)
+        p.x += 30;
+        p.y -= 30;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 25, p.y - 5, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+    }
+
+    var params = {
+      inicPoint: {
+        x: 30,
+        y: 80
+      }
+    }
+    params.lastPoint = params.inicPoint;
+    params.line = 80;
+    params.color = "blue";
+    params.inicw = false;
+    var copyparams = JSON.stringify(params)
+    var lj = new taq(params);
+    ctx.strokeStyle = "blue";
+
+    var tx = "unicament un buen ejemplo";
+
+    function clearCanvas() {
+      if (params != undefined) {
+        //alert(copyparams+"\n\n"+JSON.stringify(params))
+        // lj.params=JSON.parse(copyparams);
+        lj.params.inicw = false;
+        lj.params.lastPoint.x = 10;
+        lj.params.lastPoint.y = 80;
+        lj.params.tx = "";
+        lj.params.color = "blue";
+        lj.params.line = 80;
+        lj.params.inicPoint = lj.params.lastPoint;
+        lj.params.lastLetter = ""
+
+      }
+
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = .5
+      for (var i = 0; i < 10; i++) {
+        ctx.moveTo(0, 80 * i)
+        ctx.lineTo(800, 80 * i)
+        ctx.stroke();
+
+
+      }
+    }
+
+    function gets(word) {
+
+      var ars = []
+
+      var k = word.split(" ");
+      params.silabas = [];
+      for (var t = 0; t < k.length; t++) {
+        ars.push(lj.getSilabas(k[t]));
+      }
+      shs.value = JSON.stringify(ars)
+
+    }
+
+
+
+
+
+  </script>
+
+</body>
+
+</html>
