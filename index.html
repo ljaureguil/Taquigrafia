@@ -13,14 +13,15 @@
 <body>
 
   <canvas id="canvas" width="1000" height="500"></canvas>
-  <input id="imsg" type="text" value="es un pequeño ejemplo" oninput="this.value=this.value.toLowerCase()"
+  <input id="imsg" type="text" value="" oninput="this.value=this.value.toLowerCase()"
     placeholder="Type a short paragraph here" style="width:80%;background-color: aqua;"></input>
-  <button onclick="lj.word(imsg.value);">escribe en taquigrafia</button>
+  <button onclick="lj.word(imsg.value);gets(imsg.value);">escribe en taquigrafia</button>
   <button onclick="clearCanvas()">clear</button>
-  <button onclick="gets()">sil</button>
+  <textarea id="shs" style="width:90%;font-size:10px;height:30px;"></textarea>
 
 
   <script>
+    //imsg.value = "ca co ce da de do fa fe fu ga ge go ja je jo ka ke ko la le lo ma me mo na ne no pa pe po qa qe qu ra re ro sa se so ta te to va ve vo wa we wo xa xe xo za ze zo"
     imsg.addEventListener("keypress", function (e) { if (e.keyCode == 13) lj.paragraph(imsg.value); })
 
     const canvas = document.getElementById("canvas");
@@ -30,7 +31,6 @@
 
 
     //  ctx.scale(0.5, 0.5);
-
 
     var taq = function (params) {
 
@@ -224,19 +224,6 @@
         params.tx = word;
         params.inicw = false;
 
-        var k = word.split(" ");
-        params.silabas = [];
-        for (var t = 0; t < k.length; t++) {
-          params.silabas.push(this.getSilabas(k[t]))
-
-        }
-        alert(JSON.stringify(this.params))
-
-
-
-
-        //     word = word.replace(/a/g, "").replace(/e/g, "").replace(/i/g, "").replace(/o/g, "").replace(/u/g, "");
-        //
         for (var i = 0; i < word.length; i++) {
           var l = word[i];
           params.index = i;
@@ -331,7 +318,7 @@
         ///////////////////////////////////
         if (params.inicw) {
           var p = params.tx[params.index + 1]
-          if (p === "a") params.lastPoint.y -= 35
+          if (p === "a") params.lastPoint.y -= 25
           if (p === "e" || p === "i") params.lastPoint.y -= 5
           if (p === "o" || p === "u") params.lastPoint.y += 8
           //       alert(JSON.stringify(params))
@@ -390,7 +377,7 @@
           var p = params.tx[params.index + 1]
           if (p === "a") params.lastPoint.y -= 25
           if (p === "e" || p === "i") params.lastPoint.y -= 5
-          if (p === "o" || p === "u") params.lastPoint.y += 5
+          if (p === "o" || p === "u") params.lastPoint.y += 8
 
         }
         //////////////////////////////////
@@ -481,9 +468,9 @@
         ///////////////////////////////////
         if (params.inicw) {
           var p = params.tx[params.index + 1]
-          if (p === "a") params.lastPoint.y -= 10
+          if (p === "a") params.lastPoint.y -= 15
           if (p === "e" || p === "i") params.lastPoint.y -= 3
-          if (p === "o" || p === "u") params.lastPoint.y -= 15
+          if (p === "o" || p === "u") params.lastPoint.y += 15
 
         }
         //////////////////////////////////
@@ -516,7 +503,7 @@
         if (params.inicw) {
           var p = params.tx[params.index + 1]
           if (p === "a") params.lastPoint.y -= 45
-          if (p === "e" || p === "i") params.lastPoint.y -= 60
+          if (p === "e" || p === "i") params.lastPoint.y -= 32
           if (p === "o" || p === "u") params.lastPoint.y -= 15
           params.lastPoint.x += 60;
 
@@ -616,11 +603,7 @@
     ctx.strokeStyle = "blue";
 
     var tx = "unicament un buen ejemplo";
-    imsg.value = tx;
 
-    var so = lj.getSilabas("colapsar")
-    //lj.word(tx); ////////
-    alert(JSON.stringify(so))
     function clearCanvas() {
       if (params != undefined) {
         //alert(copyparams+"\n\n"+JSON.stringify(params))
@@ -633,9 +616,6 @@
         lj.params.line = 80;
         lj.params.inicPoint = lj.params.lastPoint;
         lj.params.lastLetter = ""
-
-
-        //alert(copyparams+"\n\n"+JSON.stringify(lj.params))
 
       }
 
@@ -653,11 +633,17 @@
       }
     }
 
-    function gets() {
-      // var re = lj.getSilabas(prompt("type a word"));
-      var word = prompt("type a word", "contraproducente")
-      var re = lj.getSilabas(word)
-      alert(JSON.stringify(re))
+    function gets(word) {
+
+      var ars = []
+
+      var k = word.split(" ");
+      params.silabas = [];
+      for (var t = 0; t < k.length; t++) {
+        ars.push(lj.getSilabas(k[t]));
+      }
+      shs.value = JSON.stringify(ars)
+
     }
 
 
