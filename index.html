@@ -15,7 +15,7 @@
   <canvas id="canvas" width="1000" height="500"></canvas>
   <input id="imsg" type="text" value="" oninput="this.value=this.value.toLowerCase()"
     placeholder="Type a short paragraph here" style="width:80%;background-color: aqua;"></input>
-  <button onclick="lj.word(imsg.value);//gets(imsg.value);">escribe en taquigrafia</button>
+  <button onclick="lj.paragraph2(imsg.value)//lj.word(imsg.value);//gets(imsg.value);">escribe en taquigrafia</button>
   <button onclick="clearCanvas()">clear</button>
   <textarea id="shs" style="width:90%;font-size:10px;height:30px;"></textarea>
   <script>
@@ -235,7 +235,8 @@
       }
       this.paragraph2 = function (paragraph) {
         //aqui...
-        paragraph = "sistem socalo cuspide sanitario"
+        // paragraph = "sistem socalo cuspide sanitario"
+        alert(paragraph)
 
         params.Silabas = []
         words = paragraph.toLowerCase()
@@ -262,8 +263,9 @@
         params.Silabas.push(k);
         for (var i = 0; i < k.length; i++) {
           this.grafSilaba(k[i]);
-          params.inicw = false;
+          //  params.inicw = false;
         }
+        params.inicw = false;
 
       }
 
@@ -350,12 +352,13 @@
         var ob = {};
         ob.radio = 3;
         ob.lineWidth = 1;
+        alert(params.inicw)
         if (params.inicw) {
-          params.x += 35;
+          params.lastPoint.x += 35;
 
-          if (s.includes("a")) { params.lastPoint.y -= 20 }
-          if (s.includes("e") || s.includes("i")) { params.lastPoint.y -= 6 }
-          if (s.includes("o") || s.includes("u")) { params.lastPoint.y += 8 }
+          if (s.includes("a")) { params.lastPoint.y = params.line - 25 }
+          if (s.includes("e") || s.includes("i")) { params.lastPoint.y = params.line - 4 }
+          if (s.includes("o") || s.includes("u")) { params.lastPoint.y = params.line + 8 }
 
 
         }
@@ -371,15 +374,13 @@
       ////    this.f_ = function (s) { alert(s) }
       ////    this.j_ = function (s) { alert(s) }
       //        this.l_ = function (s) { alert(s) }
+
       this.grafC = function (ob) {
         var lineWidth = ob.lineWidth;
         var radio = ob.radio;
         var p = params.lastPoint;
         var path = new Path2D();
         path.moveTo(p.x, p.y)
-        // alert("ok")
-        p.x += radio;
-        p.y += radio;
         path.lastPoint = p;
         //  path.lineTo(p.x, p.y);
         path.arc(p.x, p.y, radio, 0, 2 * Math.PI);
@@ -390,7 +391,24 @@
 
       }
       this.grafLin = function (ob) {
-        var lineWidth = 1;
+        var lineWidth = ob.lineWidth;
+        if (params.inicw) {
+          params.lastPoint.x += 20;
+          if (ob.dir === "c") { params.lastPoint.y = params.line - 25 }
+          if (ob.dir === "p") { params.lastPoint.y = params.line - 25 }
+          if (ob.dir === "t") { params.lastPoint.y = params.line - 25 }
+          if (ob.dir === "j") {
+            params.lastPoint.y = params.line - 25; params.lastPoint.x += 15
+          }
+          if (ob.dir === "r") { params.lastPoint.y = params.line - 8; }
+          var p = params.lastPoint;
+          var path = new Path2D();
+          path.moveTo(p.x, p.y)
+
+
+
+
+        }
 
         /*
                 ///////////////////////////////////
@@ -798,8 +816,8 @@
 
     //lj.grafSilaba("croz");
 
-    var tx = "uncon buen ejemplo";
-    lj.paragraph2()
+    shs.value = "uncon buen ejemplo";
+    //lj.paragraph2()
 
     function clearCanvas() {
       if (params != undefined) {
