@@ -15,11 +15,9 @@
   <canvas id="canvas" width="1000" height="500"></canvas>
   <input id="imsg" type="text" value="" oninput="this.value=this.value.toLowerCase()"
     placeholder="Type a short paragraph here" style="width:80%;background-color: aqua;"></input>
-  <button onclick="lj.word(imsg.value);gets(imsg.value);">escribe en taquigrafia</button>
+  <button onclick="lj.word(imsg.value);//gets(imsg.value);">escribe en taquigrafia</button>
   <button onclick="clearCanvas()">clear</button>
   <textarea id="shs" style="width:90%;font-size:10px;height:30px;"></textarea>
-
-
   <script>
     //imsg.value = "ca co ce da de do fa fe fu ga ge go ja je jo ka ke ko la le lo ma me mo na ne no pa pe po qa qe qu ra re ro sa se so ta te to va ve vo wa we wo xa xe xo za ze zo"
     imsg.addEventListener("keypress", function (e) { if (e.keyCode == 13) lj.paragraph(imsg.value); })
@@ -62,7 +60,7 @@
 
 
       this.silabas = as;
-      //alert(this.silabas)
+
       this.getSilabas = function (palabra) {
 
         palabra = palabra.toLowerCase();
@@ -228,12 +226,208 @@
           var l = word[i];
           params.index = i;
           params.inicw = true
+          //  params.wsilabas = this.getSilabas(l)
 
           this.letter(l, i);
 
         }
 
       }
+      this.paragraph2 = function (paragraph) {
+        //aqui...
+        paragraph = "sistem socalo cuspide sanitario"
+
+        params.Silabas = []
+        words = paragraph.toLowerCase()
+        var words = paragraph.split(" ")
+
+
+        params.inicw = true;
+        for (var i = 0; i < words.length; i++) {
+          this.word2(words[i]);
+
+        }
+
+        shs.value = JSON.stringify(this.params.Silabas)
+
+      }
+
+      this.word2 = function (word) {
+        params.inicw = true;
+        word = word.toLowerCase();
+        var ars = []
+
+        var k = this.getSilabas(word);
+        //    alert("222\n\n" + JSON.stringify(k))
+        params.Silabas.push(k);
+        for (var i = 0; i < k.length; i++) {
+          this.grafSilaba(k[i]);
+          params.inicw = false;
+        }
+
+      }
+
+      this.grafSilaba = function (ss) {
+        /////////////////////////////////////////////////
+        //if (ss.some(choice => ["","","","","","","","","",""].includes(choice))) ;
+        //alert(ss)
+        //  alert("graaf silaba  " + ss)
+        if (["ca", "co", "cu", "con", "cun", "can", "ga", "go", "gu"].includes(ss)) this.c_(ss);
+        // if (["ba", "be", "bi", "bo", "bu", "pa", "pe", "pi", "po", "pu"].includes(ss)) this.b_(ss);
+
+        if (["ma", "me", "mi", "mo", "mu", "am", "em", "im", "om", "um"].includes(ss)) this.m_(ss);
+
+        if (this.a_("b_").concat(this.a_("p_")).includes(ss)) this.b_(ss);
+        if (this.a_("s_").concat(this.a_("s_s")).concat(["ci", "ce"]).includes(ss)) this.s_(ss);
+        if (this.a_("r_").concat(this.a_("rr_")).includes(ss)) this.r_(ss);
+        if (this.a_("n_").concat(this.a_("ñ_")).includes(ss)) this.n_(ss);
+        if (this.a_("l_").concat(this.a_("y_")).concat("ll_").includes(ss)) this.l_(ss);
+        if (this.a_("j_").concat(this.a_("ch_")).includes(ss)) this.j_(ss);
+        if (this.a_("f_").concat(this.a_("v_")).includes(ss)) this.f_(ss);
+        if (this.a_("d_").concat(this.a_("z_")).includes(ss)) this.d_(ss)
+        if (this.a_("_l").includes(ss)) this.l_(ss)
+        if (this.a_("tr_").concat(this.a_("dr_")).includes(ss)) this.t_(ss);
+        if (this.a_("cr_").concat(this.a_("gr_")).includes(ss)) this.c_(ss);
+        if (this.a_("cr_s").concat(this.a_("cr_z")).includes(ss)) this.c_(ss);
+        if (this.a_("m_n").includes(ss)) this.m_(ss);
+        if (this.a_("t_n").concat(this.a_("d_n")).includes(ss)) this.t_(ss);
+        if (this.a_("tr_").concat(this.a_("dr_")).includes(ss)) this.t_(ss);
+        if (this.a_("br_").concat(this.a_("pr_")).includes(ss)) this.b_(ss);
+        if (this.a_("_n").includes(ss)) { this.n_(ss); }
+        if (this.a_("j_m").includes(ss)) { this.j_(ss); }
+        if (this.a_("pl_").concat(this.a_("bl_")).includes(ss)) { this.n_(ss); }
+        if (this.a_("_").includes(ss)) this.aeiou_(ss)
+        //    if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
+        //        if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
+        //if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
+        //    if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
+        //        if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
+        //            if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
+
+
+
+        //     alert(ss + " bbbbbbbbbbb " + this.c_)
+
+        /*       if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
+               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
+               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
+               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
+               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
+               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
+               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
+       
+       */
+      }
+
+      this.a_ = function (word) {
+        var vocales = "aeiou";
+        var index = word.indexOf("_")
+
+        var arc = []
+        for (var i = 0; i < vocales.length; i++) {
+          var w = word.split("");
+          w[index] = vocales[i];
+          r = w.join("");
+          arc.push(r)
+        }
+        //word[index] = "dd";
+        // arc = word
+        return arc;
+
+      }
+      this.c_ = function (s) { alert(s); }
+      this.b_ = function (s) { alert(s) }
+      this.d_ = function (s) { alert(s) }
+      this.f_ = function (s) { alert(s) }
+      this.j_ = function (s) { alert(s) }
+      this.l_ = function (s) { alert(s) }
+      this.m_ = function (s) { alert(s) }
+      this.n_ = function (s) { alert(s) }
+      this.p_ = function (s) { alert(s) }
+      this.r_ = function (s) { alert(s) }
+      this.s_ = function (s) {
+        //  graf s...
+        var ob = {};
+        ob.radio = 3;
+        ob.lineWidth = 1;
+        if (params.inicw) {
+          params.x += 35;
+
+          if (s.includes("a")) { params.lastPoint.y -= 20 }
+          if (s.includes("e") || s.includes("i")) { params.lastPoint.y -= 6 }
+          if (s.includes("o") || s.includes("u")) { params.lastPoint.y += 8 }
+
+
+        }
+        if (s.length == 3) ob.lineWidth = 2;
+        this.grafC(ob)
+      }
+      this.t_ = function (s) { alert(s) }
+      this.x_ = function (s) { alert(s) }
+      this.w_ = function (s) { alert(s) }
+
+
+      this.aeiou_ = function (s) { alert(s) }
+      ////    this.f_ = function (s) { alert(s) }
+      ////    this.j_ = function (s) { alert(s) }
+      //        this.l_ = function (s) { alert(s) }
+      this.grafC = function (ob) {
+        var lineWidth = ob.lineWidth;
+        var radio = ob.radio;
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        // alert("ok")
+        p.x += radio;
+        p.y += radio;
+        path.lastPoint = p;
+        //  path.lineTo(p.x, p.y);
+        path.arc(p.x, p.y, radio, 0, 2 * Math.PI);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        //    params.lastLetter = params.letter;
+
+      }
+      this.grafLin = function (ob) {
+        var lineWidth = 1;
+
+        /*
+                ///////////////////////////////////
+                if (params.inicw) {
+                  var p = params.tx[params.index + 1]
+                  if (p === "a") params.lastPoint.y -= 25
+                  if (p === "e" || p === "i") params.lastPoint.y -= 16
+                  if (p === "o" || p === "u") params.lastPoint.y += 5
+        
+        
+                }
+
+        if (params.letter == "g") lineWidth = 3;
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        p.x += 30;
+        path.lastPoint = p;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); // alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+        */
+
+      }
+
+      this.grafArc = function (ol) {
+
+      }
+      this.grafCur = function (ol) {
+
+      }
+
+
+
+
 
       this.letter = function (l, index) {
 
@@ -602,7 +796,10 @@
     var lj = new taq(params);
     ctx.strokeStyle = "blue";
 
-    var tx = "unicament un buen ejemplo";
+    //lj.grafSilaba("croz");
+
+    var tx = "uncon buen ejemplo";
+    lj.paragraph2()
 
     function clearCanvas() {
       if (params != undefined) {
