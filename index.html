@@ -271,10 +271,11 @@
 
       this.grafSilaba = function (ss) {
         /////////////////////////////////////////////////
+        //  ss = "ca"
         //if (ss.some(choice => ["","","","","","","","","",""].includes(choice))) ;
         //alert(ss)
         //  alert("graaf silaba  " + ss)
-        if (["ca", "co", "cu", "con", "cun", "can", "ga", "go", "gu"].includes(ss)) this.c_(ss);
+        if (["ca", "co", "cu", "con", "cun", "can", "ga", "go", "gu", "qu", "ki"].includes(ss)) this.cgkqu_(ss);
         // if (["ba", "be", "bi", "bo", "bu", "pa", "pe", "pi", "po", "pu"].includes(ss)) this.b_(ss);
 
         if (["ma", "me", "mi", "mo", "mu", "am", "em", "im", "om", "um"].includes(ss)) this.m_(ss);
@@ -337,7 +338,35 @@
         return arc;
 
       }
-      this.c_ = function (s) { alert(s); }
+      this.cgkqu_ = function (s) {
+        var lineWidth = 1;
+        if (s.includes("g")) lineWidth = 3
+
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        if (params.inicw) {
+          params.lastPoint.x += 20;
+          if (s.includes("a")) params.lastPoint.y = params.line - 25;
+          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
+          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 3;
+          path.moveTo(p.x, p.y)
+        }
+        alert(" cgkqu\n\n" + s)
+
+        params.size = 30;//corregir aqui
+        p.x += params.size;
+        path.lastPoint = p;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); // alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+        params.inicw = false;
+
+
+
+      }
       this.b_ = function (s) { alert(s) }
       this.d_ = function (s) { alert(s) }
       this.f_ = function (s) { alert(s) }
@@ -388,18 +417,17 @@
         ctx.lineWidth = lineWidth;
         ctx.stroke(path); //alert(JSON.stringify(params))
         //    params.lastLetter = params.letter;
-
+        params.inicw = false;
       }
       this.grafLin = function (ob) {
         var lineWidth = ob.lineWidth;
-        if (params.inicw) {
-          params.lastPoint.x += 20;
-          if (ob.dir === "c") { params.lastPoint.y = params.line - 25 }
-          if (ob.dir === "p") { params.lastPoint.y = params.line - 25 }
-          if (ob.dir === "t") { params.lastPoint.y = params.line - 25 }
-          if (ob.dir === "j") {
-            params.lastPoint.y = params.line - 25; params.lastPoint.x += 15
-          }
+
+        if (ob.dir === "c") { params.lastPoint.y = params.line - 25 }
+        if (ob.dir === "p") { params.lastPoint.y = params.line - 25 }
+        if (ob.dir === "t") { params.lastPoint.y = params.line - 25 }
+        if (ob.dir === "j") {
+          params.lastPoint.y = params.line - 25; params.lastPoint.x += 15
+
           if (ob.dir === "r") { params.lastPoint.y = params.line - 8; }
           var p = params.lastPoint;
           var path = new Path2D();
