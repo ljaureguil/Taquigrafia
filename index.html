@@ -37,7 +37,7 @@
 
       
 
-            this.getSilabas = function (palabra) {
+            this.getSilabas2 = function (palabra) {
 
                 palabra = palabra.toLowerCase();
 
@@ -188,9 +188,11 @@
                     //   alert(JSON.stringify(this.params))
 
                 }
+                
 
             }
-
+          
+       
 
 
             this.word = function (word) {
@@ -210,11 +212,26 @@
 
             }
             this.paragraph2 = function (paragraph) {
+
+//ESTE ESL EL BUENO AQUI... aqui...
+
+
                 ctx.strokeStyle = "blue"
                 // paragraph = "sistem socalo cuspide sanitario"
-                alert(paragraph)
+       //        alert(paragraph)
+                //  this.silFrase("contemporaneo de una buena vez systematicamente");
+                    var ars=procesarFrase(paragraph);
+            shs.value=JSON.stringify(ars);
+            for(e of ars){
+                params.inicw=true;
+                for(s of e){
+                    this.grafSilaba(s)
 
-                params.Silabas = []
+                }
+                
+            }
+
+      /*          params.Silabas = []
                 words = paragraph.toLowerCase()
                 var words = paragraph.split(" ")
 
@@ -226,6 +243,7 @@
                 }
 
                 shs.value = JSON.stringify(this.params.Silabas)
+                */
 
             }
 
@@ -240,12 +258,71 @@
                 //    alert("222\n\n" + JSON.stringify(k))
                 params.Silabas.push(k);
                 for (var i = 0; i < k.length; i++) {
-                    this.grafSilaba(k[i]);
+                   // this.grafSilaba(k[i]);
+                   this.getSilabas(k[i])
                     //  params.inicw = false;
                 }
                 params.inicw = false;
 
             }
+            this.getSilabas=function(texto){
+//nction separarTextoEnSilabas(texto) {
+    if (!texto) return "";
+
+    // Expresión regular para identificar palabras individuales aislándolas de espacios y signos de puntuación
+    return texto.replace(/[a-záéóíúüñý]+/gi, (palabra) => {
+        const palabraMinus = palabra.toLowerCase();
+        
+        // --- VARIABLES CORREGIDAS ---
+        // Se incluye la 'y' e 'ý' en las vocales y se elimina de las consonantes
+        const vocalesAbiertas = '[aeoáéóíúü]'; 
+        const vocalesCerradasSinTilde = '[iuüy]';
+        const vocalesCerradasConTilde = '[íúý]';
+        const vocales = '[aeiouáéóíúüýy]';
+        const consonantes = '[bcdfghjklmnñpqrstvwxz]'; 
+
+        // 1. Identificar marcas temporales en los HIATOS
+        let resultado = palabraMinus
+            .replace(new RegExp(`(${vocalesAbiertas})(${vocalesAbiertas})`, 'g'), '$1-$2')
+            .replace(new RegExp(`(${vocalesAbiertas})(${vocalesCerradasConTilde})`, 'g'), '$1-$2')
+            .replace(new RegExp(`(${vocalesCerradasConTilde})(${vocalesAbiertas})`, 'g'), '$1-$2');
+
+        // 2. Una consonante entre dos vocales (V-CV)
+        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${vocales})`, 'g'), '$1-$2$3');
+
+        // 3. Dos consonantes entre dos vocales (V-CC-V)
+        const gruposInseparables = '(ch|ll|rr|bl|br|cl|cr|fl|fr|gl|gr|pl|pr|tl|tr|dr)';
+        resultado = resultado.replace(new RegExp(`(${vocales})${gruposInseparables}(${vocales})`, 'g'), '$1-$2$3');
+        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2-$3$4');
+
+        // 4. Tres consonantes entre dos vocales (V-CCC-V)
+        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})${gruposInseparables}(${vocales})`, 'g'), '$1$2-$3$4');
+        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2$3-$4$5');
+
+        // 5. Cuatro consonantes entre dos vocales (V-CCCC-V)
+        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2$3-$4$5$6');
+
+        // Reconstruir la palabra manteniendo las mayúsculas originales
+        let palabraSilabas = "";
+        let j = 0;
+        for (let i = 0; i < resultado.length; i++) {
+            if (resultado[i] === '-') {
+                palabraSilabas += '-';
+            } else {
+                palabraSilabas += palabra[j];
+                j++;
+            }
+        }
+        return palabraSilabas;
+    });
+
+
+
+            }
+
+
+
+
             this.a_ = function (word) {
                 var vocales = "aeiou";
                 var index = word.indexOf("_")
@@ -263,7 +340,9 @@
 
             }          
 /////////////////
-alert(this.a_)
+//alert(this.a_)
+
+
       this.silabas = {};
       this.silabas.cgkq=["ca", "co", "cu", "con", "cun", "can", "ga", "go", "gu", "qui", "que", "ki"];
       this.silabas.m=this.a_("m_");
@@ -1106,6 +1185,218 @@ alert(this.a_)
 
 
 
+    </script>
+    <script>
+
+
+        // Función base que procesa una única palabra limpia
+        function silabearPalabra(palabra, forzarHiatos = true) {
+            let p = palabra.trim();
+            if (!p) return [];
+
+            const Fuertes = "aeoAEOáéóÁÉÓ";
+            const Debiles = "iuyIUYüÜíúÍÚ";
+            const Consonantes = "bcdfghjklmnñpqrstvwxyzBCDFGHJKLMNÑPQRSTVWXYZ".replace(/[yY]/g, '');
+
+            const gruposInseparables = ["bl", "cl", "fl", "gl", "pl", "br", "cr", "fr", "gr", "pr", "tr", "dr", "ch", "ll", "rr"];
+
+            function tipo(char) {
+                if (!char) return 'X';
+                if (Fuertes.includes(char)) return 'F';
+                if (Debiles.includes(char)) {
+                    return "íúÍÚ".includes(char) ? 'F' : 'D';
+                }
+                if (Consonantes.includes(char)) return 'C';
+                return 'X';
+            }
+
+            let puntosCorte = [];
+            let i = 0;
+
+            while (i < p.length) {
+                if (tipo(p[i]) === 'C') {
+                    let inicioC = i;
+                    while (i < p.length && tipo(p[i]) === 'C') {
+                        i++;
+                    }
+                    let finC = i - 1;
+
+                    if (inicioC === 0 || finC === p.length - 1) continue;
+
+                    let longitud = finC - inicioC + 1;
+                    let par = p.substring(inicioC, finC + 1).toLowerCase();
+
+                    if (longitud === 1) {
+                        puntosCorte.push(inicioC);
+                    }
+                    else if (longitud === 2) {
+                        if (!gruposInseparables.includes(par)) {
+                            puntosCorte.push(inicioC + 1);
+                        } else {
+                            puntosCorte.push(inicioC);
+                        }
+                    }
+                    else if (longitud === 3) {
+                        let ultimasDos = par.substring(1, 3);
+                        if (gruposInseparables.includes(ultimasDos)) {
+                            puntosCorte.push(inicioC + 1);
+                        } else {
+                            puntosCorte.push(inicioC + 2);
+                        }
+                    }
+                    else if (longitud === 4) {
+                        puntosCorte.push(inicioC + 2);
+                    }
+                } else {
+                    i++;
+                }
+            }
+
+            let tempWord = "";
+            let indicesCorte = new Set(puntosCorte);
+            for (let j = 0; j < p.length; j++) {
+                if (indicesCorte.has(j)) tempWord += "-";
+                tempWord += p[j];
+            }
+            let silabasPrevia = tempWord.split("-");
+
+            let resultadoFinal = [];
+
+            for (let silaba of silabasPrevia) {
+                let subSilaba = "";
+                let k = 0;
+
+                while (k < silaba.length) {
+                    subSilaba += silaba[k];
+
+                    if (k < silaba.length - 1) {
+                        let actual = silaba[k];
+                        let siguiente = silaba[k + 1];
+
+                        let esHIntercalada = false;
+                        if (siguiente.toLowerCase() === 'h' && k < silaba.length - 2) {
+                            siguiente = silaba[k + 2];
+                            esHIntercalada = true;
+                        }
+
+                        let t1 = tipo(actual);
+                        let t2 = tipo(siguiente);
+
+                        if ((t1 === 'F' || t1 === 'D') && (t2 === 'F' || t2 === 'D')) {
+                            let separarVocal = false;
+
+                            if (t1 === 'F' && t2 === 'F') {
+                                separarVocal = true;
+                            }
+
+                            if (forzarHiatos && ((t1 === 'D' && t2 === 'F') || (t1 === 'F' && t2 === 'D'))) {
+                                separarVocal = true;
+                            }
+
+                            if (separarVocal) {
+                                if (esHIntercalada) {
+                                    subSilaba += silaba[k + 1];
+                                    k++;
+                                }
+                                resultadoFinal.push(subSilaba);
+                                subSilaba = "";
+                            }
+                        }
+                    }
+                    k++;
+                }
+                if (subSilaba) resultadoFinal.push(subSilaba);
+            }
+
+            return resultadoFinal;
+        }
+
+        // NUEVA FUNCIÓN: Procesa frases completas limpiando signos de puntuación externos
+        function procesarFrase(frase) {
+            if (!frase.trim()) return [];
+
+            // Dividimos la frase por cualquier tipo de espacio en blanco
+            let palabrasRaw = frase.trim().split(/\s+/);
+            let fraseMatriz = [];
+
+            for (let item of palabrasRaw) {
+                // Limpiamos puntuación de los extremos (puntos, comas, signos de interrogación, etc.)
+                // Manteniendo letras del español, acentos y la 'y'
+                let palabraLimpia = item.replace(/^[¿¡!?,.:;()""'']+|[¿¡!?,.:;()""'']+$/g, '');
+
+                if (palabraLimpia) {
+                    let silabasDePalabra = silabearPalabra(palabraLimpia, true);
+                    fraseMatriz.push(silabasDePalabra);
+
+                }
+            }
+
+            return fraseMatriz;
+        }
+
+
+
+        /*
+    function separarTextoEnSilabas(texto) {
+    if (!texto) return "";
+
+    // Expresión regular para identificar palabras individuales aislándolas de espacios y signos de puntuación
+    return texto.replace(/[a-záéóíúüñý]+/gi, (palabra) => {
+        const palabraMinus = palabra.toLowerCase();
+        
+        // --- VARIABLES CORREGIDAS ---
+        // Se incluye la 'y' e 'ý' en las vocales y se elimina de las consonantes
+        const vocalesAbiertas = '[aeoáéóíúü]'; 
+        const vocalesCerradasSinTilde = '[iuüy]';
+        const vocalesCerradasConTilde = '[íúý]';
+        const vocales = '[aeiouáéóíúüýy]';
+        const consonantes = '[bcdfghjklmnñpqrstvwxz]'; 
+
+        // 1. Identificar marcas temporales en los HIATOS
+        let resultado = palabraMinus
+            .replace(new RegExp(`(${vocalesAbiertas})(${vocalesAbiertas})`, 'g'), '$1-$2')
+            .replace(new RegExp(`(${vocalesAbiertas})(${vocalesCerradasConTilde})`, 'g'), '$1-$2')
+            .replace(new RegExp(`(${vocalesCerradasConTilde})(${vocalesAbiertas})`, 'g'), '$1-$2');
+
+        // 2. Una consonante entre dos vocales (V-CV)
+        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${vocales})`, 'g'), '$1-$2$3');
+
+        // 3. Dos consonantes entre dos vocales (V-CC-V)
+        const gruposInseparables = '(ch|ll|rr|bl|br|cl|cr|fl|fr|gl|gr|pl|pr|tl|tr|dr)';
+        resultado = resultado.replace(new RegExp(`(${vocales})${gruposInseparables}(${vocales})`, 'g'), '$1-$2$3');
+        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2-$3$4');
+
+        // 4. Tres consonantes entre dos vocales (V-CCC-V)
+        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})${gruposInseparables}(${vocales})`, 'g'), '$1$2-$3$4');
+        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2$3-$4$5');
+
+        // 5. Cuatro consonantes entre dos vocales (V-CCCC-V)
+        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2$3-$4$5$6');
+
+        // Reconstruir la palabra manteniendo las mayúsculas originales
+        let palabraSilabas = "";
+        let j = 0;
+        for (let i = 0; i < resultado.length; i++) {
+            if (resultado[i] === '-') {
+                palabraSilabas += '-';
+            } else {
+                palabraSilabas += palabra[j];
+                j++;
+            }
+        }
+        return palabraSilabas;
+    });
+}
+
+// --- PRUEBA DE CONTROL ---
+console.log(separarTextoEnSilabas("systema")); 
+// Salida esperada: sys-te-ma
+
+console.log(separarTextoEnSilabas("gimnasio")); 
+// Salida esperada: gim-na-sio
+    
+        
+        */
     </script>
 
 </body>
