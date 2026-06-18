@@ -347,6 +347,23 @@
 
 
       this.silabas = {};
+      this.silabas.vocales=["a","e","i","o","u"];
+      
+      this.silabas.inseparables = [
+          "bl", "br", "cl", "cr", "dr",
+          "fl", "fr", "gl", "gr",
+          "pl", "pr", "tl", "tr"
+        ];
+  
+      for(var e of this.silabas.inseparables){
+        var a=[]
+        for(var v of this.silabas.vocales){
+            a.push(e+v);
+       }
+       var s=e+"_ = "+JSON.stringify(a);
+       eval("this.silabas."+s); 
+         }
+   //   alert(this.silabas.tl_)
       this.silabas.cgkq = ["ca", "co", "cu", "con", "cun", "can", "ga", "go", "gu", "qui", "que", "ki"];
       this.silabas.m = this.a_("m_");
       this.silabas.bp = this.a_("b_").concat(this.a_("p_"));
@@ -407,6 +424,19 @@
         if (this.silabas.dt.includes(ss)) this.dt_(ss)
 
         if (this.silabas._l.includes(ss)) this._l(ss); alert(this.silabas._l)
+//checar aqui ////////////////////////////////
+
+
+for(e of this.silabas.inseparables){
+    var s="  if(this.silabas."+e+"_.includes(ss)) this."+e+"_(ss) ";
+    eval(s)
+}
+
+
+     //   if(this.silabas.cl_.includes(ss)) this.cl_(ss)
+
+//hacer todas las functiones
+    
 
         // if (this.a_("_l").includes(ss)) this._l(ss)
 
@@ -419,28 +449,9 @@
         if (this.a_("br_").concat(this.a_("pr_")).includes(ss)) this.b_(ss);
         if (this.a_("_n").includes(ss)) { this.nñ_(ss); }/////////////////
         if (this.a_("j_m").includes(ss)) { this.j_(ss); }
-        if (this.a_("pl_").concat(this.a_("bl_")).includes(ss)) { alert("need pl"); this.nñ_(ss); }
+     //   if (this.a_("pl_").concat(this.a_("bl_")).includes(ss)) { alert("need pl"); this.nñ_(ss); }
         if (this.a_("_").includes(ss)) this.aeiou_(ss)
-        //    if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
-        //        if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
-        //if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
-        //    if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
-        //        if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
-        //            if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
-
-
-
-        //     alert(ss + " bbbbbbbbbbb " + this.c_)
-
-        /*       if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
-               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
-               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
-               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
-               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
-               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
-               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
-       
-       */
+     
       }
 
 
@@ -774,6 +785,315 @@
         params.inicw = false;
 
       }
+///////////MARADOR AQUI...
+/*
+   "bl", "br", "cl", "cr", "dr",
+          "fl", "fr", "gl", "gr",
+          "pl", "pr", "tl", "tr"
+
+
+*/
+this.bl_=function(s){
+    alert(s+" ....")
+
+
+
+}
+
+this.br_=function(s){
+    alert(s+" ....")
+}
+
+this.cl_=function(s){
+    alert(s+" ....")
+  //regresa
+  alert(params.line+"\n\n"+ params.size)
+    var p=params.lastPoint; alert(JSON.stringify(p))
+    if(params.inicw){
+        p.x+=20; 
+        if(s.includes("a")) params.lastPoint.y=params.line-params.size;
+        if(s.includes("e") || s.includes("i")) params.lastPoint.y=params.line-3;
+     if(s.includes("o") || s.includes("u")) params.lastPoint.y=params.line+3;
+    }
+    alert(JSON.stringify(p))
+    params.lastPoint=this.grCG(params.lastPoint,1,params.size)
+    alert(JSON.stringify(params.lastPoint))
+}
+
+this.cr_=function(s){
+    alert(s+" ....")
+}
+  
+this.dr_=function(s){
+    alert(s+" ....")
+}
+
+this.fl_=function(s){
+    alert(s+" ....")
+}
+this.fr_=function(s){
+    alert(s+" ....")
+}
+
+this.gl_=function(s){
+    alert(s+" ....")
+}
+
+this.gr_=function(s){
+    alert(s+" ....")
+}
+this.pl_=function(s){
+    alert(s+" ....")
+}
+
+this.pr_=function(s){
+    alert(s+" ....")
+}
+
+this.tl_=function(s){
+    alert(s+" ....")
+}
+this.tr_=function(s){
+    alert(s+" ....")
+}
+/*
+this.bl_=function(s){
+    alert(s+" ....")
+}
+
+this.bl_=function(s){
+    alert(s+" ....")
+}
+
+*/
+
+
+this.grBP = function(inicPos, lineWidth, size){
+    var p=inicPos;
+         var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        p.x += size;
+        p.y += size;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path);
+        return p;
+}
+this.grCG = function(inicPos, lineWidth, size){
+    var p=inicPos;
+         var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        p.x += size;
+     //   p.y += size;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path);
+        return p
+}
+this.grDT = function(inicPos, lineWidth, size){
+    var p=inicPos;
+         var path = new Path2D();
+        path.moveTo(p.x, p.y)
+    //    p.x += size;
+        p.y += size;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path);
+        return p;
+}
+this.grFV = function(inicPos, lineWidth, size){
+    var p=inicPos;
+         var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        p.x += 30;
+        p.y += 30;
+         path.quadraticCurveTo(p.x - 25, p.y + 5, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))
+   
+        return p;
+}
+this.grH = function(inicPos, lineWidth, size){
+   var p=inicPos;
+         var path = new Path2D();
+        path.moveTo(p.x, p.y)
+      //  p.x += 30;
+        p.y += 30;
+         path.quadraticCurveTo(p.x - 35, p.y + 15, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))
+   
+        return p;
+}
+this.grJCH = function(inicPos, lineWidth, size){
+    var p=inicPos;
+         var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        p.x -= size;
+        p.y -= size;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path);
+        return p;
+}
+this.grLY = function(inicPos, lineWidth, size){
+    var p=inicPos;
+   path.moveTo(p.x, p.y)
+        p.x += size;
+        p.y -= size;
+   
+        path.quadraticCurveTo(p.x - 25, p.y - 5, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))
+        return p;
+}
+this.grM = function(inicPos, lineWidth, size){
+    var p=inicPos;
+         var path = new Path2D();
+        path.moveTo(p.x, p.y)
+  
+        p.x += params.size;
+        path.quadraticCurveTo(p.x - 15, p.y - 25, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))rams))
+        return p;
+}
+this.grNñ = function(inicPos, lineWidth, size){
+    var p=inicPos;
+         var path = new Path2D();
+        path.moveTo(p.x, p.y)
+    path.moveTo(p.x, p.y)
+        p.x += params.size;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 15, p.y + 25, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); 
+        return p;
+}
+this.grR = function(inicPos, lineWidth, size){
+    var p=inicPos;
+         var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        p.x += size;
+        p.y -= size;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path);
+        return p;
+}
+this.grSZ  = function (inicPos, lineWidth, size){
+    var p=inicPos;
+    var radio=3;
+         var path = new Path2D();
+        path.moveTo(p.x, p.y)
+ path.arc(p.x, p.y, radio, 0, 2 * Math.PI);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path);
+        return p;
+        
+}
+
+this.grContraccionR = function(inicPos, lineWidth, size,angle){
+    var p=inicPos;
+         var path = new Path2D();
+        path.moveTo(p.x, p.y)
+
+        params.size = 30;//corregir aqui
+        p.x += size;
+        p.y += size;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path);
+        return p;//pending
+}
+this.grContraccionL = function(inicPos, lineWidth, size,angle){
+    var p=inicPos;
+         var path = new Path2D();
+        path.moveTo(p.x, p.y)
+
+        params.size = 30;//corregir aqui
+        p.x += size;
+        p.y += size;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path);
+         return p;//pending       
+}
+this.grContraccionN = function(inicPos, lineWidth, size,angle){
+    var p=inicPos;
+         var path = new Path2D();
+        path.moveTo(p.x, p.y)
+
+        params.size = 30;//corregir aqui
+        p.x += size;
+        p.y += size;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path);
+          return p;//pending      
+}
+this.grContraccionFB = function(inicPos, lineWidth, size,angle){
+    var p=inicPos;
+         var path = new Path2D();
+        path.moveTo(p.x, p.y)
+
+        params.size = 30;//corregir aqui
+        p.x += size;
+        p.y += size;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path);
+          return p;//pending      
+}
+this.grAL = function(inicPos, lineWidth, size){
+     var p=inicPos;
+   path.moveTo(p.x, p.y)
+        p.x += size;
+        p.y -= size;
+   
+        path.quadraticCurveTo(p.x + 25, p.y - 5, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); 
+        return p;
+       
+}
+/*this.grAL = function(inicPos, lineWidth, size){
+    var p=inicPos;
+         var path = new Path2D();
+        path.moveTo(p.x, p.y)
+
+        params.size = 30;//corregir aqui
+        p.x += size;
+        p.y += size;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path);
+         return p;//pending       
+}*/
+
+
+
+
+
+
+      ////////////////////////MARDADOR
       this.p_ = function (s) { alert(s) }
 
 
@@ -1202,6 +1522,7 @@
     }
     params.lastPoint = params.inicPoint;
     params.line = 80;
+    params.size=30;
     params.color = "blue";
     params.inicw = false;
     var copyparams = JSON.stringify(params)
