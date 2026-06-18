@@ -2,1390 +2,1464 @@
 <html>
 
 <head>
-    <meta name="viewport" content="width=device-width">
-    <link rel="icon" href="https://images.icon-icons.com/270/PNG/512/Dictionary_29937.png" type="image/png">
-    <title>Taquigrafia</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width">
+  <link rel="icon" href="https://images.icon-icons.com/270/PNG/512/Dictionary_29937.png" type="image/png">
+  <title>Taquigrafia</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
 </head>
 
 <body>
 
-    <canvas id="canvas" width="1000" height="500"></canvas>
-    <input id="imsg" type="text" value="" oninput="this.value=this.value.toLowerCase()"
-        placeholder="Type a short paragraph here" style="width:80%;background-color: aqua;"></input>
-    <button onclick="lj.paragraph2(imsg.value)//lj.word(imsg.value);//gets(imsg.value);">escribe en taquigrafia</button>
-    <button onclick="clearCanvas()">clear</button>
-    <textarea id="shs" style="width:90%;font-size:10px;height:30px;"></textarea>
-    <script>
-        //imsg.value = "ca co ce da de do fa fe fu ga ge go ja je jo ka ke ko la le lo ma me mo na ne no pa pe po qa qe qu ra re ro sa se so ta te to va ve vo wa we wo xa xe xo za ze zo"
-        imsg.addEventListener("keypress", function (e) { if (e.keyCode == 13) lj.paragraph(imsg.value); })
+  <canvas id="canvas" width="1000" height="500"></canvas>
+  <input id="imsg" type="text" value="" oninput="this.value=this.value.toLowerCase()"
+    placeholder="Type a short paragraph here" style="width:80%;background-color: aqua;"></input>
+  <button onclick="lj.paragraph2(imsg.value)//lj.word(imsg.value);//gets(imsg.value);">escribe en taquigrafia</button>
+  <button onclick="clearCanvas()">clear</button>
+  <textarea id="shs" style="width:90%;font-size:10px;height:30px;"></textarea>
+  <script>
+    //imsg.value = "ca co ce da de do fa fe fu ga ge go ja je jo ka ke ko la le lo ma me mo na ne no pa pe po qa qe qu ra re ro sa se so ta te to va ve vo wa we wo xa xe xo za ze zo"
+    imsg.addEventListener("keypress", function (e) { if (e.keyCode == 13) lj.paragraph(imsg.value); })
 
-        const canvas = document.getElementById("canvas");
-        const ctx = canvas.getContext("2d");
-        clearCanvas();
-
-
-
-        //  ctx.scale(0.5, 0.5);
-
-        var taq = function (params) {
-
-        
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    clearCanvas();
 
 
-      
 
-            this.getSilabas2 = function (palabra) {
+    //  ctx.scale(0.5, 0.5);
 
-                palabra = palabra.toLowerCase();
+    var taq = function (params) {
 
-                const vocales = "aeiouáéíóúü";
-                const fuertes = "aáeéoó";
 
-                const gruposInseparables = [
-                    "bl", "br", "cl", "cr", "dr",
-                    "fl", "fr", "gl", "gr",
-                    "pl", "pr", "tl", "tr"
-                ];
 
-                function esVocal(c) {
-                    return vocales.includes(c);
-                }
 
-                function esFuerte(c) {
-                    return fuertes.includes(c);
-                }
 
-                function esDiptongo(v1, v2) {
 
-                    if (!esVocal(v1) || !esVocal(v2))
-                        return false;
+      this.getSilabas2 = function (palabra) {
 
-                    const f1 = esFuerte(v1);
-                    const f2 = esFuerte(v2);
+        palabra = palabra.toLowerCase();
 
-                    // Dos vocales fuertes => hiato
-                    if (f1 && f2)
-                        return false;
+        const vocales = "aeiouáéíóúü";
+        const fuertes = "aáeéoó";
 
-                    // Vocal cerrada acentuada rompe diptongo
-                    if ("íú".includes(v1) || "íú".includes(v2))
-                        return false;
+        const gruposInseparables = [
+          "bl", "br", "cl", "cr", "dr",
+          "fl", "fr", "gl", "gr",
+          "pl", "pr", "tl", "tr"
+        ];
 
-                    return true;
-                }
+        function esVocal(c) {
+          return vocales.includes(c);
+        }
 
-                let silabas = [];
-                let pos = 0;
+        function esFuerte(c) {
+          return fuertes.includes(c);
+        }
 
-                while (pos < palabra.length) {
+        function esDiptongo(v1, v2) {
 
-                    let inicio = pos;
+          if (!esVocal(v1) || !esVocal(v2))
+            return false;
 
-                    // consonantes iniciales
-                    while (pos < palabra.length && !esVocal(palabra[pos])) {
-                        pos++;
-                    }
+          const f1 = esFuerte(v1);
+          const f2 = esFuerte(v2);
 
-                    // núcleo vocálico
-                    while (
-                        pos + 1 < palabra.length &&
-                        esDiptongo(palabra[pos], palabra[pos + 1])
-                    ) {
-                        pos++;
-                    }
+          // Dos vocales fuertes => hiato
+          if (f1 && f2)
+            return false;
 
-                    if (pos < palabra.length)
-                        pos++;
+          // Vocal cerrada acentuada rompe diptongo
+          if ("íú".includes(v1) || "íú".includes(v2))
+            return false;
 
-                    let sigVocal = pos;
+          return true;
+        }
 
-                    while (
-                        sigVocal < palabra.length &&
-                        !esVocal(palabra[sigVocal])
-                    ) {
-                        sigVocal++;
-                    }
+        let silabas = [];
+        let pos = 0;
 
-                    const numCons = sigVocal - pos;
+        while (pos < palabra.length) {
 
-                    // final de palabra
-                    if (sigVocal >= palabra.length) {
-                        silabas.push(palabra.slice(inicio));
-                        break;
-                    }
+          let inicio = pos;
 
-                    if (numCons === 0) {
+          // consonantes iniciales
+          while (pos < palabra.length && !esVocal(palabra[pos])) {
+            pos++;
+          }
 
-                        silabas.push(palabra.slice(inicio, pos));
+          // núcleo vocálico
+          while (
+            pos + 1 < palabra.length &&
+            esDiptongo(palabra[pos], palabra[pos + 1])
+          ) {
+            pos++;
+          }
 
-                    } else if (numCons === 1) {
+          if (pos < palabra.length)
+            pos++;
 
-                        silabas.push(palabra.slice(inicio, pos));
+          let sigVocal = pos;
 
-                    } else if (numCons === 2) {
+          while (
+            sigVocal < palabra.length &&
+            !esVocal(palabra[sigVocal])
+          ) {
+            sigVocal++;
+          }
 
-                        const grupo = palabra.slice(pos, pos + 2);
+          const numCons = sigVocal - pos;
 
-                        if (gruposInseparables.includes(grupo)) {
-                            silabas.push(palabra.slice(inicio, pos));
-                        } else {
-                            silabas.push(palabra.slice(inicio, pos + 1));
-                            pos += 1;
-                        }
+          // final de palabra
+          if (sigVocal >= palabra.length) {
+            silabas.push(palabra.slice(inicio));
+            break;
+          }
 
-                    } else if (numCons === 3) {
+          if (numCons === 0) {
 
-                        const grupoFinal = palabra.slice(pos + 1, pos + 3);
+            silabas.push(palabra.slice(inicio, pos));
 
-                        if (gruposInseparables.includes(grupoFinal)) {
-                            silabas.push(palabra.slice(inicio, pos + 1));
-                            pos += 1;
-                        } else {
-                            silabas.push(palabra.slice(inicio, pos + 2));
-                            pos += 2;
-                        }
+          } else if (numCons === 1) {
 
-                    } else {
+            silabas.push(palabra.slice(inicio, pos));
 
-                        // 4 o más consonantes
-                        const grupoFinal = palabra.slice(pos + 2, pos + 4);
+          } else if (numCons === 2) {
 
-                        if (gruposInseparables.includes(grupoFinal)) {
-                            silabas.push(palabra.slice(inicio, pos + 2));
-                            pos += 2;
-                        } else {
-                            silabas.push(palabra.slice(inicio, pos + 3));
-                            pos += 3;
-                        }
-                    }
-                }
+            const grupo = palabra.slice(pos, pos + 2);
 
-                return silabas;
+            if (gruposInseparables.includes(grupo)) {
+              silabas.push(palabra.slice(inicio, pos));
+            } else {
+              silabas.push(palabra.slice(inicio, pos + 1));
+              pos += 1;
             }
 
+          } else if (numCons === 3) {
 
+            const grupoFinal = palabra.slice(pos + 1, pos + 3);
 
-
-            if (params.color === undefined) params.color = "blue"
-            this.params = params;
-            params.inicw = false;
-
-            this.params.x = this.params.lastPoint.x
-            this.params.y = this.params.lastPoint.y;
-
-
-            this.paragraph = function (paragraph) {
-                var ar = paragraph.split(" ");
-                for (var i = 0; i < ar.length; i++) {
-
-                    this.params.lastPoint.y = 220
-                    this.word(ar[i]);
-                    this.params.lastPoint.x += 20;
-                    this.params.lastPoint.y = 220;
-                    //   alert(JSON.stringify(this.params))
-
-                }
-                
-
-            }
-          
-       
-
-
-            this.word = function (word) {
-                word = " " + word;
-                params.tx = word;
-                params.inicw = false;
-
-                for (var i = 0; i < word.length; i++) {
-                    var l = word[i];
-                    params.index = i;
-                    params.inicw = true
-                    //  params.wsilabas = this.getSilabas(l)
-
-                    this.letter(l, i);
-
-                }
-
-            }
-            this.paragraph2 = function (paragraph) {
-
-//ESTE ESL EL BUENO AQUI... aqui...
-
-
-                ctx.strokeStyle = "blue"
-                // paragraph = "sistem socalo cuspide sanitario"
-       //        alert(paragraph)
-                //  this.silFrase("contemporaneo de una buena vez systematicamente");
-                    var ars=procesarFrase(paragraph);
-            shs.value=JSON.stringify(ars);
-            for(e of ars){
-                params.inicw=true;
-                for(s of e){
-                    this.grafSilaba(s)
-
-                }
-                
+            if (gruposInseparables.includes(grupoFinal)) {
+              silabas.push(palabra.slice(inicio, pos + 1));
+              pos += 1;
+            } else {
+              silabas.push(palabra.slice(inicio, pos + 2));
+              pos += 2;
             }
 
-      /*          params.Silabas = []
-                words = paragraph.toLowerCase()
-                var words = paragraph.split(" ")
+          } else {
 
+            // 4 o más consonantes
+            const grupoFinal = palabra.slice(pos + 2, pos + 4);
 
-                params.inicw = true;
-                for (var i = 0; i < words.length; i++) {
-                    this.word2(words[i]);
-
-                }
-
-                shs.value = JSON.stringify(this.params.Silabas)
-                */
-
+            if (gruposInseparables.includes(grupoFinal)) {
+              silabas.push(palabra.slice(inicio, pos + 2));
+              pos += 2;
+            } else {
+              silabas.push(palabra.slice(inicio, pos + 3));
+              pos += 3;
             }
+          }
+        }
 
-            this.word2 = function (word) {
-                params.lastSilaba = ""
-                params.lastSimbol = ""
-                params.inicw = true;
-                word = word.toLowerCase();
-                var ars = []
+        return silabas;
+      }
 
-                var k = this.getSilabas(word);
-                //    alert("222\n\n" + JSON.stringify(k))
-                params.Silabas.push(k);
-                for (var i = 0; i < k.length; i++) {
-                   // this.grafSilaba(k[i]);
-                   this.getSilabas(k[i])
-                    //  params.inicw = false;
-                }
-                params.inicw = false;
 
-            }
-            this.getSilabas=function(texto){
-//nction separarTextoEnSilabas(texto) {
-    if (!texto) return "";
 
-    // Expresión regular para identificar palabras individuales aislándolas de espacios y signos de puntuación
-    return texto.replace(/[a-záéóíúüñý]+/gi, (palabra) => {
-        const palabraMinus = palabra.toLowerCase();
-        
-        // --- VARIABLES CORREGIDAS ---
-        // Se incluye la 'y' e 'ý' en las vocales y se elimina de las consonantes
-        const vocalesAbiertas = '[aeoáéóíúü]'; 
-        const vocalesCerradasSinTilde = '[iuüy]';
-        const vocalesCerradasConTilde = '[íúý]';
-        const vocales = '[aeiouáéóíúüýy]';
-        const consonantes = '[bcdfghjklmnñpqrstvwxz]'; 
 
-        // 1. Identificar marcas temporales en los HIATOS
-        let resultado = palabraMinus
+      if (params.color === undefined) params.color = "blue"
+      this.params = params;
+      params.inicw = false;
+
+      this.params.x = this.params.lastPoint.x
+      this.params.y = this.params.lastPoint.y;
+
+
+      this.paragraph = function (paragraph) {
+        var ar = paragraph.split(" ");
+        for (var i = 0; i < ar.length; i++) {
+
+          this.params.lastPoint.y = 220
+          this.word(ar[i]);
+          this.params.lastPoint.x += 20;
+          this.params.lastPoint.y = 220;
+          //   alert(JSON.stringify(this.params))
+
+        }
+
+
+      }
+
+
+
+
+      this.word = function (word) {
+        word = " " + word;
+        params.tx = word;
+        params.inicw = false;
+
+        for (var i = 0; i < word.length; i++) {
+          var l = word[i];
+          params.index = i;
+          params.inicw = true
+          //  params.wsilabas = this.getSilabas(l)
+
+          this.letter(l, i);
+
+        }
+
+      }
+      this.paragraph2 = function (paragraph) {
+
+        //ESTE ESL EL BUENO AQUI... aqui...
+
+
+        ctx.strokeStyle = "blue"
+        // paragraph = "sistem socalo cuspide sanitario"
+        //        alert(paragraph)
+        //  this.silFrase("contemporaneo de una buena vez systematicamente");
+        params.lastPoint.x = 20;
+        params.lastPoint.y = params.line;
+
+        var ars = procesarFrase(paragraph);
+        shs.value = JSON.stringify(ars);
+        for (e of ars) {
+          params.inicw = true;
+          for (s of e) {
+            this.grafSilaba(s)
+
+          }
+
+        }
+
+        /*          params.Silabas = []
+                  words = paragraph.toLowerCase()
+                  var words = paragraph.split(" ")
+  
+  
+                  params.inicw = true;
+                  for (var i = 0; i < words.length; i++) {
+                      this.word2(words[i]);
+  
+                  }
+  
+                  shs.value = JSON.stringify(this.params.Silabas)
+                  */
+
+      }
+
+      this.word2 = function (word) {
+        params.lastSilaba = ""
+        params.lastSimbol = ""
+        params.inicw = true;
+        word = word.toLowerCase();
+        var ars = []
+
+        var k = this.getSilabas(word);
+        //    alert("222\n\n" + JSON.stringify(k))
+        params.Silabas.push(k);
+        for (var i = 0; i < k.length; i++) {
+          // this.grafSilaba(k[i]);
+          this.getSilabas(k[i])
+          //  params.inicw = false;
+        }
+        params.inicw = false;
+
+      }
+      this.getSilabas = function (texto) {
+        //nction separarTextoEnSilabas(texto) {
+        if (!texto) return "";
+
+        // Expresión regular para identificar palabras individuales aislándolas de espacios y signos de puntuación
+        return texto.replace(/[a-záéóíúüñý]+/gi, (palabra) => {
+          const palabraMinus = palabra.toLowerCase();
+
+          // --- VARIABLES CORREGIDAS ---
+          // Se incluye la 'y' e 'ý' en las vocales y se elimina de las consonantes
+          const vocalesAbiertas = '[aeoáéóíúü]';
+          const vocalesCerradasSinTilde = '[iuüy]';
+          const vocalesCerradasConTilde = '[íúý]';
+          const vocales = '[aeiouáéóíúüýy]';
+          const consonantes = '[bcdfghjklmnñpqrstvwxz]';
+
+          // 1. Identificar marcas temporales en los HIATOS
+          let resultado = palabraMinus
             .replace(new RegExp(`(${vocalesAbiertas})(${vocalesAbiertas})`, 'g'), '$1-$2')
             .replace(new RegExp(`(${vocalesAbiertas})(${vocalesCerradasConTilde})`, 'g'), '$1-$2')
             .replace(new RegExp(`(${vocalesCerradasConTilde})(${vocalesAbiertas})`, 'g'), '$1-$2');
 
-        // 2. Una consonante entre dos vocales (V-CV)
-        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${vocales})`, 'g'), '$1-$2$3');
+          // 2. Una consonante entre dos vocales (V-CV)
+          resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${vocales})`, 'g'), '$1-$2$3');
 
-        // 3. Dos consonantes entre dos vocales (V-CC-V)
-        const gruposInseparables = '(ch|ll|rr|bl|br|cl|cr|fl|fr|gl|gr|pl|pr|tl|tr|dr)';
-        resultado = resultado.replace(new RegExp(`(${vocales})${gruposInseparables}(${vocales})`, 'g'), '$1-$2$3');
-        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2-$3$4');
+          // 3. Dos consonantes entre dos vocales (V-CC-V)
+          const gruposInseparables = '(ch|ll|rr|bl|br|cl|cr|fl|fr|gl|gr|pl|pr|tl|tr|dr)';
+          resultado = resultado.replace(new RegExp(`(${vocales})${gruposInseparables}(${vocales})`, 'g'), '$1-$2$3');
+          resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2-$3$4');
 
-        // 4. Tres consonantes entre dos vocales (V-CCC-V)
-        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})${gruposInseparables}(${vocales})`, 'g'), '$1$2-$3$4');
-        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2$3-$4$5');
+          // 4. Tres consonantes entre dos vocales (V-CCC-V)
+          resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})${gruposInseparables}(${vocales})`, 'g'), '$1$2-$3$4');
+          resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2$3-$4$5');
 
-        // 5. Cuatro consonantes entre dos vocales (V-CCCC-V)
-        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2$3-$4$5$6');
+          // 5. Cuatro consonantes entre dos vocales (V-CCCC-V)
+          resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2$3-$4$5$6');
 
-        // Reconstruir la palabra manteniendo las mayúsculas originales
-        let palabraSilabas = "";
-        let j = 0;
-        for (let i = 0; i < resultado.length; i++) {
+          // Reconstruir la palabra manteniendo las mayúsculas originales
+          let palabraSilabas = "";
+          let j = 0;
+          for (let i = 0; i < resultado.length; i++) {
             if (resultado[i] === '-') {
-                palabraSilabas += '-';
+              palabraSilabas += '-';
             } else {
-                palabraSilabas += palabra[j];
-                j++;
+              palabraSilabas += palabra[j];
+              j++;
             }
+          }
+          return palabraSilabas;
+        });
+
+
+
+      }
+
+
+
+
+      this.a_ = function (word) {
+        var vocales = "aeiou";
+        var index = word.indexOf("_")
+
+        var arc = []
+        for (var i = 0; i < vocales.length; i++) {
+          var w = word.split("");
+          w[index] = vocales[i];
+          r = w.join("");
+          arc.push(r)
         }
-        return palabraSilabas;
-    });
+        //word[index] = "dd";
+        // arc = word
+        return arc;
 
-
-
-            }
-
-
-
-
-            this.a_ = function (word) {
-                var vocales = "aeiou";
-                var index = word.indexOf("_")
-
-                var arc = []
-                for (var i = 0; i < vocales.length; i++) {
-                    var w = word.split("");
-                    w[index] = vocales[i];
-                    r = w.join("");
-                    arc.push(r)
-                }
-                //word[index] = "dd";
-                // arc = word
-                return arc;
-
-            }          
-/////////////////
-//alert(this.a_)
+      }
+      /////////////////
+      //alert(this.a_)
 
 
       this.silabas = {};
-      this.silabas.cgkq=["ca", "co", "cu", "con", "cun", "can", "ga", "go", "gu", "qui", "que", "ki"];
-      this.silabas.m=this.a_("m_");
-      this.silabas.bp=this.a_("b_").concat(this.a_("p_"));
-      this.silabas.s=this.a_("s_").concat(this.a_("s_s")).concat(["ci", "ce"])
-            this.silabas.rrr=this.a_("r_").concat(this.a_("rr_"))
-            this.silabas.nñ=this.a_("n_").concat(this.a_("ñ_"))
-            this.silabas.lyll=this.a_("l_").concat(this.a_("y_")).concat("ll_")
-          this.silabas.lyll=this.a_("l_").concat(this.a_("y_")).concat("ll_") 
-          this.silabas.jch=this.a_("j_").concat(this.a_("ch_"))
-            this.silabas.fv=this.a_("f_").concat(this.a_("v_"))
-            this.silabas.dt=this.a_("d_").concat(this.a_("t_"))
-            this.silabas._l=[];
-             this.silabas.tr_dr_=[];
-            this.silabas.cr_gr_=[];
-              this.silabas.cr_s=[];
-             this.silabas.d_st_s=[];
-             this.silabas.c_s=[];
-            this.silabas._l=[];
-              this.silabas._l=[];
-            this.silabas._l=[];
-             this.silabas._l=[];
-            this.silabas._l=[];
-              this.silabas._l=[];
-             this.silabas._l=[];
-             this.silabas._l=[];
-            this.silabas._l=[];
-              this.silabas._l=[];
-              this.silabas._l=[];
-             this.silabas._l=[];
-            this.silabas._l=[];
-              this.silabas._l=[];
-     
-
-
-
-//////////////////
-            this.grafSilaba = function (ss) {
-                /////////////////////////////////////////////////
-                //  ss = "ca"
-                //if (ss.some(choice => ["","","","","","","","","",""].includes(choice))) ;
-                //alert(ss)
-                //  alert("graaf silaba  " + ss)["ma", "me", "mi", "mo", "mu", "am", "em", "im", "om", "um"]
-                if (this.silabas.cgkq.includes(ss)) this.cgkqu_(ss);
-                // if (["ba", "be", "bi", "bo", "bu", "pa", "pe", "pi", "po", "pu"].includes(ss)) this.b_(ss);
-
-                if (this.silabas.m.includes(ss)) this.m_(ss);
-
-                if (this.silabas.bp.includes(ss)) this.bp_(ss);
-
-                if (this.silabas.s.includes(ss)) this.s_(ss);
-
-                if (this.silabas.rrr.includes(ss)) this.rrr_(ss);
-
-                if (this.silabas.nñ.includes(ss)) this.n_(ss);
-                if (this.silabas.lyll.includes(ss)) this.lyll_(ss);
-                if (this.silabas.jch.includes(ss)) this.jch_(ss);
-               if (this.silabas.fv.includes(ss)) this.fv_(ss);
-                if (this.silabas.dt.includes(ss)) this.dt_(ss)
-                if (this.a_("_l").includes(ss)) this.l_(ss)
-                if (this.a_("tr_").concat(this.a_("dr_")).includes(ss)) this.t_(ss);
-                if (this.a_("cr_").concat(this.a_("gr_")).includes(ss)) this.c_(ss);
-                if (this.a_("cr_s").concat(this.a_("cr_z")).includes(ss)) this.c_(ss);
-                if (this.a_("m_n").includes(ss)) this.m_(ss);
-                if (this.a_("t_n").concat(this.a_("d_n")).includes(ss)) this.t_(ss);
-                if (this.a_("tr_").concat(this.a_("dr_")).includes(ss)) this.t_(ss);
-                if (this.a_("br_").concat(this.a_("pr_")).includes(ss)) this.b_(ss);
-                if (this.a_("_n").includes(ss)) { this.n_(ss); }
-                if (this.a_("j_m").includes(ss)) { this.j_(ss); }
-                if (this.a_("pl_").concat(this.a_("bl_")).includes(ss)) { this.n_(ss); }
-                if (this.a_("_").includes(ss)) this.aeiou_(ss)
-                //    if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
-                //        if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
-                //if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
-                //    if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
-                //        if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
-                //            if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
-
-
-
-                //     alert(ss + " bbbbbbbbbbb " + this.c_)
-
-                /*       if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
-                       if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
-                       if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
-                       if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
-                       if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
-                       if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
-                       if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
-               
-               */
-            }
-
-  
-            this.cgkqu_ = function (s) {
-                var lineWidth = 1;
-                if (s.includes("g")) lineWidth = 3
-
-                var p = params.lastPoint;
-                var path = new Path2D();
-                path.moveTo(p.x, p.y)
-                if (params.inicw) {
-                    params.lastPoint.x += 20;
-                    if (s.includes("a")) params.lastPoint.y = params.line - 25;
-                    if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
-                    if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 5;
-                    path.moveTo(p.x, p.y)
-                }
-                //  alert(" cgkqu\n\n" + s)
-
-                params.size = 30;//corregir aqui
-                p.x += params.size;
-                params.lastPoint = p;
-                path.lineTo(p.x, p.y);
-
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); // alert(JSON.stringify(params))
-                // params.lastLetter = params.letter;
-                params.inicw = false;
-                params.lastSimbol = "c"
-                params.lastSilaba = s;
-
-
-
-            }
-            this.bp_ = function (s) {
-
-                lineWidth = 1;
-                if (s.includes("b")) lineWidth = 4;
-                var p = params.lastPoint;
-                var path = new Path2D();
-                path.moveTo(p.x, p.y)
-
-                if (params.inicw) {
-                    params.lastPoint.x += 20;
-
-                    if (s.includes("a")) params.lastPoint.y = params.line - 45;
-                    if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 33;
-                    if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - 15;
-                    path.moveTo(p.x, p.y)
-                }
-
-                params.size = 30;//corregir aqui
-                p.x += params.size;
-                p.y += params.size;
-                params.lastPoint = p;
-                path.lineTo(p.x, p.y);
-
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); // alert(JSON.stringify(params))
-                //   params.lastLetter = params.letter;
-                params.lastSimbol = "b"
-                params.lastSilaba = s;
-                params.inicw = false;
-
-
-
-
-            }
-
-            this.dt_ = function (s) {
-                lineWidth = 1;
-                if (s.includes("d")) lineWidth = 3;
-                var p = params.lastPoint;
-                var path = new Path2D();
-                path.moveTo(p.x, p.y)
-
-                if (params.inicw) {
-                    params.lastPoint.x += 20;
-
-                    if (s.includes("a")) params.lastPoint.y = params.line - 45;
-                    if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 33;
-                    if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - 15;
-                    path.moveTo(p.x, p.y)
-                }
-
-                params.size = 30;//corregir aqui
-                // p.x += params.size;
-                p.y += params.size;
-                params.lastPoint = p;
-                path.lineTo(p.x, p.y);
-
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); // alert(JSON.stringify(params))
-                //   params.lastLetter = params.letter;
-                params.lastSilaba = s;
-                params.lastSimbol = "d"
-                params.inicw = false;
-
-
-            }
-            this.fv_ = function (s) {
-
-                var lineWidth = 1;
-
-                var path = new Path2D();
-                var p = params.lastPoint;
-                var lineWidth = 1;
-                if (s.includes("v")) lineWidth = 3;
-                ///////////////////////////////////
-                if (params.inicw) {
-                    // var p = params.tx[params.index + 1]
-                    if (s.includes("a")) params.lastPoint.y = params.line - 45
-                    if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 32
-                    if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - 15
-
-
-                }
-                //////////////////////////////////
-
-                path.moveTo(p.x, p.y)
-                p.x += 30;
-                p.y += 30;
-                params.lastPoint = p;
-                path.quadraticCurveTo(p.x - 25, p.y + 5, p.x, p.y);
-
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); //  alert(JSON.stringify(params))
-                params.lastLetter = params.letter;
-                params.lastSilaba = s;
-                params.lastSilbol = "f"
-                params.inicw = false
-
-
-            }
-            this.jch_ = function (s) {
-
-                lineWidth = 1;
-                if (s.includes("j")) lineWidth = 4;
-                var p = params.lastPoint;
-                var path = new Path2D();
-                path.moveTo(p.x, p.y)
-
-                if (params.inicw) {
-                    params.lastPoint.x += (20 + 30 + 20);
-
-                    if (s.includes("a")) params.lastPoint.y = params.line - 45;
-                    if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 33;
-                    if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - 15;
-                    path.moveTo(p.x, p.y)
-                }
-
-                params.size = 30;//corregir aqui
-                p.x -= params.size;
-                p.y += params.size;
-                params.lastPoint = p;
-                path.lineTo(p.x, p.y);
-
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); // alert(JSON.stringify(params))
-                //   params.lastLetter = params.letter;
-                params.lastSimbol = "b"
-                params.lastSilaba = s;
-                params.inicw = false;
-
-
-
-            }
-            this.lyll_ = function (s) {
-
-
-                lineWidth = 1;
-                if (s.includes("ll") || s.includes("y")) lineWidth = 4;
-                var p = params.lastPoint;
-                var path = new Path2D();
-                //    path.moveTo(p.x, p.y)
-
-                if (params.inicw) {
-                    params.lastPoint.x + 20;
-
-                    if (s.includes("a")) params.lastPoint.y = params.line - 15;
-                    if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
-                    if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 15;
-                    path.moveTo(p.x, p.y)
-                }
-
-                params.size = 30;//corregir aqui
-                //   p.x -= params.size;
-                //    p.y += params.size;
-                params.lastPoint = p;
-
-                path.moveTo(p.x, p.y)
-                p.x += params.size;
-                p.y -= params.size;
-                params.lastPoint = p;
-                path.quadraticCurveTo(p.x - 25, p.y - 5, p.x, p.y);
-
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); //  alert(JSON.stringify(params))
-                params.lastLetter = params.letter;
-                params.lastSilaba = s;
-                params.lastSimbol = "l"
-
-            }
-
-            this.rrr_ = function (s) {
-                //aqui...
-                lineWidth = 1;
-                if (s.includes("rr")) lineWidth = 4;
-                var p = params.lastPoint;
-                var path = new Path2D();
-                path.moveTo(p.x, p.y)
-
-                if (params.inicw) {
-                    params.lastPoint.x += 20;
-
-                    if (s.includes("a")) params.lastPoint.y = params.line - 15;
-                    if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
-                    if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 15;
-                    path.moveTo(p.x, p.y)
-                }
-
-                params.size = 30;//corregir aqui
-                p.x += params.size;
-                p.y -= params.size;
-                params.lastPoint = p;
-                path.lineTo(p.x, p.y);
-
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); // alert(JSON.stringify(params))
-                //   params.lastLetter = params.letter;
-                params.lastSimbol = "r"
-                params.lastSilaba = s;
-                params.inicw = false;
-
-
-            }
-
-            this.m_ = function (s) { alert(s) }
-            this.n_ = function (s) { alert(s) }
-            this.p_ = function (s) { alert(s) }
-
-
-            this.s_ = function (s) {
-                //  graf s...
-                var ob = {};
-                ob.radio = 3;
-                ob.lineWidth = 1;
-                alert(params.inicw)
-                if (params.inicw) {
-                    params.lastPoint.x += 35;
-
-                    if (s.includes("a")) { params.lastPoint.y = params.line - 25 }
-                    if (s.includes("e") || s.includes("i")) { params.lastPoint.y = params.line - 4 }
-                    if (s.includes("o") || s.includes("u")) { params.lastPoint.y = params.line + 8 }
-
-
-                }
-                if (s.length == 3) ob.lineWidth = 2;
-                this.grafC(ob)
-            }
-            this.t_ = function (s) { alert(s) }
-            this.x_ = function (s) { alert(s) }
-            this.w_ = function (s) { alert(s) }
-
-
-            this.aeiou_ = function (s) { alert(s) }
-            ////    this.f_ = function (s) { alert(s) }
-            ////    this.j_ = function (s) { alert(s) }
-            //        this.l_ = function (s) { alert(s) }
-
-            this.grafC = function (ob) {
-                var lineWidth = ob.lineWidth;
-                var radio = ob.radio;
-                var p = params.lastPoint;
-                var path = new Path2D();
-                path.moveTo(p.x, p.y)
-                path.lastPoint = p;
-                //  path.lineTo(p.x, p.y);
-                path.arc(p.x, p.y, radio, 0, 2 * Math.PI);
-
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); //alert(JSON.stringify(params))
-                //    params.lastLetter = params.letter;
-                params.inicw = false;
-            }
-            this.grafLin = function (ob) {
-                var lineWidth = ob.lineWidth;
-
-                if (ob.dir === "c") { params.lastPoint.y = params.line - 25 }
-                if (ob.dir === "p") { params.lastPoint.y = params.line - 25 }
-                if (ob.dir === "t") { params.lastPoint.y = params.line - 25 }
-                if (ob.dir === "j") {
-                    params.lastPoint.y = params.line - 25; params.lastPoint.x += 15
-
-                    if (ob.dir === "r") { params.lastPoint.y = params.line - 8; }
-                    var p = params.lastPoint;
-                    var path = new Path2D();
-                    path.moveTo(p.x, p.y)
-
-
-
-
-                }
-
-                /*
-                        ///////////////////////////////////
-                        if (params.inicw) {
-                          var p = params.tx[params.index + 1]
-                          if (p === "a") params.lastPoint.y -= 25
-                          if (p === "e" || p === "i") params.lastPoint.y -= 16
-                          if (p === "o" || p === "u") params.lastPoint.y += 5
-                
-                
-                        }
-        
-                if (params.letter == "g") lineWidth = 3;
-                var p = params.lastPoint;
-                var path = new Path2D();
-                path.moveTo(p.x, p.y)
-                p.x += 30;
-                path.lastPoint = p;
-                path.lineTo(p.x, p.y);
-        
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); // alert(JSON.stringify(params))
-                params.lastLetter = params.letter;
-                */
-
-            }
-
-            this.grafArc = function (ol) {
-
-            }
-            this.grafCur = function (ol) {
-
-            }
-
-
-
-
-
-            this.letter = function (l, index) {
-
-                ctx.strokeStyle = params.color
-                params.inicw = false;
-                // alert(params.tx[params.index]+params.index)
-                if (params.index > 0) {
-                    if (params.tx[params.index - 1] === " ") {
-                        params.lastPoint.y = params.line;
-                        params.lastPoint.x += 10;
-                        params.inicw = true
-
-                    }
-
-                }
-
-                this.params.letter = l;
-
-                if (l === "p" || l === "b") {
-                    this.bp(this.params)
-                } else if (l === "f" || l === "v") {
-                    this.fv(this.params)
-                } else if (l === "c" || l === "g" || l === "q" || l === "k") {
-                    this.ckq(this.params)
-                } else if (l === "n" || l === "ñ") {
-                    this.nñ(this.params)
-                } else if (l === "m") {
-                    this.m(this.params)
-                } else if (l === "l" || l === "y" || l === "ll") {
-                    this.lyll(this.params)
-                } else if (l === "r" || l === "rr") {
-                    this.r(this.params)
-                } else if (l === "j" || l === "ch") {
-                    this.j(this.params)
-                } else if (l === "t" || l === "d") {
-                    this.dt(this.params)
-                }
-                else if (l === "s" || l === "z") {
-                    this.sz(this.params)
-                }
-
-
-                //  this.params.letter = l;
-
-                return;
-
-
-            }
-
-            this.sz = function (params) {
-                var lineWidth = 1;
-
-                ///////////////////////////////////
-                if (params.inicw) {
-                    var p = params.tx[params.index + 1]
-                    if (p === "a") params.lastPoint.y -= 15
-                    if (p === "e" || p === "i") params.lastPoint.y -= 5
-                    if (p === "o" || p === "u") params.lastPoint.y += 8
-
-                }
-                //////////////////////////////////
-                var p = params.lastPoint;
-                var path = new Path2D();
-                path.moveTo(p.x, p.y)
-                // alert("ok")
-                p.x += 1.5;
-                p.y += 1.5;
-                path.lastPoint = p;
-                //  path.lineTo(p.x, p.y);
-                path.arc(p.x, p.y, 4, 0, 2 * Math.PI);
-
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); //alert(JSON.stringify(params))
-                params.lastLetter = params.letter;
-
-            }
-
-            this.ckq = function (params) {
-                var lineWidth = 1;
-                var lineWidth = 1;
-
-                ///////////////////////////////////
-                if (params.inicw) {
-                    var p = params.tx[params.index + 1]
-                    if (p === "a") params.lastPoint.y -= 25
-                    if (p === "e" || p === "i") params.lastPoint.y -= 5
-                    if (p === "o" || p === "u") params.lastPoint.y += 8
-                    //       alert(JSON.stringify(params))
-                    params.inicw = false;
-
-                }
-                //////////////////////////////////-   
-                if (params.letter == "g") lineWidth = 3;
-                var p = params.lastPoint;
-                var path = new Path2D();
-                path.moveTo(p.x, p.y)
-                p.x += 30;
-                path.lastPoint = p;
-                path.lineTo(p.x, p.y);
-
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); // alert(JSON.stringify(params))
-                params.lastLetter = params.letter;
-
-            }
-            this.nñ = function (params) {
-                var lineWidth = 1;
-
-                ///////////////////////////////////
-                if (params.inicw) {
-                    var p = params.tx[params.index + 1]
-                    if (p === "a") params.lastPoint.y -= 25
-                    if (p === "e" || p === "i") params.lastPoint.y -= 16
-                    if (p === "o" || p === "u") params.lastPoint.y += 5
-
-                }
-                //////////////////////////////////
-
-                var path = new Path2D();
-                //  alert(JSON.stringify(params))   
-                var p = params.lastPoint;
-                var lineWidth = 1;
-                if (params.letter == "ñ") lineWidth = 3;
-
-
-                path.moveTo(p.x, p.y)
-                p.x += 30;;
-                params.lastPoint = p;
-                path.quadraticCurveTo(p.x - 15, p.y + 25, p.x, p.y);
-
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); //  alert(JSON.stringify(params))rams))
-                params.lastLetter = params.letter;
-            }
-
-            this.m = function (params) {
-                var lineWidth = 1;
-
-                ///////////////////////////////////
-                if (params.inicw) {
-                    var p = params.tx[params.index + 1]
-                    if (p === "a") params.lastPoint.y -= 25
-                    if (p === "e" || p === "i") params.lastPoint.y -= 5
-                    if (p === "o" || p === "u") params.lastPoint.y += 8
-
-                }
-                //////////////////////////////////
-
-                var path = new Path2D();
-                //  alert(JSON.stringify(params))   
-                var p = params.lastPoint;
-                var lineWidth = 1;
-                //  if(params.letter=="ñ") lineWidth=3;
-
-
-                path.moveTo(p.x, p.y)
-                p.x += 30;;
-                params.lastPoint = p;
-                path.quadraticCurveTo(p.x - 15, p.y - 20, p.x, p.y);
-
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); //  alert(JSON.stringify(params))rams))
-                params.lastLetter = params.letter;
-            }
-
-            this.bp = function (params) {
-
-                var lineWidth = 1;
-
-                ///////////////////////////////////
-                if (params.inicw) {
-                    var p = params.tx[params.index + 1]
-                    if (p === "a") params.lastPoint.y -= 45
-                    if (p === "e" || p === "i") params.lastPoint.y -= 33
-                    if (p === "o" || p === "u") params.lastPoint.y -= 15
-
-                }
-                //////////////////////////////////
-                var path = new Path2D();
-                //   alert(JSON.stringify(params))
-                var p = params.lastPoint;
-                var lineWidth = 3;
-                if (params.letter == "p") lineWidth = 1;
-
-                path.moveTo(p.x, p.y);
-                p.x += 30;
-                p.y += 30;
-                path.lineTo(p.x, p.y);
-                // path.lastPoint = p;
-                params.lastPoint = p;
-
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); //alert(JSON.stringify(params))
-                params.lastLetter = params.letter;
-            }
-
-            this.dt = function (params) {
-                var lineWidth = 1;
-
-                ///////////////////////////////////
-                if (params.inicw) {
-                    var p = params.tx[params.index + 1]
-                    if (p === "a") params.lastPoint.y -= 45
-                    if (p === "e" || p === "i") params.lastPoint.y -= 33
-                    if (p === "o" || p === "u") params.lastPoint.y -= 15
-
-                }
-                //////////////////////////////////
-
-                var path = new Path2D();
-                //   alert(JSON.stringify(params))
-                var p = params.lastPoint;
-                var lineWidth = 1;
-                if (params.letter == "d") lineWidth = 3;
-
-                path.moveTo(p.x, p.y);
-
-                p.y += 30;
-                path.lineTo(p.x, p.y);
-                // path.lastPoint = p;
-                params.lastPoint = p;
-
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); //alert(JSON.stringify(params))
-                params.lastLetter = params.letter;
-            }
-
-
-            this.r = function (params) {
-                var lineWidth = 1;
-
-                ///////////////////////////////////
-                if (params.inicw) {
-                    var p = params.tx[params.index + 1]
-                    if (p === "a") params.lastPoint.y -= 15
-                    if (p === "e" || p === "i") params.lastPoint.y -= 3
-                    if (p === "o" || p === "u") params.lastPoint.y += 15
-
-                }
-                //////////////////////////////////
-
-                var path = new Path2D();
-                //   alert(JSON.stringify(params))
-                var p = params.lastPoint;
-                var lineWidth = 1;
-                if (params.letter == "rr") lineWidth = 3;
-
-                path.moveTo(p.x, p.y);
-                p.x += 30;
-                p.y -= 30;
-                if (params.lastLetter == "j") p.x += 10;;
-                //  alert(JSON.stringify(params))
-                path.lineTo(p.x, p.y);
-                path.lastPoint = p;
-                params.lastPoint = p;
-
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); //alert(JSON.stringify(params))
-                params.lastLetter = params.letter;
-            }
-
-
-            this.j = function (params) {
-                var lineWidth = 1;
-
-                ///////////////////////////////////
-                if (params.inicw) {
-                    var p = params.tx[params.index + 1]
-                    if (p === "a") params.lastPoint.y -= 45
-                    if (p === "e" || p === "i") params.lastPoint.y -= 32
-                    if (p === "o" || p === "u") params.lastPoint.y -= 15
-                    params.lastPoint.x += 60;
-
-                }
-                //////////////////////////////////
-                var path = new Path2D();
-                //   alert(JSON.stringify(params))
-                var p = params.lastPoint;
-                var lineWidth = 1;
-                if (params.letter == "j") lineWidth = 3;
-
-                path.moveTo(p.x, p.y);
-                p.x -= 30;
-                p.y += 30;
-                if (params.lastLetter == "r") p.x += 10;;
-                path.lineTo(p.x, p.y);
-                // path.lastPoint = p;
-                params.lastPoint = p;
-
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); //alert(JSON.stringify(params))
-                params.lastLetter = params.letter;
-            }
-
-
-
-            this.fv = function (params) {
-                var lineWidth = 1;
-
-                ///////////////////////////////////
-                if (params.inicw) {
-                    var p = params.tx[params.index + 1]
-                    if (p === "a") params.lastPoint.y -= 45
-                    if (p === "e" || p === "i") params.lastPoint.y -= 33
-                    if (p === "o" || p === "u") params.lastPoint.y -= 15
-
-                }
-                //////////////////////////////////
-
-                var path = new Path2D();
-                var p = params.lastPoint;
-                var lineWidth = 1;
-                if (params.letter == "v") lineWidth = 3;
-                path.moveTo(p.x, p.y)
-                p.x += 30;
-                p.y += 30;
-                params.lastPoint = p;
-                path.quadraticCurveTo(p.x - 25, p.y + 5, p.x, p.y);
-
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); //  alert(JSON.stringify(params))
-                params.lastLetter = params.letter;
-            }
-
-            this.lyll = function (params) {
-                var lineWidth = 1;
-
-                ///////////////////////////////////
-                if (params.inicw) {
-                    var p = params.tx[params.index + 1]
-                    if (p === "a") params.lastPoint.y -= 15
-                    if (p === "e" || p === "i") params.lastPoint.y -= 3
-                    if (p === "o" || p === "u") params.lastPoint.y += 15
-
-                }
-                //////////////////////////////////
-
-                var path = new Path2D();
-                var p = params.lastPoint;
-                var lineWidth = 1;
-                if (params.letter == "y" || params.letter == "ll") lineWidth = 3;
-
-            }
-
+      this.silabas.cgkq = ["ca", "co", "cu", "con", "cun", "can", "ga", "go", "gu", "qui", "que", "ki"];
+      this.silabas.m = this.a_("m_");
+      this.silabas.bp = this.a_("b_").concat(this.a_("p_"));
+      this.silabas.s = this.a_("s_").concat(this.a_("s_s")).concat(["ci", "ce"])
+      this.silabas.rrr = this.a_("r_").concat(this.a_("rr_"))
+      this.silabas.nñ = this.a_("n_").concat(this.a_("ñ_"))
+      this.silabas.lyll = this.a_("l_").concat(this.a_("y_")).concat("ll_")
+      this.silabas.lyll = this.a_("l_").concat(this.a_("y_")).concat("ll_")
+      this.silabas.jch = this.a_("j_").concat(this.a_("ch_"))
+      this.silabas.fv = this.a_("f_").concat(this.a_("v_"))
+      this.silabas.dt = this.a_("d_").concat(this.a_("t_"))
+      this.silabas._l = this.a_("b_l").concat(this.a_("c_l")).concat(this.a_("d_l")).concat(this.a_("f_l")).concat(this.a_("g_l"));
+      this.silabas.tr_dr_ = [];
+      this.silabas.cr_gr_ = [];
+      this.silabas.cr_s = [];
+      this.silabas.d_st_s = [];
+      this.silabas.c_s = [];
+      this.silabas._l = [];
+      this.silabas._l = [];
+      this.silabas._l = [];
+      this.silabas._l = [];
+      this.silabas._l = [];
+      this.silabas._l = [];
+      this.silabas._l = [];
+      this.silabas._l = [];
+      this.silabas._l = [];
+      this.silabas._l = [];
+      this.silabas._l = [];
+      this.silabas._l = [];
+      this.silabas._l = [];
+      this.silabas._l = [];
+
+
+
+
+      //////////////////
+      this.grafSilaba = function (ss) {
+        /////////////////////////////////////////////////
+        //  ss = "ca"
+        //if (ss.some(choice => ["","","","","","","","","",""].includes(choice))) ;
+        //alert(ss)
+        //  alert("graaf silaba  " + ss)["ma", "me", "mi", "mo", "mu", "am", "em", "im", "om", "um"]
+        if (this.silabas.cgkq.includes(ss)) this.cgkqu_(ss);
+        // if (["ba", "be", "bi", "bo", "bu", "pa", "pe", "pi", "po", "pu"].includes(ss)) this.b_(ss);
+
+        if (this.silabas.m.includes(ss)) this.m_(ss);
+
+        if (this.silabas.bp.includes(ss)) this.bp_(ss);
+
+        if (this.silabas.s.includes(ss)) this.sc_(ss);
+
+        if (this.silabas.rrr.includes(ss)) this.rrr_(ss);
+
+        if (this.silabas.nñ.includes(ss)) this.nñ_(ss);
+        if (this.silabas.lyll.includes(ss)) this.lyll_(ss);
+        if (this.silabas.jch.includes(ss)) this.jch_(ss);
+        if (this.silabas.fv.includes(ss)) this.fv_(ss);
+        if (this.silabas.dt.includes(ss)) this.dt_(ss)
+
+        if (this.silabas._l.includes(ss)) this._l(ss); alert(this.silabas._l)
+
+        // if (this.a_("_l").includes(ss)) this._l(ss)
+
+        if (this.a_("tr_").concat(this.a_("dr_")).includes(ss)) this.t_(ss);
+        if (this.a_("cr_").concat(this.a_("gr_")).includes(ss)) this.c_(ss);
+        if (this.a_("cr_s").concat(this.a_("cr_z")).includes(ss)) this.c_(ss);
+        if (this.a_("m_n").includes(ss)) this.m_(ss);
+        if (this.a_("t_n").concat(this.a_("d_n")).includes(ss)) this.t_(ss);
+        if (this.a_("tr_").concat(this.a_("dr_")).includes(ss)) this.t_(ss);
+        if (this.a_("br_").concat(this.a_("pr_")).includes(ss)) this.b_(ss);
+        if (this.a_("_n").includes(ss)) { this.nñ_(ss); }/////////////////
+        if (this.a_("j_m").includes(ss)) { this.j_(ss); }
+        if (this.a_("pl_").concat(this.a_("bl_")).includes(ss)) { alert("need pl"); this.nñ_(ss); }
+        if (this.a_("_").includes(ss)) this.aeiou_(ss)
+        //    if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
+        //        if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
+        //if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
+        //    if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
+        //        if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
+        //            if (this.a_("j_m").includes(ss)) { this.j_(ss); alert("good :" + ss); }
+
+
+
+        //     alert(ss + " bbbbbbbbbbb " + this.c_)
+
+        /*       if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
+               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
+               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
+               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
+               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
+               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
+               if (["", "", "", "", "", "", "", "", "", ""].includes(ss)) alert("good :" + ss);
+       
+       */
+      }
+
+
+      this.cgkqu_ = function (s) {
+        var lineWidth = 1;
+        if (s.includes("g")) lineWidth = 3
+
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        if (params.inicw) {
+          params.lastPoint.x += 20;
+          if (s.includes("a")) params.lastPoint.y = params.line - 25;
+          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
+          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 5;
+          path.moveTo(p.x, p.y)
         }
+        //  alert(" cgkqu\n\n" + s)
 
-        var params = {
-            inicPoint: {
-                x: 30,
-                y: 80
-            }
-        }
-        params.lastPoint = params.inicPoint;
-        params.line = 80;
-        params.color = "blue";
+        params.size = 30;//corregir aqui
+        p.x += params.size;
+        params.lastPoint = p;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); // alert(JSON.stringify(params))
+        // params.lastLetter = params.letter;
         params.inicw = false;
-        var copyparams = JSON.stringify(params)
-        var lj = new taq(params);
-        ctx.strokeStyle = "blue";
-
-        //lj.grafSilaba("croz");
-
-        shs.value = "uncon buen ejemplo";
-        //lj.paragraph2()
-
-        function clearCanvas() {
-            if (params != undefined) {
-                //alert(copyparams+"\n\n"+JSON.stringify(params))
-                // lj.params=JSON.parse(copyparams);
-                lj.params.inicw = false;
-                lj.params.lastPoint.x = 10;
-                lj.params.lastPoint.y = 80;
-                lj.params.tx = "";
-                lj.params.color = "blue";
-                lj.params.line = 80;
-                lj.params.inicPoint = lj.params.lastPoint;
-                lj.params.lastLetter = ""
-
-            }
+        params.lastSimbol = "c"
+        params.lastSilaba = s;
 
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-            ctx.strokeStyle = "red";
-            ctx.lineWidth = .5
-            for (var i = 0; i < 10; i++) {
-                ctx.moveTo(0, 80 * i)
-                ctx.lineTo(800, 80 * i)
-                ctx.stroke();
+      }
+      this.bp_ = function (s) {
 
+        lineWidth = 1;
+        if (s.includes("b")) lineWidth = 3;
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
 
-            }
+        if (params.inicw) {
+          params.lastPoint.x += 20;
+
+          if (s.includes("a")) params.lastPoint.y = params.line - 45;
+          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 33;
+          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - 15;
+          path.moveTo(p.x, p.y)
         }
 
-        function gets(word) {
+        params.size = 30;//corregir aqui
+        p.x += params.size;
+        p.y += params.size;
+        params.lastPoint = p;
+        path.lineTo(p.x, p.y);
 
-            var ars = []
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); // alert(JSON.stringify(params))
+        //   params.lastLetter = params.letter;
+        params.lastSimbol = "b"
+        params.lastSilaba = s;
+        params.inicw = false;
 
-            var k = word.split(" ");
-            params.silabas = [];
-            for (var t = 0; t < k.length; t++) {
-                ars.push(lj.getSilabas(k[t]));
-            }
-            shs.value = JSON.stringify(ars)
+
+
+
+      }
+
+      this.dt_ = function (s) {
+        lineWidth = 1;
+        if (s.includes("d")) lineWidth = 3;
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+
+        if (params.inicw) {
+          params.lastPoint.x += 20;
+
+          if (s.includes("a")) params.lastPoint.y = params.line - 45;
+          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 33;
+          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - 15;
+          path.moveTo(p.x, p.y)
+        }
+
+        params.size = 30;//corregir aqui
+        // p.x += params.size;
+        p.y += params.size;
+        params.lastPoint = p;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); // alert(JSON.stringify(params))
+        //   params.lastLetter = params.letter;
+        params.lastSilaba = s;
+        params.lastSimbol = "d"
+        params.inicw = false;
+
+
+      }
+      this.fv_ = function (s) {
+
+        var lineWidth = 1;
+
+        var path = new Path2D();
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (s.includes("v")) lineWidth = 3;
+        ///////////////////////////////////
+        if (params.inicw) {
+          // var p = params.tx[params.index + 1]
+          if (s.includes("a")) params.lastPoint.y = params.line - 45
+          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 32
+          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - 15
+
+
+        }
+        //////////////////////////////////
+
+        path.moveTo(p.x, p.y)
+        p.x += 30;
+        p.y += 30;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 25, p.y + 5, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+        params.lastSilaba = s;
+        params.lastSilbol = "f"
+        params.inicw = false
+
+
+      }
+      this.jch_ = function (s) {
+
+        lineWidth = 1;
+        if (s.includes("j")) lineWidth = 3;
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+
+        if (params.inicw) {
+          params.lastPoint.x += (20 + 30 + 20);
+
+          if (s.includes("a")) params.lastPoint.y = params.line - 45;
+          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 33;
+          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - 15;
+          path.moveTo(p.x, p.y)
+        }
+
+        params.size = 30;//corregir aqui
+        p.x -= params.size;
+        p.y += params.size;
+        params.lastPoint = p;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); // alert(JSON.stringify(params))
+        //   params.lastLetter = params.letter;
+        params.lastSimbol = "b"
+        params.lastSilaba = s;
+        params.inicw = false;
+
+
+
+      }
+      this._l = function (s) {
+        alert(s)
+        lineWidth = 1;
+        //  if (s.includes("ll") || s.includes("y")) lineWidth = 3;
+        var p = params.lastPoint;
+        var path = new Path2D();
+        //    path.moveTo(p.x, p.y)
+
+        if (params.inicw) {
+          params.lastPoint.x + 20;
+
+          if (s.includes("a")) params.lastPoint.y = params.line - 15;
+          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
+          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 15;
+          path.moveTo(p.x, p.y)
+        }
+
+        params.size = 30;//corregir aqui
+        //   p.x -= params.size;
+        //    p.y += params.size;
+        params.lastPoint = p;
+
+        path.moveTo(p.x, p.y)
+        p.x += params.size;
+        p.y -= params.size;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x + 25, p.y - 5, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+        params.lastSilaba = s;
+        params.lastSimbol = "_l"
+
+      }
+
+      this.lyll_ = function (s) {
+
+
+        lineWidth = 1;
+        if (s.includes("ll") || s.includes("y")) lineWidth = 3;
+        var p = params.lastPoint;
+        var path = new Path2D();
+        //    path.moveTo(p.x, p.y)
+
+        if (params.inicw) {
+          params.lastPoint.x + 20;
+
+          if (s.includes("a")) params.lastPoint.y = params.line - 15;
+          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
+          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 15;
+          path.moveTo(p.x, p.y)
+        }
+
+        params.size = 30;//corregir aqui
+        //   p.x -= params.size;
+        //    p.y += params.size;
+        params.lastPoint = p;
+
+        path.moveTo(p.x, p.y)
+        p.x += params.size;
+        p.y -= params.size;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 25, p.y - 5, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+        params.lastSilaba = s;
+        params.lastSimbol = "l"
+
+      }
+
+      this.rrr_ = function (s) {
+        //aqui...
+        lineWidth = 1;
+        if (s.includes("rr")) lineWidth = 3;
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+
+        if (params.inicw) {
+          params.lastPoint.x += 20;
+
+          if (s.includes("a")) params.lastPoint.y = params.line - 15;
+          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
+          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 15;
+          path.moveTo(p.x, p.y)
+        }
+
+        params.size = 30;//corregir aqui
+        p.x += params.size;
+        p.y -= params.size;
+        params.lastPoint = p;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); // alert(JSON.stringify(params))
+        //   params.lastLetter = params.letter;
+        params.lastSimbol = "r"
+        params.lastSilaba = s;
+        params.inicw = false;
+
+
+      }
+
+      this.m_ = function (s) {
+        lineWidth = 1;
+        if (s.includes("ñ")) lineWidth = 3;
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+
+        if (params.inicw) {
+          params.lastPoint.x += 20;
+
+          if (s.includes("a")) params.lastPoint.y = params.line - 15;
+          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
+          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 15;
+          path.moveTo(p.x, p.y)
+        }
+
+        params.size = 30;//corregir aqui
+        path.moveTo(p.x, p.y)
+        p.x += params.size;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 15, p.y - 25, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))rams))
+        params.lastLetter = params.letter;
+        params.lastSimbol = "nm"
+        params.lastSilaba = s;
+        params.inicw = false;
+
+      }
+      this.nñ_ = function (s) {
+        lineWidth = 1;
+        if (s.includes("ñ")) lineWidth = 3;
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+
+        if (params.inicw) {
+          params.lastPoint.x += 20;
+
+          if (s.includes("a")) params.lastPoint.y = params.line - 35;
+          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 15;
+          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 3;
+          path.moveTo(p.x, p.y)
+        }
+
+        params.size = 30;//corregir aqui
+        path.moveTo(p.x, p.y)
+        p.x += params.size;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 15, p.y + 25, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))rams))
+        params.lastLetter = params.letter;
+        params.lastSimbol = "n"
+        params.lastSilaba = s;
+        params.inicw = false;
+
+      }
+      this.p_ = function (s) { alert(s) }
+
+
+      this.sc_ = function (s) {
+        var radio = 3;
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        var lineWidth = 1;
+        //  alert(params.inicw)
+        if (params.inicw) {
+          p.x += 35;
+          path.moveTo(p.x, p.y);
+          if (s.includes("a")) { params.lastPoint.y = params.line - 25 }
+          if (s.includes("e") || s.includes("i")) { params.lastPoint.y = params.line - 4 }
+          if (s.includes("o") || s.includes("u")) { parmas.lastPoint.y = params.line + 8 }
+        }
+        params.lastPoint = p;
+        if (s.length == 3) lineWidth = 4;
+        path.arc(p.x, p.y, radio, 0, 2 * Math.PI);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path);
+        params.lastSilaba = s;
+        params.inicw = false;
+
+
+      }
+      this.t_ = function (s) { alert(s) }
+      this.x_ = function (s) { alert(s) }
+      this.w_ = function (s) { alert(s) }
+
+
+      this.aeiou_ = function (s) { alert(s) }
+      ////    this.f_ = function (s) { alert(s) }
+      ////    this.j_ = function (s) { alert(s) }
+      //        this.l_ = function (s) { alert(s) }
+
+      this.grafC = function (ob) {
+        var lineWidth = ob.lineWidth;
+        var radio = ob.radio;
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        path.lastPoint = p;
+        //  path.lineTo(p.x, p.y);
+        path.arc(p.x, p.y, radio, 0, 2 * Math.PI);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        //    params.lastLetter = params.letter;
+        params.inicw = false;
+      }
+      this.grafLin = function (ob) {
+        var lineWidth = ob.lineWidth;
+
+        if (ob.dir === "c") { params.lastPoint.y = params.line - 25 }
+        if (ob.dir === "p") { params.lastPoint.y = params.line - 25 }
+        if (ob.dir === "t") { params.lastPoint.y = params.line - 25 }
+        if (ob.dir === "j") {
+          params.lastPoint.y = params.line - 25; params.lastPoint.x += 15
+
+          if (ob.dir === "r") { params.lastPoint.y = params.line - 8; }
+          var p = params.lastPoint;
+          var path = new Path2D();
+          path.moveTo(p.x, p.y)
+
+
+
 
         }
 
+      }
 
 
+      this.letter = function (l, index) {
 
+        ctx.strokeStyle = params.color
+        params.inicw = false;
+        // alert(params.tx[params.index]+params.index)
+        if (params.index > 0) {
+          if (params.tx[params.index - 1] === " ") {
+            params.lastPoint.y = params.line;
+            params.lastPoint.x += 10;
+            params.inicw = true
 
-    </script>
-    <script>
+          }
 
-
-        // Función base que procesa una única palabra limpia
-        function silabearPalabra(palabra, forzarHiatos = true) {
-            let p = palabra.trim();
-            if (!p) return [];
-
-            const Fuertes = "aeoAEOáéóÁÉÓ";
-            const Debiles = "iuyIUYüÜíúÍÚ";
-            const Consonantes = "bcdfghjklmnñpqrstvwxyzBCDFGHJKLMNÑPQRSTVWXYZ".replace(/[yY]/g, '');
-
-            const gruposInseparables = ["bl", "cl", "fl", "gl", "pl", "br", "cr", "fr", "gr", "pr", "tr", "dr", "ch", "ll", "rr"];
-
-            function tipo(char) {
-                if (!char) return 'X';
-                if (Fuertes.includes(char)) return 'F';
-                if (Debiles.includes(char)) {
-                    return "íúÍÚ".includes(char) ? 'F' : 'D';
-                }
-                if (Consonantes.includes(char)) return 'C';
-                return 'X';
-            }
-
-            let puntosCorte = [];
-            let i = 0;
-
-            while (i < p.length) {
-                if (tipo(p[i]) === 'C') {
-                    let inicioC = i;
-                    while (i < p.length && tipo(p[i]) === 'C') {
-                        i++;
-                    }
-                    let finC = i - 1;
-
-                    if (inicioC === 0 || finC === p.length - 1) continue;
-
-                    let longitud = finC - inicioC + 1;
-                    let par = p.substring(inicioC, finC + 1).toLowerCase();
-
-                    if (longitud === 1) {
-                        puntosCorte.push(inicioC);
-                    }
-                    else if (longitud === 2) {
-                        if (!gruposInseparables.includes(par)) {
-                            puntosCorte.push(inicioC + 1);
-                        } else {
-                            puntosCorte.push(inicioC);
-                        }
-                    }
-                    else if (longitud === 3) {
-                        let ultimasDos = par.substring(1, 3);
-                        if (gruposInseparables.includes(ultimasDos)) {
-                            puntosCorte.push(inicioC + 1);
-                        } else {
-                            puntosCorte.push(inicioC + 2);
-                        }
-                    }
-                    else if (longitud === 4) {
-                        puntosCorte.push(inicioC + 2);
-                    }
-                } else {
-                    i++;
-                }
-            }
-
-            let tempWord = "";
-            let indicesCorte = new Set(puntosCorte);
-            for (let j = 0; j < p.length; j++) {
-                if (indicesCorte.has(j)) tempWord += "-";
-                tempWord += p[j];
-            }
-            let silabasPrevia = tempWord.split("-");
-
-            let resultadoFinal = [];
-
-            for (let silaba of silabasPrevia) {
-                let subSilaba = "";
-                let k = 0;
-
-                while (k < silaba.length) {
-                    subSilaba += silaba[k];
-
-                    if (k < silaba.length - 1) {
-                        let actual = silaba[k];
-                        let siguiente = silaba[k + 1];
-
-                        let esHIntercalada = false;
-                        if (siguiente.toLowerCase() === 'h' && k < silaba.length - 2) {
-                            siguiente = silaba[k + 2];
-                            esHIntercalada = true;
-                        }
-
-                        let t1 = tipo(actual);
-                        let t2 = tipo(siguiente);
-
-                        if ((t1 === 'F' || t1 === 'D') && (t2 === 'F' || t2 === 'D')) {
-                            let separarVocal = false;
-
-                            if (t1 === 'F' && t2 === 'F') {
-                                separarVocal = true;
-                            }
-
-                            if (forzarHiatos && ((t1 === 'D' && t2 === 'F') || (t1 === 'F' && t2 === 'D'))) {
-                                separarVocal = true;
-                            }
-
-                            if (separarVocal) {
-                                if (esHIntercalada) {
-                                    subSilaba += silaba[k + 1];
-                                    k++;
-                                }
-                                resultadoFinal.push(subSilaba);
-                                subSilaba = "";
-                            }
-                        }
-                    }
-                    k++;
-                }
-                if (subSilaba) resultadoFinal.push(subSilaba);
-            }
-
-            return resultadoFinal;
         }
 
-        // NUEVA FUNCIÓN: Procesa frases completas limpiando signos de puntuación externos
-        function procesarFrase(frase) {
-            if (!frase.trim()) return [];
+        this.params.letter = l;
 
-            // Dividimos la frase por cualquier tipo de espacio en blanco
-            let palabrasRaw = frase.trim().split(/\s+/);
-            let fraseMatriz = [];
-
-            for (let item of palabrasRaw) {
-                // Limpiamos puntuación de los extremos (puntos, comas, signos de interrogación, etc.)
-                // Manteniendo letras del español, acentos y la 'y'
-                let palabraLimpia = item.replace(/^[¿¡!?,.:;()""'']+|[¿¡!?,.:;()""'']+$/g, '');
-
-                if (palabraLimpia) {
-                    let silabasDePalabra = silabearPalabra(palabraLimpia, true);
-                    fraseMatriz.push(silabasDePalabra);
-
-                }
-            }
-
-            return fraseMatriz;
+        if (l === "p" || l === "b") {
+          this.bp(this.params)
+        } else if (l === "f" || l === "v") {
+          this.fv(this.params)
+        } else if (l === "c" || l === "g" || l === "q" || l === "k") {
+          this.ckq(this.params)
+        } else if (l === "n" || l === "ñ") {
+          this.nñ(this.params)
+        } else if (l === "m") {
+          this.m(this.params)
+        } else if (l === "l" || l === "y" || l === "ll") {
+          this.lyll(this.params)
+        } else if (l === "r" || l === "rr") {
+          this.r(this.params)
+        } else if (l === "j" || l === "ch") {
+          this.j(this.params)
+        } else if (l === "t" || l === "d") {
+          this.dt(this.params)
+        }
+        else if (l === "s" || l === "z") {
+          this.sz(this.params)
         }
 
 
+        //  this.params.letter = l;
 
-        /*
-    function separarTextoEnSilabas(texto) {
-    if (!texto) return "";
+        return;
 
-    // Expresión regular para identificar palabras individuales aislándolas de espacios y signos de puntuación
-    return texto.replace(/[a-záéóíúüñý]+/gi, (palabra) => {
-        const palabraMinus = palabra.toLowerCase();
-        
-        // --- VARIABLES CORREGIDAS ---
-        // Se incluye la 'y' e 'ý' en las vocales y se elimina de las consonantes
-        const vocalesAbiertas = '[aeoáéóíúü]'; 
-        const vocalesCerradasSinTilde = '[iuüy]';
-        const vocalesCerradasConTilde = '[íúý]';
-        const vocales = '[aeiouáéóíúüýy]';
-        const consonantes = '[bcdfghjklmnñpqrstvwxz]'; 
 
-        // 1. Identificar marcas temporales en los HIATOS
-        let resultado = palabraMinus
-            .replace(new RegExp(`(${vocalesAbiertas})(${vocalesAbiertas})`, 'g'), '$1-$2')
-            .replace(new RegExp(`(${vocalesAbiertas})(${vocalesCerradasConTilde})`, 'g'), '$1-$2')
-            .replace(new RegExp(`(${vocalesCerradasConTilde})(${vocalesAbiertas})`, 'g'), '$1-$2');
+      }
 
-        // 2. Una consonante entre dos vocales (V-CV)
-        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${vocales})`, 'g'), '$1-$2$3');
+      this.sz = function (params) {
+        var lineWidth = 1;
 
-        // 3. Dos consonantes entre dos vocales (V-CC-V)
-        const gruposInseparables = '(ch|ll|rr|bl|br|cl|cr|fl|fr|gl|gr|pl|pr|tl|tr|dr)';
-        resultado = resultado.replace(new RegExp(`(${vocales})${gruposInseparables}(${vocales})`, 'g'), '$1-$2$3');
-        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2-$3$4');
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 15
+          if (p === "e" || p === "i") params.lastPoint.y -= 5
+          if (p === "o" || p === "u") params.lastPoint.y += 8
 
-        // 4. Tres consonantes entre dos vocales (V-CCC-V)
-        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})${gruposInseparables}(${vocales})`, 'g'), '$1$2-$3$4');
-        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2$3-$4$5');
+        }
+        //////////////////////////////////
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        // alert("ok")
+        p.x += 1.5;
+        p.y += 1.5;
+        path.lastPoint = p;
+        //  path.lineTo(p.x, p.y);
+        path.arc(p.x, p.y, 4, 0, 2 * Math.PI);
 
-        // 5. Cuatro consonantes entre dos vocales (V-CCCC-V)
-        resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2$3-$4$5$6');
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
 
-        // Reconstruir la palabra manteniendo las mayúsculas originales
-        let palabraSilabas = "";
-        let j = 0;
-        for (let i = 0; i < resultado.length; i++) {
-            if (resultado[i] === '-') {
-                palabraSilabas += '-';
+      }
+
+      this.ckq = function (params) {
+        var lineWidth = 1;
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 25
+          if (p === "e" || p === "i") params.lastPoint.y -= 5
+          if (p === "o" || p === "u") params.lastPoint.y += 8
+          //       alert(JSON.stringify(params))
+          params.inicw = false;
+
+        }
+        //////////////////////////////////-   
+        if (params.letter == "g") lineWidth = 3;
+        var p = params.lastPoint;
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        p.x += 30;
+        path.lastPoint = p;
+        path.lineTo(p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); // alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+
+      }
+      this.nñ = function (params) {
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 25
+          if (p === "e" || p === "i") params.lastPoint.y -= 16
+          if (p === "o" || p === "u") params.lastPoint.y += 5
+
+        }
+        //////////////////////////////////
+
+        var path = new Path2D();
+        //  alert(JSON.stringify(params))   
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "ñ") lineWidth = 3;
+
+
+        path.moveTo(p.x, p.y)
+        p.x += 30;;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 15, p.y + 25, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))rams))
+        params.lastLetter = params.letter;
+      }
+
+      this.m = function (params) {
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 25
+          if (p === "e" || p === "i") params.lastPoint.y -= 5
+          if (p === "o" || p === "u") params.lastPoint.y += 8
+
+        }
+        //////////////////////////////////
+
+        var path = new Path2D();
+        //  alert(JSON.stringify(params))   
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        //  if(params.letter=="ñ") lineWidth=3;
+
+
+        path.moveTo(p.x, p.y)
+        p.x += 30;;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 15, p.y - 20, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))rams))
+        params.lastLetter = params.letter;
+      }
+
+      this.bp = function (params) {
+
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 45
+          if (p === "e" || p === "i") params.lastPoint.y -= 33
+          if (p === "o" || p === "u") params.lastPoint.y -= 15
+
+        }
+        //////////////////////////////////
+        var path = new Path2D();
+        //   alert(JSON.stringify(params))
+        var p = params.lastPoint;
+        var lineWidth = 3;
+        if (params.letter == "p") lineWidth = 1;
+
+        path.moveTo(p.x, p.y);
+        p.x += 30;
+        p.y += 30;
+        path.lineTo(p.x, p.y);
+        // path.lastPoint = p;
+        params.lastPoint = p;
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+      this.dt = function (params) {
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 45
+          if (p === "e" || p === "i") params.lastPoint.y -= 33
+          if (p === "o" || p === "u") params.lastPoint.y -= 15
+
+        }
+        //////////////////////////////////
+
+        var path = new Path2D();
+        //   alert(JSON.stringify(params))
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "d") lineWidth = 3;
+
+        path.moveTo(p.x, p.y);
+
+        p.y += 30;
+        path.lineTo(p.x, p.y);
+        // path.lastPoint = p;
+        params.lastPoint = p;
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+
+      this.r = function (params) {
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 15
+          if (p === "e" || p === "i") params.lastPoint.y -= 3
+          if (p === "o" || p === "u") params.lastPoint.y += 15
+
+        }
+        //////////////////////////////////
+
+        var path = new Path2D();
+        //   alert(JSON.stringify(params))
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "rr") lineWidth = 3;
+
+        path.moveTo(p.x, p.y);
+        p.x += 30;
+        p.y -= 30;
+        if (params.lastLetter == "j") p.x += 10;;
+        //  alert(JSON.stringify(params))
+        path.lineTo(p.x, p.y);
+        path.lastPoint = p;
+        params.lastPoint = p;
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+
+      this.j = function (params) {
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 45
+          if (p === "e" || p === "i") params.lastPoint.y -= 32
+          if (p === "o" || p === "u") params.lastPoint.y -= 15
+          params.lastPoint.x += 60;
+
+        }
+        //////////////////////////////////
+        var path = new Path2D();
+        //   alert(JSON.stringify(params))
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "j") lineWidth = 3;
+
+        path.moveTo(p.x, p.y);
+        p.x -= 30;
+        p.y += 30;
+        if (params.lastLetter == "r") p.x += 10;;
+        path.lineTo(p.x, p.y);
+        // path.lastPoint = p;
+        params.lastPoint = p;
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+
+
+      this.fv = function (params) {
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 45
+          if (p === "e" || p === "i") params.lastPoint.y -= 33
+          if (p === "o" || p === "u") params.lastPoint.y -= 15
+
+        }
+        //////////////////////////////////
+
+        var path = new Path2D();
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "v") lineWidth = 3;
+        path.moveTo(p.x, p.y)
+        p.x += 30;
+        p.y += 30;
+        params.lastPoint = p;
+        path.quadraticCurveTo(p.x - 25, p.y + 5, p.x, p.y);
+
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params))
+        params.lastLetter = params.letter;
+      }
+
+      this.lyll = function (params) {
+        var lineWidth = 1;
+
+        ///////////////////////////////////
+        if (params.inicw) {
+          var p = params.tx[params.index + 1]
+          if (p === "a") params.lastPoint.y -= 15
+          if (p === "e" || p === "i") params.lastPoint.y -= 3
+          if (p === "o" || p === "u") params.lastPoint.y += 15
+
+        }
+        //////////////////////////////////
+
+        var path = new Path2D();
+        var p = params.lastPoint;
+        var lineWidth = 1;
+        if (params.letter == "y" || params.letter == "ll") lineWidth = 3;
+
+      }
+
+    }
+
+    var params = {
+      inicPoint: {
+        x: 30,
+        y: 80
+      }
+    }
+    params.lastPoint = params.inicPoint;
+    params.line = 80;
+    params.color = "blue";
+    params.inicw = false;
+    var copyparams = JSON.stringify(params)
+    var lj = new taq(params);
+    ctx.strokeStyle = "blue";
+
+    //lj.grafSilaba("croz");
+
+    shs.value = "uncon buen ejemplo";
+    //lj.paragraph2()
+
+    function clearCanvas() {
+      if (params != undefined) {
+        //alert(copyparams+"\n\n"+JSON.stringify(params))
+        // lj.params=JSON.parse(copyparams);
+        lj.params.inicw = false;
+        lj.params.lastPoint.x = 10;
+        lj.params.lastPoint.y = 80;
+        lj.params.tx = "";
+        lj.params.color = "blue";
+        lj.params.line = 80;
+        lj.params.inicPoint = lj.params.lastPoint;
+        lj.params.lastLetter = ""
+
+      }
+
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = .5
+      for (var i = 0; i < 10; i++) {
+        ctx.moveTo(0, 80 * i)
+        ctx.lineTo(800, 80 * i)
+        ctx.stroke();
+
+
+      }
+    }
+
+    function gets(word) {
+
+      var ars = []
+
+      var k = word.split(" ");
+      params.silabas = [];
+      for (var t = 0; t < k.length; t++) {
+        ars.push(lj.getSilabas(k[t]));
+      }
+      shs.value = JSON.stringify(ars)
+
+    }
+
+
+
+
+
+  </script>
+  <script>
+
+
+    // Función base que procesa una única palabra limpia
+    function silabearPalabra(palabra, forzarHiatos = true) {
+      let p = palabra.trim();
+      if (!p) return [];
+
+      const Fuertes = "aeoAEOáéóÁÉÓ";
+      const Debiles = "iuyIUYüÜíúÍÚ";
+      const Consonantes = "bcdfghjklmnñpqrstvwxyzBCDFGHJKLMNÑPQRSTVWXYZ".replace(/[yY]/g, '');
+
+      const gruposInseparables = ["bl", "cl", "fl", "gl", "pl", "br", "cr", "fr", "gr", "pr", "tr", "dr", "ch", "ll", "rr"];
+
+      function tipo(char) {
+        if (!char) return 'X';
+        if (Fuertes.includes(char)) return 'F';
+        if (Debiles.includes(char)) {
+          return "íúÍÚ".includes(char) ? 'F' : 'D';
+        }
+        if (Consonantes.includes(char)) return 'C';
+        return 'X';
+      }
+
+      let puntosCorte = [];
+      let i = 0;
+
+      while (i < p.length) {
+        if (tipo(p[i]) === 'C') {
+          let inicioC = i;
+          while (i < p.length && tipo(p[i]) === 'C') {
+            i++;
+          }
+          let finC = i - 1;
+
+          if (inicioC === 0 || finC === p.length - 1) continue;
+
+          let longitud = finC - inicioC + 1;
+          let par = p.substring(inicioC, finC + 1).toLowerCase();
+
+          if (longitud === 1) {
+            puntosCorte.push(inicioC);
+          }
+          else if (longitud === 2) {
+            if (!gruposInseparables.includes(par)) {
+              puntosCorte.push(inicioC + 1);
             } else {
-                palabraSilabas += palabra[j];
-                j++;
+              puntosCorte.push(inicioC);
             }
+          }
+          else if (longitud === 3) {
+            let ultimasDos = par.substring(1, 3);
+            if (gruposInseparables.includes(ultimasDos)) {
+              puntosCorte.push(inicioC + 1);
+            } else {
+              puntosCorte.push(inicioC + 2);
+            }
+          }
+          else if (longitud === 4) {
+            puntosCorte.push(inicioC + 2);
+          }
+        } else {
+          i++;
         }
-        return palabraSilabas;
-    });
+      }
+
+      let tempWord = "";
+      let indicesCorte = new Set(puntosCorte);
+      for (let j = 0; j < p.length; j++) {
+        if (indicesCorte.has(j)) tempWord += "-";
+        tempWord += p[j];
+      }
+      let silabasPrevia = tempWord.split("-");
+
+      let resultadoFinal = [];
+
+      for (let silaba of silabasPrevia) {
+        let subSilaba = "";
+        let k = 0;
+
+        while (k < silaba.length) {
+          subSilaba += silaba[k];
+
+          if (k < silaba.length - 1) {
+            let actual = silaba[k];
+            let siguiente = silaba[k + 1];
+
+            let esHIntercalada = false;
+            if (siguiente.toLowerCase() === 'h' && k < silaba.length - 2) {
+              siguiente = silaba[k + 2];
+              esHIntercalada = true;
+            }
+
+            let t1 = tipo(actual);
+            let t2 = tipo(siguiente);
+
+            if ((t1 === 'F' || t1 === 'D') && (t2 === 'F' || t2 === 'D')) {
+              let separarVocal = false;
+
+              if (t1 === 'F' && t2 === 'F') {
+                separarVocal = true;
+              }
+
+              if (forzarHiatos && ((t1 === 'D' && t2 === 'F') || (t1 === 'F' && t2 === 'D'))) {
+                separarVocal = true;
+              }
+
+              if (separarVocal) {
+                if (esHIntercalada) {
+                  subSilaba += silaba[k + 1];
+                  k++;
+                }
+                resultadoFinal.push(subSilaba);
+                subSilaba = "";
+              }
+            }
+          }
+          k++;
+        }
+        if (subSilaba) resultadoFinal.push(subSilaba);
+      }
+
+      return resultadoFinal;
+    }
+
+    // NUEVA FUNCIÓN: Procesa frases completas limpiando signos de puntuación externos
+    function procesarFrase(frase) {
+      if (!frase.trim()) return [];
+
+      // Dividimos la frase por cualquier tipo de espacio en blanco
+      let palabrasRaw = frase.trim().split(/\s+/);
+      let fraseMatriz = [];
+
+      for (let item of palabrasRaw) {
+        // Limpiamos puntuación de los extremos (puntos, comas, signos de interrogación, etc.)
+        // Manteniendo letras del español, acentos y la 'y'
+        let palabraLimpia = item.replace(/^[¿¡!?,.:;()""'']+|[¿¡!?,.:;()""'']+$/g, '');
+
+        if (palabraLimpia) {
+          let silabasDePalabra = silabearPalabra(palabraLimpia, true);
+          fraseMatriz.push(silabasDePalabra);
+
+        }
+      }
+
+      return fraseMatriz;
+    }
+
+
+
+    /*
+function separarTextoEnSilabas(texto) {
+if (!texto) return "";
+
+// Expresión regular para identificar palabras individuales aislándolas de espacios y signos de puntuación
+return texto.replace(/[a-záéóíúüñý]+/gi, (palabra) => {
+    const palabraMinus = palabra.toLowerCase();
+    
+    // --- VARIABLES CORREGIDAS ---
+    // Se incluye la 'y' e 'ý' en las vocales y se elimina de las consonantes
+    const vocalesAbiertas = '[aeoáéóíúü]'; 
+    const vocalesCerradasSinTilde = '[iuüy]';
+    const vocalesCerradasConTilde = '[íúý]';
+    const vocales = '[aeiouáéóíúüýy]';
+    const consonantes = '[bcdfghjklmnñpqrstvwxz]'; 
+
+    // 1. Identificar marcas temporales en los HIATOS
+    let resultado = palabraMinus
+        .replace(new RegExp(`(${vocalesAbiertas})(${vocalesAbiertas})`, 'g'), '$1-$2')
+        .replace(new RegExp(`(${vocalesAbiertas})(${vocalesCerradasConTilde})`, 'g'), '$1-$2')
+        .replace(new RegExp(`(${vocalesCerradasConTilde})(${vocalesAbiertas})`, 'g'), '$1-$2');
+
+    // 2. Una consonante entre dos vocales (V-CV)
+    resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${vocales})`, 'g'), '$1-$2$3');
+
+    // 3. Dos consonantes entre dos vocales (V-CC-V)
+    const gruposInseparables = '(ch|ll|rr|bl|br|cl|cr|fl|fr|gl|gr|pl|pr|tl|tr|dr)';
+    resultado = resultado.replace(new RegExp(`(${vocales})${gruposInseparables}(${vocales})`, 'g'), '$1-$2$3');
+    resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2-$3$4');
+
+    // 4. Tres consonantes entre dos vocales (V-CCC-V)
+    resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})${gruposInseparables}(${vocales})`, 'g'), '$1$2-$3$4');
+    resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2$3-$4$5');
+
+    // 5. Cuatro consonantes entre dos vocales (V-CCCC-V)
+    resultado = resultado.replace(new RegExp(`(${vocales})(${consonantes})(${consonantes})(${consonantes})(${consonantes})(${vocales})`, 'g'), '$1$2$3-$4$5$6');
+
+    // Reconstruir la palabra manteniendo las mayúsculas originales
+    let palabraSilabas = "";
+    let j = 0;
+    for (let i = 0; i < resultado.length; i++) {
+        if (resultado[i] === '-') {
+            palabraSilabas += '-';
+        } else {
+            palabraSilabas += palabra[j];
+            j++;
+        }
+    }
+    return palabraSilabas;
+});
 }
 
 // --- PRUEBA DE CONTROL ---
@@ -1394,10 +1468,10 @@ console.log(separarTextoEnSilabas("systema"));
 
 console.log(separarTextoEnSilabas("gimnasio")); 
 // Salida esperada: gim-na-sio
+ 
     
-        
-        */
-    </script>
+    */
+  </script>
 
 </body>
 
