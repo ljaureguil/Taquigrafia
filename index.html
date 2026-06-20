@@ -24,9 +24,6 @@
     if (arpending === null) arpending = [];
     else arpending = JSON.parse(arpending);
     alert(arpending)
-
-
-    //imsg.value = "ca co ce da de do fa fe fu ga ge go ja je jo ka ke ko la le lo ma me mo na ne no pa pe po qa qe qu ra re ro sa se so ta te to va ve vo wa we wo xa xe xo za ze zo"
     imsg.addEventListener("keypress", function (e) { if (e.keyCode == 13) lj.paragraph2(imsg.value); })
 
     const canvas = document.getElementById("canvas");
@@ -38,142 +35,6 @@
     //  ctx.scale(0.5, 0.5);
 
     var taq = function (params) {
-
-
-
-      /*
-      
-      
-                  this.getSilabas2 = function (palabra) {
-      
-                      palabra = palabra.toLowerCase();
-      
-                      const vocales = "aeiouáéíóúü";
-                      const fuertes = "aáeéoó";
-      
-                      const gruposInseparables = [
-                          "bl", "br", "cl", "cr", "dr",
-                          "fl", "fr", "gl", "gr",
-                          "pl", "pr", "tl", "tr"
-                      ];
-      
-                      function esVocal(c) {
-                          return vocales.includes(c);
-                      }
-      
-                      function esFuerte(c) {
-                          return fuertes.includes(c);
-                      }
-      
-                      function esDiptongo(v1, v2) {
-      
-                          if (!esVocal(v1) || !esVocal(v2))
-                              return false;
-      
-                          const f1 = esFuerte(v1);
-                          const f2 = esFuerte(v2);
-      
-                          // Dos vocales fuertes => hiato
-                          if (f1 && f2)
-                              return false;
-      
-                          // Vocal cerrada acentuada rompe diptongo
-                          if ("íú".includes(v1) || "íú".includes(v2))
-                              return false;
-      
-                          return true;
-                      }
-      
-                      let silabas = [];
-                      let pos = 0;
-      
-                      while (pos < palabra.length) {
-      
-                          let inicio = pos;
-      
-                          // consonantes iniciales
-                          while (pos < palabra.length && !esVocal(palabra[pos])) {
-                              pos++;
-                          }
-      
-                          // núcleo vocálico
-                          while (
-                              pos + 1 < palabra.length &&
-                              esDiptongo(palabra[pos], palabra[pos + 1])
-                          ) {
-                              pos++;
-                          }
-      
-                          if (pos < palabra.length)
-                              pos++;
-      
-                          let sigVocal = pos;
-      
-                          while (
-                              sigVocal < palabra.length &&
-                              !esVocal(palabra[sigVocal])
-                          ) {
-                              sigVocal++;
-                          }
-      
-                          const numCons = sigVocal - pos;
-      
-                          // final de palabra
-                          if (sigVocal >= palabra.length) {
-                              silabas.push(palabra.slice(inicio));
-                              break;
-                          }
-      
-                          if (numCons === 0) {
-      
-                              silabas.push(palabra.slice(inicio, pos));
-      
-                          } else if (numCons === 1) {
-      
-                              silabas.push(palabra.slice(inicio, pos));
-      
-                          } else if (numCons === 2) {
-      
-                              const grupo = palabra.slice(pos, pos + 2);
-      
-                              if (gruposInseparables.includes(grupo)) {
-                                  silabas.push(palabra.slice(inicio, pos));
-                              } else {
-                                  silabas.push(palabra.slice(inicio, pos + 1));
-                                  pos += 1;
-                              }
-      
-                          } else if (numCons === 3) {
-      
-                              const grupoFinal = palabra.slice(pos + 1, pos + 3);
-      
-                              if (gruposInseparables.includes(grupoFinal)) {
-                                  silabas.push(palabra.slice(inicio, pos + 1));
-                                  pos += 1;
-                              } else {
-                                  silabas.push(palabra.slice(inicio, pos + 2));
-                                  pos += 2;
-                              }
-      
-                          } else {
-      
-                              // 4 o más consonantes
-                              const grupoFinal = palabra.slice(pos + 2, pos + 4);
-      
-                              if (gruposInseparables.includes(grupoFinal)) {
-                                  silabas.push(palabra.slice(inicio, pos + 2));
-                                  pos += 2;
-                              } else {
-                                  silabas.push(palabra.slice(inicio, pos + 3));
-                                  pos += 3;
-                              }
-                          }
-                      }
-      
-                      return silabas;
-                  }
-      
-      */
 
 
       if (params.color === undefined) params.color = "blue"
@@ -342,6 +203,7 @@
 
       this.silabas = {};
       this.silabas.vocales = ["a", "e", "i", "o", "u"];
+      this.silabas.consonantes = "bcdfghjklmnñpqrstvwxyzBCDFGHJKLMNÑPQRSTVWXYZ".replace(/[yY]/g, '');
 
       this.silabas.inseparables = [
         "bl", "br", "cl", "cr", "dr",
@@ -480,8 +342,26 @@
         if (confirm("Silabas pendientes:\n" + arpending + "\n\nGrafico para esta silaba no existente... ' " + ss + " '' do you want to save it?")) {
           arpending.push(ss);
           localStorage.setItem("selpending", JSON.stringify(arpending))
-
         }
+        var ar = [];
+        for (let e of this.silabas.vocales) {
+          if (ss.includes(e)) {
+            var arp = ss.split(e);
+            this.grafSilaba(arp[0] + e);
+            if (arp[1] != undefined) {
+              for (let c of this.silabas.consonantes) {
+                if (arp.includes(c)) this.grLeter(c)
+              }
+            }
+
+            //regresa
+          }
+        }
+
+      }
+      this.grLeter = function (l) {
+        if (l === "n") this.grcontraccionN(params.inicPoint, 1, 4, 45)
+        alert(l + "\n\nConsonante")
       }
 
 
@@ -492,25 +372,16 @@
         if (s.includes("g")) lineWidth = 3
 
         var p = params.lastPoint;
-        var path = new Path2D();
-        path.moveTo(p.x, p.y)
+
         if (params.inicw) {
           params.lastPoint.x += 20;
           if (s.includes("a")) params.lastPoint.y = params.line - 25;
           if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 5;
-          path.moveTo(p.x, p.y)
+
         }
-        //  alert(" cgkqu\n\n" + s)
 
-        params.size = 25;//corregir aqui
-        p.x += params.size;
-        params.lastPoint = p;
-        path.lineTo(p.x, p.y);
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); // alert(JSON.stringify(params))
-        // params.lastLetter = params.letter;
+        params.lastPoint = this.grCG(params.lastPoint, lineWidth, params.size)
         params.inicw = false;
         params.lastSimbol = "c"
         params.lastSilaba = s;
@@ -523,27 +394,16 @@
         lineWidth = 1;
         if (s.includes("b")) lineWidth = 3;
         var p = params.lastPoint;
-        var path = new Path2D();
-        path.moveTo(p.x, p.y)
 
         if (params.inicw) {
           params.lastPoint.x += 20;
 
-          if (s.includes("a")) params.lastPoint.y = params.line - 45;
-          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 33;
-          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - 15;
-          path.moveTo(p.x, p.y)
+          if (s.includes("a")) params.lastPoint.y = params.line - params.size - 15;
+          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - params.size - 1;
+          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
         }
 
-        params.size = params.size;//corregir aqui
-        p.x += params.size;
-        p.y += params.size;
-        params.lastPoint = p;
-        path.lineTo(p.x, p.y);
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); // alert(JSON.stringify(params))
-        //   params.lastLetter = params.letter;
+        params.lastPoint = this.grBP(params.lastPoint, lineWidth, params.size)
         params.lastSimbol = "b"
         params.lastSilaba = s;
         params.inicw = false;
@@ -557,27 +417,17 @@
         lineWidth = 1;
         if (s.includes("d")) lineWidth = 3;
         var p = params.lastPoint;
-        var path = new Path2D();
-        path.moveTo(p.x, p.y)
 
         if (params.inicw) {
           params.lastPoint.x += 20;
 
-          if (s.includes("a")) params.lastPoint.y = params.line - 45;
-          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 33;
-          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - 15;
-          path.moveTo(p.x, p.y)
+          if (s.includes("a")) params.lastPoint.y = params.line - params.size - 15;
+          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - params.line - 2;
+          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
+          //   path.moveTo(p.x, p.y)
         }
+        params.lastPoint = this.grDT(params.lastPoint, lineWidth, params.size)
 
-        params.size = params.size;//corregir aqui
-        // p.x += params.size;
-        p.y += params.size;
-        params.lastPoint = p;
-        path.lineTo(p.x, p.y);
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); // alert(JSON.stringify(params))
-        //   params.lastLetter = params.letter;
         params.lastSilaba = s;
         params.lastSimbol = "d"
         params.inicw = false;
@@ -588,29 +438,21 @@
 
         var lineWidth = 1;
 
-        var path = new Path2D();
+        //   var path = new Path2D();
         var p = params.lastPoint;
         var lineWidth = 1;
         if (s.includes("v")) lineWidth = 3;
         ///////////////////////////////////
         if (params.inicw) {
           // var p = params.tx[params.index + 1]
-          if (s.includes("a")) params.lastPoint.y = params.line - 45
-          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 32
-          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - 15
+          if (s.includes("a")) params.lastPoint.y = params.line - params.size - 15
+          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - params.size - 2
+          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2
 
 
         }
-        //////////////////////////////////
 
-        path.moveTo(p.x, p.y)
-        p.x += params.size;
-        p.y += params.size;
-        params.lastPoint = p;
-        path.quadraticCurveTo(p.x - 25, p.y + 5, p.x, p.y);
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //  alert(JSON.stringify(params))
+        params.lastPoint = this.grFV(params.lastPoint, lineWidth, params.size)
         params.lastLetter = params.letter;
         params.lastSilaba = s;
         params.lastSilbol = "f"
@@ -624,26 +466,17 @@
         if (s.includes("j")) lineWidth = 3;
         var p = params.lastPoint;
         var path = new Path2D();
-        path.moveTo(p.x, p.y)
 
         if (params.inicw) {
           params.lastPoint.x += (20 + params.size + 20);
 
-          if (s.includes("a")) params.lastPoint.y = params.line - 45;
-          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 33;
-          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - 15;
-          path.moveTo(p.x, p.y)
+          if (s.includes("a")) params.lastPoint.y = params.line - params.size - 15
+          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 1;
+          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
+
         }
 
-        params.size = params.size;//corregir aqui
-        p.x -= params.size;
-        p.y += params.size;
-        params.lastPoint = p;
-        path.lineTo(p.x, p.y);
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); // alert(JSON.stringify(params))
-        //   params.lastLetter = params.letter;
+        params.lastPoint = this.grJCH(params.inicPoint, lineWidth, params.size)
         params.lastSimbol = "b"
         params.lastSilaba = s;
         params.inicw = false;
@@ -1097,7 +930,7 @@
         var path = new Path2D();
         path.moveTo(p.x, p.y)
         p.x -= size;
-        p.y -= size;
+        p.y += size;
         path.lineTo(p.x, p.y);
 
         ctx.lineWidth = lineWidth;
@@ -1206,7 +1039,7 @@
         var p = inicPos;
         var path = new Path2D();
         path.moveTo(p.x, p.y)
-
+        alert("contraccion n")
         // params.size = params.size;//corregir aqui
         p.x += size;
         p.y += size;
