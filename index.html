@@ -15,7 +15,7 @@
   <canvas id="canvas" width="1000" height="500"></canvas>
   <input id="imsg" type="text" value="" oninput="this.value=this.value.toLowerCase()"
     placeholder="Type a short paragraph here" style="width:80%;background-color: aqua;"></input>
-  <button onclick="lj.paragraph2(imsg.value)//lj.word(imsg.value);//gets(imsg.value);">escribe en taquigrafia</button>
+  <button onclick="lj.paragraph3(imsg.value)//lj.word(imsg.value);//gets(imsg.value);">escribe en taquigrafia</button>
   <button onclick="clearCanvas()">clear</button>
   <textarea id="shs" style="width:90%;font-size:10px;height:params.sizepx;"></textarea>
   <script>
@@ -26,7 +26,7 @@
     else arpending = JSON.parse(arpending);
     //  alert(arpending)
 
-    imsg.addEventListener("keypress", function (e) { if (e.keyCode == 13) lj.paragraph2(imsg.value); })
+    imsg.addEventListener("keypress", function (e) { if (e.keyCode == 13) lj.paragraph3(imsg.value); })
 
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
@@ -81,6 +81,124 @@
         }
 
       }
+
+
+
+
+
+
+
+
+
+
+
+
+
+      //////////////////////////////////////////////////////////////////////////////
+           this.vocales = ["a", "e", "i", "o", "u"];
+      this.consonantes = "bcdfghjklmnñpqrstvwxyzBCDFGHJKLMNÑPQRSTVWXYZ".replace(/[yY]/g, '');
+
+      this.inseparables = [
+        "bl", "br", "cl", "cr", "dr",
+        "fl", "fr", "gl", "gr",
+        "pl", "pr", "tl", "tr"
+      ];
+      this.inseparablesConv=[];
+      for(let e of this.inseparables){
+        for(let v of this.vocales){
+          this.inseparablesConv.push(e+v)
+        }
+      }
+   //   alert(this.inseparablesConv)
+
+
+
+
+this.paragraph3 = function(paragraph,params){
+       clearCanvas();
+        ctx.strokeStyle = "blue";
+        this.params.color="blue";
+
+        this.params.lastPoint.x = 20;
+        this.params.lastPoint.y = this.params.line;
+        var ar=paragraph.split(" ");
+        for(e of ar){
+
+
+        }
+
+        for (e of ar) {
+          this.grWord(e)
+  
+        }
+
+}
+
+
+this.grWord = function(w){
+this.params.inicw=false;
+this.params.lastLetter=""
+this.params.lastSilbol="";
+this.params.index=0;
+var c=this.chkInicCont(w)
+alert(c);
+if(c!=""){
+  var cont=false;
+if(c.includes("br" || c.includes("pr") || c.includes("tr"))){
+  alert(c+"\n\nneeds contraccion")
+  cont=true
+}
+if(c.includes("l") && c.includes("c") && !cont){
+  if(w[0]==="c"){
+     this.params.lastPoint=this.grContracciones(this.params.lastPoint,1,10,90,false);
+     this.params.lastPoint=this.grCG(this.params.lastPoint,1,this.params.size)
+
+  }
+
+
+
+}
+
+
+if(c.includes("r") && !cont){
+  this.params.lastPoint=this.grContracciones(this.params.lastPoint,1,10,95)
+}
+}
+
+for(let c of w){
+
+
+}
+    
+}
+
+
+this.chkInicCont = function(w){
+  for(let e of this.inseparablesConv){
+    if(w.indexOf(e)===0 ) return e;
+  }
+  return "";
+ 
+
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       this.paragraph2 = function (paragraph) {
         clearCanvas();
 
@@ -1017,7 +1135,7 @@
 
       }
 
-      this.grContracciones = function (inicPoint, lineWidth, size, angle) {
+      this.grContracciones = function (inicPoint, lineWidth, size, angle, clockwise) {
         //  // 1. Determinar el sentido del giro (derecha o izquierda)
         // const adjustedAngle = clock === "izquierda" ? -angle : angle;
         const radians = (angle * Math.PI) / 180;
@@ -1037,15 +1155,17 @@
 
         var path = new Path2D();
         path.moveTo(p.x, p.y);
-        var ac = Math.atan(size * 2, size);
-        var rc = Math.sqrt(size * size + size * size / 4);
-        pc.x = p.x + Math.cos(ac) * rc;
-        pc.y = p.y - Math.sin(ac) * rc;
+        var s=1 ;
+        if(clockwise)s=-1
+        var ac = Math.atan(r, r/2);
+        var rc = Math.sqrt(r * r + (r/2) * (r/2));
+        pc.x = p.x + Math.cos(ac+radians) * rc;
+        pc.y = p.y - Math.sin(ac+radians) * rc;
         var pr = {}; pr.inicio = p;
         pr.control = pc;
         pr.final = pf
 
-        alert(JSON.stringify(pr))
+   //     alert(JSON.stringify(pr))
         // 6. Construir el objeto geométrico Path2D
 
         //        path.moveTo(pInic.x, pInic.y);
@@ -1884,8 +2004,8 @@ console.log(separarTextoEnSilabas("gimnasio"));
     }
 
     // Ejecución
-    const todasLasSilabas = generarCombinacionesCVC();
-    alert("ddd\n\n" + JSON.stringify(todasLasSilabas));
+   // const todasLasSilabas = generarCombinacionesCVC();
+    //alert("ddd\n\n" + JSON.stringify(todasLasSilabas));
 
   </script>
 </body>
