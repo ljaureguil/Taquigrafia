@@ -95,7 +95,7 @@
 
 
       //////////////////////////////////////////////////////////////////////////////
-           this.vocales = ["a", "e", "i", "o", "u"];
+      this.vocales = ["a", "e", "i", "o", "u"];
       this.consonantes = "bcdfghjklmnñpqrstvwxyzBCDFGHJKLMNÑPQRSTVWXYZ".replace(/[yY]/g, '');
 
       this.inseparables = [
@@ -103,88 +103,88 @@
         "fl", "fr", "gl", "gr",
         "pl", "pr", "tl", "tr"
       ];
-      this.inseparablesConv=[];
-      for(let e of this.inseparables){
-        for(let v of this.vocales){
-          this.inseparablesConv.push(e+v)
+      this.inseparablesConv = [];
+      for (let e of this.inseparables) {
+        for (let v of this.vocales) {
+          this.inseparablesConv.push(e + v)
         }
       }
-   //   alert(this.inseparablesConv)
+      //   alert(this.inseparablesConv)
 
 
 
 
-this.paragraph3 = function(paragraph,params){
-       clearCanvas();
+      this.paragraph3 = function (paragraph, params) {
+        clearCanvas();
         ctx.strokeStyle = "blue";
-        this.params.color="blue";
+        this.params.color = "blue";
 
         this.params.lastPoint.x = 20;
         this.params.lastPoint.y = this.params.line;
-        var ar=paragraph.split(" ");
-        for(e of ar){
+        var ar = paragraph.split(" ");
+        for (e of ar) {
 
 
         }
 
         for (e of ar) {
           this.grWord(e)
-  
+
         }
 
-}
+      }
 
 
-this.grWord = function(w){
-this.params.inicw=false;
-this.params.lastLetter=""
-this.params.lastSilbol="";
-this.params.index=0;
-var c=this.chkInicCont(w)
-alert(c);
-if(c!=""){
-  var cont=false;
-if(c.includes("br" || c.includes("pr") || c.includes("tr"))){
-  alert(c+"\n\nneeds contraccion")
-  cont=true
-}
-if(c.includes("l") && c.includes("c") && !cont){
-  if(w[0]==="c"){
-     this.params.lastPoint=this.grContracciones(this.params.lastPoint,1,10,90,false);
-     this.params.lastPoint=this.grCG(this.params.lastPoint,1,this.params.size)
+      this.grWord = function (w) {
+        this.params.inicw = false;
+        this.params.lastLetter = ""
+        this.params.lastSilbol = "";
+        this.params.index = 0;
+        var c = this.chkInicCont(w)
+        alert(c);
+        if (c != "") {
+          var cont = false;
+          if (c.includes("br" || c.includes("pr") || c.includes("tr"))) {
+            alert(c + "\n\nneeds contraccion")
+            cont = true
+          }
+          if (c.includes("l") && c.includes("c") && !cont) {
+            if (w[0] === "c") {
+              this.params.lastPoint = this.grContracciones(this.params.lastPoint, 1, 10, 90, false);
+              this.params.lastPoint = this.grCG(this.params.lastPoint, 1, this.params.size)
 
-  }
-
-
-
-}
-
-
-if(c.includes("r") && !cont){
-  this.params.lastPoint=this.grContracciones(this.params.lastPoint,1,10,95)
-}
-}
-
-for(let c of w){
-
-
-}
-    
-}
-
-
-this.chkInicCont = function(w){
-  for(let e of this.inseparablesConv){
-    if(w.indexOf(e)===0 ) return e;
-  }
-  return "";
- 
-
-}
+            }
 
 
 
-/////////////////////////////////////////////////////////////////////////
+          }
+
+
+          if (c.includes("r") && !cont) {
+            this.params.lastPoint = this.grContracciones(this.params.lastPoint, 1, 10, 95)
+          }
+        }
+
+        for (let c of w) {
+
+
+        }
+
+      }
+
+
+      this.chkInicCont = function (w) {
+        for (let e of this.inseparablesConv) {
+          if (w.indexOf(e) === 0) return e;
+        }
+        return "";
+
+
+      }
+
+
+
+      /////////////////////////////////////////////////////////////////////////
 
 
 
@@ -209,18 +209,20 @@ this.chkInicCont = function(w){
 
         this.params.lastPoint.x = 20;
         this.params.lastPoint.y = params.line;
-           var ars = procesarFrase(paragraph);
+        var ars = procesarFrase(paragraph);
         shs.value = JSON.stringify(ars);
         for (e of ars) {
           this.params.inicw = true;
           this.params.lastsi = "";
           this.params.lastSilaba = "";
-          this.params.lastWord=e.join("");
-          this.params.lastWordSil=e;
-          alert("palabras con join de array\n\n"+this.params.lastWord)
+          this.params.lastWord = e.join("");
+          this.params.lastWordSil = e;
+          alert("palabras con join de array\n\n" + this.params.lastWord)
+
           for (s of e) {
             this.grafSilaba(s)
           }
+          this.inicw = false;
 
         }
 
@@ -244,7 +246,7 @@ this.chkInicCont = function(w){
         params.inicw = false;
 
       }
-     
+
       this.a_ = function (word) {
         var vocales = "aeiou";
         var index = word.indexOf("_")
@@ -256,11 +258,11 @@ this.chkInicCont = function(w){
           r = w.join("");
           arc.push(r)
         }
-    
+
         return arc;
 
       }
-    
+
       this.silabas = {};
       this.silabas.vocales = ["a", "e", "i", "o", "u"];
       this.silabas.consonantes = "bcdfghjklmnñpqrstvwxyzBCDFGHJKLMNÑPQRSTVWXYZ".replace(/[yY]/g, '');
@@ -293,8 +295,8 @@ this.chkInicCont = function(w){
       this.silabas.dt = this.a_("d_").concat(this.a_("t_"))
       this.silabas._l = this.a_("b_l").concat(this.a_("c_l")).concat(this.a_("d_l")).concat(this.a_("f_l")).concat(this.a_("g_l"));
       this.silabas.cgkqu_n = this.a_("c_n").concat(this.a_("g_n")).concat(this.a_("k_n")).concat(this.a_("qu_n"));
-      this.silabas.c_n=this.a_("c_n");
-     /*      */
+      this.silabas.c_n = this.a_("c_n");
+      /*      */
       this.grafSilaba = function (ss) {
         //   alert(ss)
         // 1. Map simple group names to their respective method suffixes
@@ -306,7 +308,7 @@ this.chkInicCont = function(w){
 
         for (const [key, method] of groups) {
           if (this.silabas[key]?.includes(ss)) {
-            alert(this.silabas[key] + "\n\n" + method + "\n\n" + this[method])
+            //   alert(this.silabas[key] + "\n\n" + method + "\n\n" + this[method])
             this[method](ss);
             return; // Stops the loop and exits the method
           }
@@ -326,37 +328,37 @@ this.chkInicCont = function(w){
 
         // 3. Process complex combined checks cleanly with early returns
         //if (match("tr_", "dr_"))   { this.t_(ss); return; }
-   
-        if (match("cr_s", "cr_z")) { this.c_(ss); return; }
-        if (match("m_n")) { this.m_(ss); return; }
-        if (match("t_n", "d_n")) { this.t_(ss); return; }
-        if (match("_n")) { this.nñ_(ss); return; }
-        if (match("j_m")) { this.j_(ss); return; }
-        if (match("_")) { this.aeiou_(ss); return; }
-     //   
 
-     /*
-       if (match("c_n")) { alert("con...."+ss); return; }    
         if (match("cr_s", "cr_z")) { this.c_(ss); return; }
-        if (match("m_n")) { this.m_(ss); return; }
+        //  if (match("m_n")) { this.m_(ss); return; }
         if (match("t_n", "d_n")) { this.t_(ss); return; }
         if (match("_n")) { this.nñ_(ss); return; }
         if (match("j_m")) { this.j_(ss); return; }
         if (match("_")) { this.aeiou_(ss); return; }
-     */
+        //   
+
+        /*
+          if (match("c_n")) { alert("con...."+ss); return; }    
+           if (match("cr_s", "cr_z")) { this.c_(ss); return; }
+           if (match("m_n")) { this.m_(ss); return; }
+           if (match("t_n", "d_n")) { this.t_(ss); return; }
+           if (match("_n")) { this.nñ_(ss); return; }
+           if (match("j_m")) { this.j_(ss); return; }
+           if (match("_")) { this.aeiou_(ss); return; }
+        */
 
         this.grafSilabaLiteral(ss)
 
       };
-      this.match=function(ss){
-        return  (...keys) => keys.some(key => this.a_(key).includes(ss));
+      this.match = function (ss) {
+        return (...keys) => keys.some(key => this.a_(key).includes(ss));
       }
-      
+
 
 
 
       this.grafSilabaLiteral = function (ss) {
-      //  alert(ss)
+        alert(ss)
         //   if (arpending.includes(ss)) return;
         if (confirm("Silabas pendientes:\n" + arpending + "\n\nGrafico para esta silaba no existente... ' " + ss + " '' do you want to save it?")) {
           arpending.push(ss);
@@ -365,35 +367,57 @@ this.chkInicCont = function(w){
         var color = this.params.color;
         this.params.color = "green"
         var ar = [];
-        var i=this.params.inicw;
-     
+        var i = this.params.inicw;
+        var lp = this.params.lastPoint;
+        var sz = this.params.size;
+        if (this.params.inicw) this.params.lastPoint.y = this.params.line - this.params.size - 3
         this.params.color = color;
-        for(let l of ss){
-          if(l==="c"||l==="k"){
-            
+        for (let l of ss) {
+          if (l === "c" || l === "k") {
+            if (l === "g");
           };//chk por ch
-         if(l==="g") ;
-         if(l==="b") ;
-         if(l==="t"||l==="k") ;
-         if(l==="f"||l==="k") ;
-        if(l==="v"||l==="k") ;
-         if(l==="h") ;
-         if(l==="j") ;
-     //    if(l==="ch"||l==="k") ;
-         if(l==="l"||l==="k") ;
-    //    if(l==="ll"||l==="k") ;
-         if(l==="y") ;//chk
-         if(l==="b") ;
-         if(l==="m"||l==="k") ;
-         if(l==="n"||l==="k") ;
-        if(l==="ñ"||l==="k") ;
-         if(l==="r") ;
-   //      if(l==="r") ;rr
-         if(l==="s"||l==="z") ;//chk
-     //    if(l==="c"||l==="k") ;
-       // if(l==="c"||l==="k") ;
-         //if(l==="p") ;
- m  
+          if (l === "d") {
+
+            this.grDT(lp, 2, sz)
+          };
+          if (l === "b") [
+            this.grBP(lp, 3, sz)
+          ];
+          if (l === "t") {
+            this.grDT(lp, 1, sz)
+          };
+          if (l === "f" || l === "k") {
+            this.grFV(lp, 1, sz)
+          };
+          if (l === "v") {
+            this.grFV(lp, 3, sz)
+          };;
+          if (l === "h");
+          if (l === "j");
+          //    if(l==="ch"||l==="k") ;
+          if (l === "l" || l === "k");
+          //    if(l==="ll"||l==="k") ;
+          if (l === "y");//chk
+          //   if (l === "b");
+          if (l === "m") {
+            this.grM(lp, 1, sz);
+          };
+          if (l === "n") {
+            if (ss[2] === l) this.params.lastPoint = this.grContraccionN(lp, 1, sz, 45)
+            else this.grNñ(lp, 1, sz) //aqui
+          };
+          if (l === "ñ" || l === "k") {
+            this.grNñ(lp, 3, sz)
+          };
+          if (l === "p") {
+            this.grBP(lp, 1, sz)
+          };;
+          //      if(l==="r") ;rr
+          if (l === "s" || l === "z");//chk
+          //    if(l==="c"||l==="k") ;
+          // if(l==="c"||l==="k") ;
+          //if(l==="p") ;
+
 
 
 
@@ -401,17 +425,17 @@ this.chkInicCont = function(w){
 
 
         }
-       // if(this.silabas.consonantes.includes())
+        // if(this.silabas.consonantes.includes())
 
         // ..
-       // if(this.silabas.consonantes.includes(ss[0])) alert("primer letra "+ss[0]+"\n"+ss)
+        // if(this.silabas.consonantes.includes(ss[0])) alert("primer letra "+ss[0]+"\n"+ss)
 
-      
-      this.grLeter = function (l) {
-    //    if (l === "n") this.grContracciones(this.params.inicPoint, 1, 6, 180)
-    //    alert(l + "\n\nConsonante")
+
+        this.grLeter = function (l) {
+          //    if (l === "n") this.grContracciones(this.params.inicPoint, 1, 6, 180)
+          //    alert(l + "\n\nConsonante")
+        }
       }
-    }
 
 
 
@@ -460,7 +484,7 @@ this.chkInicCont = function(w){
         params.lastSimbol = "ci"
         params.lastSilaba = s;
 
-       // alert("ok regresa")
+        // alert("ok regresa")
 
 
       }
@@ -560,7 +584,7 @@ this.chkInicCont = function(w){
 
       }
       this._l = function (s) {
-     //   alert(s)
+        //   alert(s)
         lineWidth = 1;
         //  if (s.includes("ll") || s.includes("y")) lineWidth = 3;
         var p = params.lastPoint;
@@ -1037,6 +1061,7 @@ this.chkInicCont = function(w){
         return p;
       }
       this.grNñ = function (inicPos, lineWidth, size) {
+        alert(size)
         var p = inicPos;
         var path = new Path2D();
         path.moveTo(p.x, p.y)
@@ -1094,17 +1119,17 @@ this.chkInicCont = function(w){
 
         var path = new Path2D();
         path.moveTo(p.x, p.y);
-        var s=1 ;
-        if(clockwise)s=-1
-        var ac = Math.atan(r, r/2);
-        var rc = Math.sqrt(r * r + (r/2) * (r/2));
-        pc.x = p.x + Math.cos(ac+radians) * rc;
-        pc.y = p.y - Math.sin(ac+radians) * rc;
+        var s = 1;
+        if (clockwise) s = -1
+        var ac = Math.atan(r, r / 2);
+        var rc = Math.sqrt(r * r + (r / 2) * (r / 2));
+        pc.x = p.x + Math.cos(ac + radians) * rc;
+        pc.y = p.y - Math.sin(ac + radians) * rc;
         var pr = {}; pr.inicio = p;
         pr.control = pc;
         pr.final = pf
 
-   //     alert(JSON.stringify(pr))
+        //     alert(JSON.stringify(pr))
         // 6. Construir el objeto geométrico Path2D
 
         //        path.moveTo(pInic.x, pInic.y);
@@ -1159,18 +1184,25 @@ this.chkInicCont = function(w){
         return p;
       }
       this.grContraccionN = function (inicPos, lineWidth, size, angle) {
+        //  alert("nnnnn")
+
         var p = inicPos;
         var path = new Path2D();
-        path.moveTo(p.x, p.y)
-       // alert("contraccion n " + size)
-        // params.size = params.size;//corregir  
-        p.x += size;
-        p.y += size;
-        path.lineTo(p.x, p.y);
+        path.moveTo(p.x, p.y);
+        var pc = {};
+        //  alert(JSON.stringify(p))
+        if (angle === 0) { p.y -= 5; pc.x = p.x - 10; pc.y = p.y + 3 }
+        if (angle === 45) { p.y += 2; p.x -= 5; pc.x = p.x + 1; pc.y = p.y + 8 };
+        if (angle === 90) { p.x += 5; pc.x = p.x - 3; pc.y = p.y - 5 };
+        if (angle === 135) { p.y += 5; p.x += 5; pc.x = p.x + 5; pc.y = p.y - 5 };
+        if (angle === 180) { p.y += 5; pc.x = p.x - 10; pc.y = p.y + 3 }
+        //  if (angle === 275) { }
+
+        path.quadraticCurveTo(pc.x, pc.y, p.x, p.y)
 
         ctx.lineWidth = lineWidth;
         ctx.stroke(path);
-        return p;//pending      
+        return p;//pending       
       }
       this.grContraccionFB = function (inicPos, lineWidth, size, angle) {
         var p = inicPos;
@@ -1220,7 +1252,7 @@ this.chkInicCont = function(w){
 
 
       ////////////////////////MARDADOR
-      this.p_ = function (s) {  }
+      this.p_ = function (s) { }
 
 
       this.sc_ = function (s) {
@@ -1943,7 +1975,7 @@ console.log(separarTextoEnSilabas("gimnasio"));
     }
 
     // Ejecución
-   // const todasLasSilabas = generarCombinacionesCVC();
+    // const todasLasSilabas = generarCombinacionesCVC();
     //alert("ddd\n\n" + JSON.stringify(todasLasSilabas));
 
   </script>
