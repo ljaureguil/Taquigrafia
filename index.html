@@ -293,7 +293,7 @@
       this.silabas.jch = this.a_("j_").concat(this.a_("ch_"))
       this.silabas.fv = this.a_("f_").concat(this.a_("v_"))
       this.silabas.dt = this.a_("d_").concat(this.a_("t_"))
-      this.silabas._l = this.a_("b_l").concat(this.a_("c_l")).concat(this.a_("d_l")).concat(this.a_("f_l")).concat(this.a_("g_l"));
+     // this.silabas._l = this.a_("b_l").concat(this.a_("c_l")).concat(this.a_("d_l")).concat(this.a_("f_l")).concat(this.a_("g_l"));
       this.silabas.cgkqu_n = this.a_("c_n").concat(this.a_("g_n")).concat(this.a_("k_n")).concat(this.a_("qu_n"));
       this.silabas.c_n = this.a_("c_n");
       /*      */
@@ -331,7 +331,7 @@
 
         if (match("cr_s", "cr_z")) { this.c_(ss); return; }
         //  if (match("m_n")) { this.m_(ss); return; }
-        if (match("t_n", "d_n")) { this.t_(ss); return; }
+     //   if (match("t_n", "d_n")) { this.t_(ss); return; }
         if (match("_n")) { this.nñ_(ss); return; }
         if (match("j_m")) { this.j_(ss); return; }
         if (match("_")) { this.aeiou_(ss); return; }
@@ -347,7 +347,101 @@
            if (match("_")) { this.aeiou_(ss); return; }
         */
 
-        this.grafSilabaLiteral(ss)
+    //    this.grafSilabaLiteral(ss)
+
+       alert(ss)
+        /*      //   if (arpending.includes(ss)) return;
+              if (confirm("Silabas pendientes:\n" + arpending + "\n\nGrafico para esta silaba no existente... ' " + ss + " '' do you want to save it?")) {
+                arpending.push(ss);
+                localStorage.setItem("selpending", JSON.stringify(arpending))
+              }*/
+        var color = this.params.color;
+        this.params.color = "green"
+        var ar = [];
+        var i = this.params.inicw;
+      //  var lp = this.params.lastPoint;
+    //    var sz = this.params.size;
+      //  if (this.params.inicw) this.params.lastPoint.y = this.params.line - this.params.size - 3
+   
+        for (let l of ss) {
+        alert(l)
+
+          if (l === "s") {
+            this.sc_(ss);
+             if(i) this.params.inicw=false;
+          }
+          if (l === "c") {
+            alert(l+JSON.stringify(this.params.lastPoint))
+            this.cgkqu_(ss);  if(i) this.params.inicw=false;
+  alert(l+JSON.stringify(this.params.lastPoint))
+
+          }
+            if (l === "g"){
+              this.cgkqu_(ss);  if(i) this.params.inicw=false;
+            };
+      //  chk por ch
+          if (l === "d") {
+            this.dt_(ss);  if(i) this.params.inicw=false;
+          //  this.grDT(lp, 2, sz)
+          };
+          if (l === "b") {
+          //  this.grBP(lp, 3, sz)
+          this.bp_(ss);  if(i) this.params.inicw=false;
+          };
+          if (l === "t") {
+            this.dt_(ss);  if(i) this.params.inicw=false;
+           // this.grDT(lp, 1, sz)
+          };
+          if (l === "f" || l === "k") {
+            this.fv_(ss);  if(i) this.params.inicw=false;
+           // this.grFV(lp, 1, sz)
+          };
+          if (l === "v") {
+            this.fv_(ss);  if(i) this.params.inicw=false;
+
+           // this.grFV(lp, 3, sz)
+          };;
+          if (l === "h");
+          if (l === "j");
+          this.jch_(ss)
+          //    if(l==="ch"||l==="k") ;
+          if (l === "l" || l === "y"){
+            this.lyll_(ss);;  if(i) this.params.inicw=false;
+          };
+          //    if(l==="ll"||l==="k") ;
+          if (l === "y");//chk
+          //   if (l === "b");
+          if (l === "m") {
+         //   alert("grmmmm")
+           this.m_(ss);;  if(i) this.params.inicw=false;// this.grM(lp, 1, sz);
+          };
+          if (l === "n") {
+          //  if (ss[2] === l) this.params.lastPoint = this.grContraccionN(lp, 1, sz, 45)
+          //  else  
+          alert(l)
+              this.nñ_(ss);;  if(i) this.params.inicw=false;// this.grR(lp, 1, sz);////aqui
+          };
+          if (l === "ñ") {
+            tthis.nñ_(ss);  if(i) this.params.inicw=false;// this.grR(lp, 1, sz);////aqui
+    
+         //   this.grNñ(lp, 3, sz);  if(i) this.params.inicw=false;
+          };
+          if (l === "p") {
+            this.p_(ss);  if(i) this.params.inicw=false;
+            //this.grBP(lp, 1, sz)
+          };
+               if(l==="r") {
+           //    this.grR(lp,1,sz);//aqui
+                this.rrr_(ss);  if(i) this.params.inicw=false;
+
+               };
+    
+          this.params.inicw = false;
+          // alert(l + "\n" + ss)
+
+     this.params.color = color;
+
+
 
       };
       this.match = function (ss) {
@@ -358,12 +452,18 @@
 
 
       this.grafSilabaLiteral = function (ss) {
-        //  alert(ss)
-        /*      //   if (arpending.includes(ss)) return;
+   
+
+        }
+     /*
+     
+      this.grafSilabaLiteral = function (ss) {
+          alert(ss)
+             //   if (arpending.includes(ss)) return;
               if (confirm("Silabas pendientes:\n" + arpending + "\n\nGrafico para esta silaba no existente... ' " + ss + " '' do you want to save it?")) {
                 arpending.push(ss);
                 localStorage.setItem("selpending", JSON.stringify(arpending))
-              }*/
+              }
         var color = this.params.color;
         this.params.color = "green"
         var ar = [];
@@ -371,72 +471,80 @@
         var lp = this.params.lastPoint;
         var sz = this.params.size;
         if (this.params.inicw) this.params.lastPoint.y = this.params.line - this.params.size - 3
-        this.params.color = color;
+   
         for (let l of ss) {
           if (l === "s") {
             this.sc_(ss);
+             if(i) this.params.inicw=false;
           }
-          if (l === "c" || l === "k") {
-            if (l === "g");
-          };//chk por ch
+          if (l === "c") {
+            this.cgkqu_(ss);  if(i) this.params.inicw=false;
+          }
+            if (l === "g"){
+              this.cgkqu_(ss);  if(i) this.params.inicw=false;
+            };
+      //  chk por ch
           if (l === "d") {
-
-            this.grDT(lp, 2, sz)
+            this.dt_(ss);  if(i) this.params.inicw=false;
+          //  this.grDT(lp, 2, sz)
           };
-          if (l === "b") [
-            this.grBP(lp, 3, sz)
-          ];
+          if (l === "b") {
+          //  this.grBP(lp, 3, sz)
+          this.bp_(ss);  if(i) this.params.inicw=false;
+          };
           if (l === "t") {
-            this.grDT(lp, 1, sz)
+            this.dt_(ss);  if(i) this.params.inicw=false;
+           // this.grDT(lp, 1, sz)
           };
           if (l === "f" || l === "k") {
-            this.grFV(lp, 1, sz)
+            this.fv_(ss);  if(i) this.params.inicw=false;
+           // this.grFV(lp, 1, sz)
           };
           if (l === "v") {
-            this.grFV(lp, 3, sz)
+            this.fv_(ss);  if(i) this.params.inicw=false;
+
+           // this.grFV(lp, 3, sz)
           };;
           if (l === "h");
           if (l === "j");
+          this.jch_(ss)
           //    if(l==="ch"||l==="k") ;
-          if (l === "l" || l === "k");
+          if (l === "l" || l === "y"){
+            this.lyll_(ss);;  if(i) this.params.inicw=false;
+          };
           //    if(l==="ll"||l==="k") ;
           if (l === "y");//chk
           //   if (l === "b");
           if (l === "m") {
-            alert("grmmmm")
-            this.grM(lp, 1, sz);
+         //   alert("grmmmm")
+           this.m_(ss);;  if(i) this.params.inicw=false;// this.grM(lp, 1, sz);
           };
           if (l === "n") {
             if (ss[2] === l) this.params.lastPoint = this.grContraccionN(lp, 1, sz, 45)
-            else this.grNñ(lp, 1, sz) //aqui
+            else    this.rrr_(ss);;  if(i) this.params.inicw=false;// this.grR(lp, 1, sz);////aqui
           };
           if (l === "ñ" || l === "k") {
-            this.grNñ(lp, 3, sz)
+            this.grNñ(lp, 3, sz);  if(i) this.params.inicw=false;
           };
           if (l === "p") {
-            this.grBP(lp, 1, sz)
-          };;
-          //      if(l==="r") ;rr
-          if (l === "s" || l === "z");//chk
-          //    if(l==="c"||l==="k") ;
-          // if(l==="c"||l==="k") ;
-          //if(l==="p") ;
+            this.p_(ss);  if(i) this.params.inicw=false;
+            //this.grBP(lp, 1, sz)
+          };
+               if(l==="r") {
+               this.grR(lp,1,sz);//aqui
+                this.rrr_(ss);  if(i) this.params.inicw=false;
 
+               };
+    
           this.params.inicw = false;
           // alert(l + "\n" + ss)
 
-
-
-
-
+     this.params.color = color;
 
 
         }
-        // if(this.silabas.consonantes.includes())
-
-        // ..
-        // if(this.silabas.consonantes.includes(ss[0])) alert("primer letra "+ss[0]+"\n"+ss)
-
+     
+     */
 
         this.grLeter = function (l) {
           //    if (l === "n") this.grContracciones(this.params.inicPoint, 1, 6, 180)
@@ -461,12 +569,11 @@
 
         }
 
-        params.lastPoint = this.grCG(params.lastPoint, lineWidth, params.size)
-        params.inicw = false;
-        params.lastSimbol = "c"
-        params.lastSilaba = s;
-
-
+        this.params.lastPoint = this.grCG(this.params.lastPoint, lineWidth, this.params.size)
+        alert(JSON.stringify(this.params.lastPoint))
+        this.params.inicw = false;
+        this.params.lastSimbol = "c"
+        this.params.lastSilaba = s;
 
       }
       this.cgkqu_n = function (s) {
@@ -1285,7 +1392,7 @@
         if (s.length == 3) lineWidth = 4;
         path.arc(p.x, p.y, radio, 0, 2 * Math.PI);
 
-        ctx.lineWidth = lineWidth;
+        ctx.lineWidth = 1;//lineWidth;
         ctx.stroke(path);
         params.lastSilaba = s;
         params.inicw = false;
