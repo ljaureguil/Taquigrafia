@@ -217,7 +217,7 @@
           this.params.lastSilaba = "";
           this.params.lastWord = e.join("");
           this.params.lastWordSil = e;
-          alert("palabras con join de array\n\n" + this.params.lastWord)
+          //   alert("palabras con join de array\n\n" + this.params.lastWord)
 
           for (s of e) {
             this.grafSilaba(s)
@@ -358,12 +358,12 @@
 
 
       this.grafSilabaLiteral = function (ss) {
-        alert(ss)
-        //   if (arpending.includes(ss)) return;
-        if (confirm("Silabas pendientes:\n" + arpending + "\n\nGrafico para esta silaba no existente... ' " + ss + " '' do you want to save it?")) {
-          arpending.push(ss);
-          localStorage.setItem("selpending", JSON.stringify(arpending))
-        }
+        //  alert(ss)
+        /*      //   if (arpending.includes(ss)) return;
+              if (confirm("Silabas pendientes:\n" + arpending + "\n\nGrafico para esta silaba no existente... ' " + ss + " '' do you want to save it?")) {
+                arpending.push(ss);
+                localStorage.setItem("selpending", JSON.stringify(arpending))
+              }*/
         var color = this.params.color;
         this.params.color = "green"
         var ar = [];
@@ -373,6 +373,9 @@
         if (this.params.inicw) this.params.lastPoint.y = this.params.line - this.params.size - 3
         this.params.color = color;
         for (let l of ss) {
+          if (l === "s") {
+            this.sc_(ss);
+          }
           if (l === "c" || l === "k") {
             if (l === "g");
           };//chk por ch
@@ -400,6 +403,7 @@
           if (l === "y");//chk
           //   if (l === "b");
           if (l === "m") {
+            alert("grmmmm")
             this.grM(lp, 1, sz);
           };
           if (l === "n") {
@@ -417,6 +421,9 @@
           //    if(l==="c"||l==="k") ;
           // if(l==="c"||l==="k") ;
           //if(l==="p") ;
+
+          this.params.inicw = false;
+          // alert(l + "\n" + ss)
 
 
 
@@ -1087,6 +1094,7 @@
         return p;
       }
       this.grSZ = function (inicPos, lineWidth, size) {
+        alert("aqui grsz")
         var p = inicPos;
         var radio = 3;
         var path = new Path2D();
@@ -1095,6 +1103,7 @@
 
         ctx.lineWidth = lineWidth;
         ctx.stroke(path);
+        alert("chk s")
         return p;
 
       }
@@ -1256,6 +1265,7 @@
 
 
       this.sc_ = function (s) {
+        //    alert("aqui estamos sc_")
         var radio = 3;
         var p = params.lastPoint;
         var path = new Path2D();
@@ -1268,7 +1278,9 @@
           if (s.includes("a")) { params.lastPoint.y = params.line - 25 }
           if (s.includes("e") || s.includes("i")) { params.lastPoint.y = params.line - 4 }
           if (s.includes("o") || s.includes("u")) { parmas.lastPoint.y = params.line + 8 }
+
         }
+
         params.lastPoint = p;
         if (s.length == 3) lineWidth = 4;
         path.arc(p.x, p.y, radio, 0, 2 * Math.PI);
@@ -1291,6 +1303,7 @@
       //        this.l_ = function (s) { alert(s) }
 
       this.grafC = function (ob) {
+        alert("aqui grafC")
         var lineWidth = ob.lineWidth;
         var radio = ob.radio;
         var p = params.lastPoint;
