@@ -53,7 +53,7 @@
 
           this.params.lastPoint.y = 220
           this.word(ar[i]);
-          this.params.lastPoint.x += 20;
+          this.params.lastPoint.x +=20;
           this.params.lastPoint.y = 220;
           //   alert(JSON.stringify(this.params))
 
@@ -219,10 +219,13 @@
           this.params.lastWordSil = e;
           //   alert("palabras con join de array\n\n" + this.params.lastWord)
           this.inicw = false;
+        //  alert(this.params.lastWord + JSON.stringify(this.params.lastPoint))
           for (s of e) {
             //   setTimeout(() => { this.grafSilaba(s) }, 1000)
             this.grafSilaba(s)
           }
+          params.lastPoint.x += 20;
+     //     alert(this.params.lastWord + JSON.stringify(this.params.lastPoint))
 
 
         }
@@ -347,7 +350,7 @@
         this.params.color = "green"
         var ar = [];
         var i = this.params.inicw;
-        alert(ss)
+        //   alert(ss)
         // 1. Define the action map outside the loop (or as a static class property)
         const ACTION_MAP = {
           s: "sc_",
@@ -412,7 +415,7 @@
         var p = params.lastPoint;
 
         if (params.inicw) {
-          params.lastPoint.x += 20;
+          
           if (s.includes("a")) params.lastPoint.y = params.line - 25;
           if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 5;
@@ -446,7 +449,7 @@
         var p = params.lastPoint;
 
         if (params.inicw) {
-          params.lastPoint.x += 20;
+          
           if (s.includes("a")) params.lastPoint.y = params.line - 25;
           if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 5;
@@ -461,13 +464,14 @@
 
       }
       this.bp_ = function (s) {
+       
 
         lineWidth = 1;
         if (s.includes("b")) lineWidth = 3;
         var p = params.lastPoint;
 
         if (params.inicw) {
-          params.lastPoint.x += 20;
+          
 
           if (s.includes("a")) params.lastPoint.y = params.line - params.size - 15;
           if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - params.size - 1;
@@ -485,13 +489,14 @@
       }
 
       this.dt_ = function (s) {
+
         lineWidth = 1;
         var params = this.params;
         if (s.includes("d")) lineWidth = 3;
         var p = params.lastPoint;
 
         if (params.inicw) {
-          params.lastPoint.x += 20;
+          
 
           if (s.includes("a")) params.lastPoint.y = params.line - params.size - 15;
           if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - params.size - 2;
@@ -597,8 +602,7 @@
         if (s.includes("ll") || s.includes("y")) lineWidth = 3;
         var p = params.lastPoint;
         var path = new Path2D();
-        //    path.moveTo(p.x, p.y)
-
+        path.moveTo(p.x, p.y)
         if (params.inicw) {
           params.lastPoint.x + 20;
 
@@ -608,12 +612,7 @@
           path.moveTo(p.x, p.y)
         }
 
-        params.size = params.size;//corregir  
-        //   p.x -= params.size;
-        //    p.y += params.size;
-        params.lastPoint = p;
 
-        path.moveTo(p.x, p.y)
         p.x += params.size;
         p.y -= params.size;
         params.lastPoint = p;
@@ -638,8 +637,6 @@
 
         }
 
-
-
         lineWidth = 1;
         if (s.includes("rr")) lineWidth = 3;
         var p = params.lastPoint;
@@ -647,7 +644,7 @@
         path.moveTo(p.x, p.y)
 
         if (params.inicw) {
-          params.lastPoint.x += 20;
+          
 
           if (s.includes("a")) params.lastPoint.y = params.line - 15;
           if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
@@ -658,6 +655,7 @@
         params.size = params.size;//corregir  
         p.x += params.size;
         p.y -= params.size;
+
         params.lastPoint = p;
         path.lineTo(p.x, p.y);
 
@@ -665,7 +663,7 @@
         ctx.stroke(path); // alert(JSON.stringify(params))
         //   params.lastLetter = params.letter;
         params.lastSimbol = "r"
-          ;
+
         params.inicw = false;
 
 
@@ -679,7 +677,7 @@
         path.moveTo(p.x, p.y)
 
         if (params.inicw) {
-          params.lastPoint.x += 20;
+          
 
           if (s.includes("a")) params.lastPoint.y = params.line - 15;
           if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
@@ -701,7 +699,12 @@
         params.inicw = false;
 
       }
-      this.nñ_ = function (s) {
+      this.nñ_ = function (s) {//aqui
+        if(!params.inicw && s.includes("t") || s.includes("d")){ //aqui..
+          this.cont(params.lastPoint,5,1,180,false);
+          return;
+
+        }
         lineWidth = 1;
         if (s.includes("ñ")) lineWidth = 3;
         var p = params.lastPoint;
@@ -709,7 +712,7 @@
         path.moveTo(p.x, p.y)
 
         if (params.inicw) {
-          params.lastPoint.x += 20;
+          
 
           if (s.includes("a")) params.lastPoint.y = params.line - 35;
           if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 15;
@@ -1082,6 +1085,40 @@
         return p;
 
       }
+ this.cont = function(p1, size, lineWidth, angle, ccw) {
+    // 1. Map ccw boolean directly to 1 or -1 (removes variable declaration and conditional branching)
+    const d = ccw ? -1 : 1;
+
+    // 2. Convert degrees to radians using a pre-calculated multiplier constant (saves a division)
+    const theta = angle * 0.017453292519943295; 
+    const cos = Math.cos(theta);
+    const sin = Math.sin(theta);
+
+    // 3. Inline the original point coordinates directly into the rotation matrix formula.
+    // This completely bypasses creating temporary cp and end objects, reducing Garbage Collection (GC) load.
+    const cpX = (size * 0.5 * d) * cos - (-size) * sin + p1.x;
+    const cpY = (-size) * cos + (size * 0.5 * d) * sin + p1.y;
+
+    const endX = (size * d) * cos - 0 * sin + p1.x; // 0 * sin drops out completely
+    const endY = 0 * cos + (size * d) * sin + p1.y; // 0 * cos drops out completely
+
+    // 4. Initialize Path2D and chain operations smoothly
+    const path = new Path2D();
+    
+    // 5. CRITICAL FIX: You had `ctx.moveTo` but were drawing a separate `path`. 
+    // Moving the path start point fixes the disconnected curve bug.
+    path.moveTo(p1.x, p1.y); 
+    path.quadraticCurveTo(cpX, cpY, endX, endY);
+   
+
+    // 6. Execute side-effect updates and drawing configurations
+    ctx.lineWidth = lineWidth;
+    ctx.stroke(path);
+
+    // 7. Update state using clean object assignments
+    this.params.lastPoint = { x: endX, y: endY };
+    this.params.lastSimbol = `contraccion ${angle}`;
+};
 
       this.grContracciones = function (inicPoint, lineWidth, size, angle, clockwise) {
         //  // 1. Determinar el sentido del giro (derecha o izquierda)
