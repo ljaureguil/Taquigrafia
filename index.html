@@ -304,6 +304,17 @@
       this.grafSilaba = function (ss) {
         this.params.lastsilaba = ss
         //alert(ss)
+ 
+          if(this.params.inicCont=== "con" || this.params.inicCont==="com"){
+            this.grInicCont()
+ 
+        }
+
+        if(this.params.inicw && ss=== "con" || ss==="com"){
+          this.params.inicCont=ss;
+          return;
+      
+        }
         // 1. Map simple group names to their respective method suffixes
         const groups = [
           ['cgkq', 'cgkqu_'], ['m', 'm_'], ['bp', 'bp_'], ['s', 'sc_'],
@@ -363,7 +374,8 @@
           n: "nñ_", ñ: "nñ_",
           p: "p_",
           r: "rrr_",
-          j: "jch_"
+          j: "jch_",
+          q: "cgkqu_"
         };
 
         // 2. The optimized loop
@@ -416,16 +428,18 @@
 
         if (params.inicw) {
           
+          
           if (s.includes("a")) params.lastPoint.y = params.line - 25;
           if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 5;
+          if(s.includes("qu")) params.lastPoint.y-=8;
 
         }
 
         this.params.lastPoint = this.grCG(this.params.lastPoint, lineWidth, this.params.size)
         //     
         this.params.inicw = false;
-        this.params.lastSimbol = "c"
+    //    this.params.lastSimbol = "c"
           ;
 
       }
@@ -460,7 +474,7 @@
         params.lastPoint = this.grContracciones(params.lastPoint, 1, 4, 230)
 
         //     params.inicw = false;
-        params.lastSimbol = "ci"
+       // params.lastSimbol = "ci"
 
       }
       this.bp_ = function (s) {
@@ -479,7 +493,7 @@
         }
 
         params.lastPoint = this.grBP(params.lastPoint, lineWidth, params.size)
-        params.lastSimbol = "b"
+ //       params.lastSimbol = "b"
           ;
         params.inicw = false;
 
@@ -506,7 +520,7 @@
         params.lastPoint = this.grDT(params.lastPoint, lineWidth, params.size)
 
           ;
-        params.lastSimbol = "d"
+  //      params.lastSimbol = "d"
         params.inicw = false;
       }
       this.fv_ = function (s) {
@@ -530,7 +544,7 @@
         params.lastPoint = this.grFV(params.lastPoint, lineWidth, params.size)
         params.lastLetter = params.letter;
         ;
-        params.lastSilbol = "f"
+   //     params.lastSilbol = "f"
         params.inicw = false
 
 
@@ -552,7 +566,7 @@
         }
 
         params.lastPoint = this.grJCH(params.inicPoint, lineWidth, params.size)
-        params.lastSimbol = "b"
+   //     params.lastSimbol = "j"
           ;
         params.inicw = false;
 
@@ -957,6 +971,7 @@
 
         ctx.lineWidth = lineWidth;
         ctx.stroke(path);
+        this.params.lastSimbol="b"
         return p;
       }
       this.grCG = function (inicPos, lineWidth, size) {
@@ -969,6 +984,7 @@
 
         ctx.lineWidth = lineWidth;
         ctx.stroke(path);
+                this.params.lastSilbol = "c"
         return p
       }
       this.grDT = function (inicPos, lineWidth, size) {
@@ -980,7 +996,7 @@
         path.lineTo(p.x, p.y);
 
         ctx.lineWidth = lineWidth;
-        ctx.stroke(path);
+        ctx.stroke(path);   this.params.lastSilbol = "d"
         return p;
       }
       this.grFV = function (inicPos, lineWidth, size) {
@@ -990,7 +1006,7 @@
         p.x += size;
         p.y += size;
         path.quadraticCurveTo(p.x - 25, p.y - 10, p.x, p.y);
-
+        this.params.lastSilbol = "f"
         ctx.lineWidth = lineWidth;
         ctx.stroke(path); //  alert(JSON.stringify(params))
 
@@ -1006,7 +1022,7 @@
 
         ctx.lineWidth = lineWidth;
         ctx.stroke(path); //  alert(JSON.stringify(params))
-
+this.params.lastSilbol = "h"
         return p;
       }
       this.grJCH = function (inicPos, lineWidth, size) {
@@ -1028,7 +1044,7 @@
         p.y -= size;
 
         path.quadraticCurveTo(p.x - 25, p.y - 5, p.x, p.y);
-
+this.params.lastSilbol = "l"
         ctx.lineWidth = lineWidth;
         ctx.stroke(path); //  alert(JSON.stringify(params))
         return p;
@@ -1054,7 +1070,7 @@
         p.x += params.size;
         params.lastPoint = p;
         path.quadraticCurveTo(p.x - 15, p.y + 25, p.x, p.y);
-
+this.params.lastSilbol = "n"
         ctx.lineWidth = lineWidth;
         ctx.stroke(path);
         return p;
@@ -1066,7 +1082,7 @@
         p.x += size;
         p.y -= size;
         path.lineTo(p.x, p.y);
-
+this.params.lastSilbol = "r"
         ctx.lineWidth = lineWidth;
         ctx.stroke(path);
         return p;
@@ -1078,12 +1094,33 @@
         var path = new Path2D();
         path.moveTo(p.x, p.y)
         path.arc(p.x, p.y, radio, 0, 2 * Math.PI);
-
+this.params.lastSilbol = "c"
         ctx.lineWidth = lineWidth;
         ctx.stroke(path);
         alert("chk s")
         return p;
 
+      }
+
+      this.grInicCont = function(c){
+ 
+          var x=this.params.lastPoint.x, y=this.params.lastPoint.y;
+          if(this.params.lastSimbol!=undefined){
+          if(this.params.lastSimbol.includes("c") || this.params.lastSimbol.includes("g") ){x+=x+10;y-=5}
+          if(this.params.lastSimbol.includes("t")  || this.params.lastSimbol.includes("d") ){x+=5,y-=15}
+          }
+          else {x+=10;y-=15}
+        this.grDot(x,y,2)
+      //    alert("aqui");
+          this.params.inicCont="";
+          
+      }
+      this.grDot = function(x,y,r){
+          var path=new Path2D();
+          path.moveTo(x,y)
+          path.arc(x,y,r,0,Math.PI*2);
+          ctx.fillStyle=params.color;
+          ctx.fill(path)
       }
  this.cont = function(p1, size, lineWidth, angle, ccw) {
     // 1. Map ccw boolean directly to 1 or -1 (removes variable declaration and conditional branching)
