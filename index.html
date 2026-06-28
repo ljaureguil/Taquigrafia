@@ -21,7 +21,7 @@
   <button id="startBtn">Dictate</S></button>
   <button id="stopBtn">Stop</button>
 
-  <textarea id="shs" style="width:90%;font-size:10px;height:params.sizepx;"></textarea>
+  <textarea id="shs" style="width:90%;font-size:10px;height:fit-content"></textarea>
   <script>
     startBtn.addEventListener('click', () => speech.on());
     stopBtn.addEventListener('click', () => speech.off());
@@ -115,7 +115,7 @@
 
 
     const speech = new SpeechController(imsg);
-    
+
     var link = 'https://api.jsonblob.com/019ee2d9-0026-74ff-9c64-8b277dbac393';
     localStorage.removeItem("selpending")
     var arpending = localStorage.getItem("selpending");// alert(arpending)
@@ -310,6 +310,7 @@
         shs.value = JSON.stringify(ars);
         for (e of ars) {
           this.params.inicw = true;
+          this.params.lastSimbol = "";
           this.params.lastsi = "";
           this.params.lastSilaba = "";
           this.params.lastWord = e.join("");
@@ -400,13 +401,16 @@
         //alert(ss)
 
         if (this.params.inicCont === "con" || this.params.inicCont === "com") {
-          this.grInicCont()
-
+          if (!this.params.inicw) this.grInicCont();
+          this.params.inicCont = "";
+          //   return
         }
 
-        if (this.params.inicw && ss === "con" || ss === "com") {
-          this.params.inicCont = ss;
-          return;
+        if (ss === "con" || ss === "com") {
+          if (this.params.inicw) {
+            this.params.inicCont = ss;
+            return;
+          }
 
         }
         // 1. Map simple group names to their respective method suffixes
@@ -709,25 +713,28 @@
         lineWidth = 1;
         if (s.includes("ll") || s.includes("y")) lineWidth = 3;
         var p = params.lastPoint;
-        var path = new Path2D();
-        path.moveTo(p.x, p.y)
+        //    var path = new Path2D();
+        //    path.moveTo(p.x, p.y)
         if (params.inicw) {
           params.lastPoint.x + 20;
 
           if (s.includes("a")) params.lastPoint.y = params.line - 15;
           if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 15;
-          path.moveTo(p.x, p.y)
+          //         path.moveTo(p.x, p.y)
         }
+        params.lastPoint = this.grLY(params.lastPoint, lineWidth, params.size)
 
-
-        p.x += params.size;
-        p.y -= params.size;
-        params.lastPoint = p;
-        path.quadraticCurveTo(p.x - 25, p.y - 5, p.x, p.y);
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //  alert(JSON.stringify(params))
+        /*
+        
+                p.x += params.size;
+                p.y -= params.size;
+                params.lastPoint = p;
+                path.quadraticCurveTo(p.x - 25, p.y - 5, p.x, p.y);
+        
+                ctx.lineWidth = lineWidth;
+                ctx.stroke(path); //  alert(JSON.stringify(params))
+                */
         params.lastLetter = params.letter;
         ;
         params.lastSimbol = "l"
@@ -736,6 +743,7 @@
 
       this.rrr_ = function (s) {
         // ...
+        if (params.lastSimbol === "r" && s.includes("rr")) return;
         var ter = false
         for (const v of this.silabas.vocales) {
           var co = v + "r";
@@ -746,30 +754,19 @@
         }
 
         lineWidth = 1;
-        if (s.includes("rr")) lineWidth = 3;
+        if (s.includes("rr")) lineWidth = 2;
+
         var p = params.lastPoint;
-        var path = new Path2D();
-        path.moveTo(p.x, p.y)
 
         if (params.inicw) {
-
 
           if (s.includes("a")) params.lastPoint.y = params.line - 15;
           if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 15;
-          path.moveTo(p.x, p.y)
+          //      path.moveTo(p.x, p.y)
         }
+        params.lastPoint = this.grR(p, lineWidth, params.size)
 
-        params.size = params.size;//corregir  
-        p.x += params.size;
-        p.y -= params.size;
-
-        params.lastPoint = p;
-        path.lineTo(p.x, p.y);
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); // alert(JSON.stringify(params))
-        //   params.lastLetter = params.letter;
         params.lastSimbol = "r"
 
         params.inicw = false;
@@ -779,10 +776,10 @@
 
       this.m_ = function (s) {
         lineWidth = 1;
-        if (s.includes("ñ")) lineWidth = 3;
+        if (s.includes("mp")) lineWidth = 3;
         var p = params.lastPoint;
-        var path = new Path2D();
-        path.moveTo(p.x, p.y)
+        //   var path = new Path2D();
+        //   path.moveTo(p.x, p.y)
 
         if (params.inicw) {
 
@@ -790,17 +787,18 @@
           if (s.includes("a")) params.lastPoint.y = params.line - 15;
           if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 15;
-          path.moveTo(p.x, p.y)
+          //  path.moveTo(p.x, p.y)
         }
-
-        params.size = params.size;//corregir  
-        path.moveTo(p.x, p.y)
-        p.x += params.size;
-        params.lastPoint = p;
-        path.quadraticCurveTo(p.x - 15, p.y - 25, p.x, p.y);
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //  alert(JSON.stringify(params))rams))
+        params.lastPoint = this.grM(params.lastPoint, lineWidth, params.size)
+        /*     params.size = params.size;//corregir  
+             path.moveTo(p.x, p.y)
+             p.x += params.size;
+             params.lastPoint = p;
+             path.quadraticCurveTo(p.x - 15, p.y - 25, p.x, p.y);
+     
+             ctx.lineWidth = lineWidth;
+             ctx.stroke(path); //  alert(JSON.stringify(params))rams))
+             */
         params.lastLetter = params.letter;
         params.lastSimbol = "nm"
           ;
@@ -827,8 +825,8 @@
         lineWidth = 1;
         if (s.includes("ñ")) lineWidth = 3;
         var p = params.lastPoint;
-        var path = new Path2D();
-        path.moveTo(p.x, p.y)
+        ////var path = new Path2D();
+        //  path.moveTo(p.x, p.y)
 
         if (params.inicw) {
 
@@ -836,17 +834,19 @@
           if (s.includes("a")) params.lastPoint.y = params.line - 35;
           if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 15;
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 3;
-          path.moveTo(p.x, p.y)
+          //   path.moveTo(p.x, p.y)
         }
+        params.lastPoint = this.grNñ(params.lastPoint, lineWidth, params.size)
 
-        // params.size = params.size;//corregir  
-        path.moveTo(p.x, p.y)
-        p.x += params.size;
-        params.lastPoint = p;
-        path.quadraticCurveTo(p.x - 15, p.y + 25, p.x, p.y);
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //  alert(JSON.stringify(params))rams))
+        /*  // params.size = params.size;//corregir  
+          path.moveTo(p.x, p.y)
+          p.x += params.size;
+          params.lastPoint = p;
+          path.quadraticCurveTo(p.x - 15, p.y + 25, p.x, p.y);
+  
+          ctx.lineWidth = lineWidth;
+          ctx.stroke(path); //  alert(JSON.stringify(params))rams))
+          */
         params.lastLetter = params.letter;
         params.lastSimbol = "n"
           ;
@@ -873,7 +873,7 @@
         }
         params.lastPoint = this.grContraccionL(params.inicPoint, 1, 4, 45);
         params.lastPoint = this.grBP(params.lastPoint, 3, params.size);
-        params.lastSibol = "b"
+        params.lastSimbol = "b"
 
 
       }
@@ -890,7 +890,7 @@
         }
         params.lastPoint = this.grContraccionR(params.inicPoint, 1, 4, 45);
         params.lastPoint = this.grBP(params.lastPoint, 3, params.size);
-        params.lastSibol = "b"
+        params.lastSimbol = "b"
       }
 
       this.cl_ = function (s) {
@@ -905,7 +905,7 @@
         }
         params.lastPoint = this.grContraccionL(params.inicPoint, 1, 4, 0);
         params.lastPoint = this.grCG(params.lastPoint, 1, params.size);
-        params.lastSibol = "c"
+        params.lastSimbol = "c"
 
       }
 
@@ -921,7 +921,7 @@
         }
         params.lastPoint = this.grContraccionR(params.inicPoint, 1, 4, 0);
         params.lastPoint = this.grCG(params.lastPoint, 1, params.size);
-        params.lastSibol = "c"
+        params.lastSimbol = "c"
 
 
       }
@@ -939,7 +939,7 @@
         }
         params.lastPoint = this.grContraccionR(params.inicPoint, 1, 4, 90);
         params.lastPoint = this.grDT(params.lastPoint, 3, params.size);
-        params.lastSibol = "d"
+        params.lastSimbol = "t"
       }
 
       this.fl_ = function (s) {
@@ -955,7 +955,7 @@
         }
         params.lastPoint = this.grContraccionL(params.inicPoint, 1, 4, 45);
         params.lastPoint = this.grFV(params.lastPoint, 1, params.size - 5);
-        params.lastSibol = "f"
+        params.lastSimbol = "f"
 
       }
       this.fr_ = function (s) {
@@ -970,7 +970,7 @@
         }
         params.lastPoint = this.grContraccionL(params.inicPoint, 2, 4, 45);
         params.lastPoint = this.grFV(params.lastPoint, 1, params.size - 5);
-        params.lastSibol = "f"
+        params.lastSimbol = "f"
       }
 
       this.gl_ = function (s) {
@@ -985,7 +985,7 @@
         }
         params.lastPoint = this.grContraccionL(params.inicPoint, 1, 4, 0);
         params.lastPoint = this.grCG(params.lastPoint, 3, params.size);
-        params.lastSibol = "c"
+        params.lastSimbol = "c"
       }
 
       this.gr_ = function (s) {
@@ -1001,7 +1001,7 @@
         }
         params.lastPoint = this.grContraccionR(params.inicPoint, 1, 4, 0);
         params.lastPoint = this.grCG(params.lastPoint, 3, params.size);
-        params.lastSibol = "c"
+        params.lastSimbol = "c"
 
       }
       this.pl_ = function (s) {
@@ -1016,7 +1016,7 @@
         }
         params.lastPoint = this.grContraccionL(params.inicPoint, 1, 4, 45);
         params.lastPoint = this.grBP(params.lastPoint, 1, params.size);
-        params.lastSibol = "p"
+        params.lastSimbol = "p"
       }
 
       this.pr_ = function (s) {
@@ -1031,7 +1031,7 @@
         }
         params.lastPoint = this.grContraccionR(params.inicPoint, 1, 4, 45);
         params.lastPoint = this.grBP(params.lastPoint, 1, params.size);
-        params.lastSibol = "p"
+        params.lastSimbol = "p"
       }
 
       this.tl_ = function (s) {
@@ -1047,11 +1047,11 @@
         }
         params.lastPoint = this.grContraccionL(params.inicPoint, 1, 4, 90);
         params.lastPoint = this.grDT(params.lastPoint, 1, params.size);
-        params.lastSibol = "t"
+        params.lastSimbol = "t"
       }
       this.tr_ = function (s) {
 
-        var p = params.lastPoint;// alert(JSON.stringify(p))
+        var p = params.lastPoint; //alert(JSON.stringify(p))
         if (params.inicw) {
           p.x += 20;
           if (s.includes("a")) params.lastPoint.y = params.line - params.size - 8;
@@ -1061,7 +1061,7 @@
         }
         params.lastPoint = this.grContraccionR(params.inicPoint, 1, 4, 90);
         params.lastPoint = this.grDT(params.lastPoint, 1, params.size);
-        params.lastSibol = "t";
+        params.lastSimbol = "t";
 
       }
 
@@ -1094,6 +1094,13 @@
       }
       this.grDT = function (inicPos, lineWidth, size) {
         var p = inicPos;
+        // alert(this.params.lastSimbol)
+        if (params.lastSimbol.includes("t") || params.lastSimbol.includes("d")) {
+          p.x += 4; p.y -= (params.size / 1.5);
+
+        }
+
+
         var path = new Path2D();
         path.moveTo(p.x, p.y)
         //    p.x += size;
@@ -1101,7 +1108,8 @@
         path.lineTo(p.x, p.y);
 
         ctx.lineWidth = lineWidth;
-        ctx.stroke(path); this.params.lastSilbol = "d"
+        ctx.stroke(path);
+        this.params.lastSimbol = "d"
         return p;
       }
       this.grFV = function (inicPos, lineWidth, size) {
@@ -1110,7 +1118,7 @@
         path.moveTo(p.x, p.y)
         p.x += size;
         p.y += size;
-        path.quadraticCurveTo(p.x - 25, p.y - 10, p.x, p.y);
+        path.quadraticCurveTo(p.x - size / 1.5, p.y + size / 6, p.x, p.y);
         this.params.lastSilbol = "f"
         ctx.lineWidth = lineWidth;
         ctx.stroke(path); //  alert(JSON.stringify(params))
@@ -1144,11 +1152,18 @@
       }
       this.grLY = function (inicPos, lineWidth, size) {
         var p = inicPos;
+        if (params.lastSimbol === "l") {
+          //  p.x -= (0 + params.size / 2); p.y += (params.size / 1.3);
+
+          return p;
+        }
+
+        var path = new Path2D();
         path.moveTo(p.x, p.y)
         p.x += size;
         p.y -= size;
 
-        path.quadraticCurveTo(p.x - 25, p.y - 5, p.x, p.y);
+        path.quadraticCurveTo(p.x - size / 1.5, p.y - size / 5, p.x, p.y);
         this.params.lastSilbol = "l"
         ctx.lineWidth = lineWidth;
         ctx.stroke(path); //  alert(JSON.stringify(params))
@@ -1160,7 +1175,7 @@
         path.moveTo(p.x, p.y)
 
         p.x += params.size;
-        path.quadraticCurveTo(p.x - 15, p.y - 25, p.x, p.y);
+        path.quadraticCurveTo(p.x - size / 2, p.y - size / 2, p.x, p.y);//aqui
 
         ctx.lineWidth = lineWidth;
         ctx.stroke(path); //  alert(JSON.stringify(params))rams))
@@ -1174,7 +1189,7 @@
         path.moveTo(p.x, p.y)
         p.x += params.size;
         params.lastPoint = p;
-        path.quadraticCurveTo(p.x - 15, p.y + 25, p.x, p.y);
+        path.quadraticCurveTo(p.x - size / 2, p.y + size / 1.5, p.x, p.y);
         this.params.lastSilbol = "n"
         ctx.lineWidth = lineWidth;
         ctx.stroke(path);
@@ -1182,6 +1197,9 @@
       }
       this.grR = function (inicPos, lineWidth, size) {
         var p = inicPos;
+        if (params.lastSimbol === "r") {
+          p.x -= (0 + params.size / 2); p.y += (params.size / 1.3);
+        }
         var path = new Path2D();
         path.moveTo(p.x, p.y)
         p.x += size;
@@ -1192,7 +1210,7 @@
         ctx.stroke(path);
         return p;
       }
-      this.grSZ = function (inicPos, lineWidth, size) {
+      this.grSZ = function (inicPos, lineWidth, size) { //aqui
         //   alert(" grsz")
         var p = inicPos;
         var radio = 3;
@@ -1209,7 +1227,7 @@
       }
 
       this.grInicCont = function (c) {
-
+        if (this.params.inicw) return;
         var x = this.params.lastPoint.x, y = this.params.lastPoint.y;
         if (this.params.lastSimbol != undefined) {
           if (this.params.lastSimbol.includes("c") || this.params.lastSimbol.includes("g")) { x += x + 10; y -= 5 }
@@ -1293,10 +1311,6 @@
         pr.control = pc;
         pr.final = pf
 
-        //     alert(JSON.stringify(pr))
-        // 6. Construir el objeto geométrico Path2D
-
-        //        path.moveTo(pInic.x, pInic.y);
         path.quadraticCurveTo(pc.x, pc.y, pf.x, pf.y);
 
         // Aplicar estilos de línea antes de dibujar
@@ -1497,6 +1511,7 @@
 
 
       this.letter = function (l, index) {
+        alert(borrar)
 
         ctx.strokeStyle = params.color
         params.inicw = false;
@@ -1545,6 +1560,7 @@
       }
 
       this.sz = function (params) {
+        alert(borrar)
         var lineWidth = 1;
 
         ///////////////////////////////////
@@ -1573,6 +1589,7 @@
       }
 
       this.ckq = function (params) {
+        alert(borrar)
         var lineWidth = 1;
         var lineWidth = 1;
 
@@ -1601,6 +1618,7 @@
 
       }
       this.nñ = function (params) {
+        alert(borrar)
         var lineWidth = 1;
 
         ///////////////////////////////////
@@ -1631,6 +1649,7 @@
       }
 
       this.m = function (params) {
+        alert(borrar)
         var lineWidth = 1;
 
         ///////////////////////////////////
@@ -1661,6 +1680,7 @@
       }
 
       this.bp = function (params) {
+        alert(borrar)
 
         var lineWidth = 1;
 
@@ -1724,6 +1744,7 @@
 
 
       this.r = function (params) {
+        alert(borrar)
         var lineWidth = 1;
 
         ///////////////////////////////////
@@ -1758,6 +1779,7 @@
 
 
       this.j = function (params) {
+        alert(borrar)
         var lineWidth = 1;
 
         ///////////////////////////////////
@@ -1792,6 +1814,7 @@
 
 
       this.fv = function (params) {
+        alert(borrar)
         var lineWidth = 1;
 
         ///////////////////////////////////
@@ -1841,7 +1864,7 @@
 
     }
     var params = {};
-    params.size = 25;
+    params.size = 20;//aqui //size
     params.inicPoint = { x: params.size, y: 80 }
     params.lastPoint = params.inicPoint;
     params.line = 80;
@@ -2053,35 +2076,7 @@
 
   </script>
   <script>
-    function generarCombinacionesCVC() {
-      const iniciales = [
-        "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "ñ", "p",
-        "r", "s", "t", "v", "w", "x", "y", "z", "ch", "ll"
-      ];
-      const vocales = ["a", "e", "i", "o", "u"];
-      const finales = ["s", "n", "r", "l", "m", "p", "c", "d", "b", "g", "t", "x", "z"];
 
-      const resultado = {};
-
-      // Bucles limpios usando for...of
-      for (let conFinal of finales) {
-        const clave = `terminadas_en_${conFinal}`;
-        resultado[clave] = [];
-
-        for (let conInicial of iniciales) {
-          for (let vocal of vocales) {
-            // Construye la sílaba y la agrega al arreglo correspondiente
-            resultado[clave].push(conInicial + vocal + conFinal);
-          }
-        }
-      }
-
-      return resultado;
-    }
-
-    // Ejecución
-    // const todasLasSilabas = generarCombinacionesCVC();
-    //alert("ddd\n\n" + JSON.stringify(todasLasSilabas));
 
   </script>
 
