@@ -23,6 +23,8 @@
 
   <textarea id="shs" style="width:90%;font-size:10px;height:fit-content"></textarea>
   <script>
+
+    alert("checar la silaba con y la terminacion ado, porque esta funcionando raro, \n**parece ser cuando se usa la ado en anterior palabra\n\nre hacer la funcionalidad de las contracciones ya que no estan funcionando")
     startBtn.addEventListener('click', () => speech.on());
     stopBtn.addEventListener('click', () => speech.off());
 
@@ -400,19 +402,21 @@
         this.params.lastsilaba = ss
         //alert(ss)
 
-        if (this.params.inicCont === "con" || this.params.inicCont === "com") {
-          if (!this.params.inicw) this.grInicCont();
-          this.params.inicCont = "";
-          //   return
-        }
-
-        if (ss === "con" || ss === "com") {
-          if (this.params.inicw) {
-            this.params.inicCont = ss;
-            return;
-          }
-
-        }
+        /*        if (this.params.inicCont === "con" || this.params.inicCont === "com") {
+                  alert(ss)
+                  if (!this.params.inicw) this.grInicCont();
+                  this.params.inicCont = "";
+                  //   return
+                }
+        
+                if (ss === "con" || ss === "com") {
+                  alert(ss)
+                  if (this.params.inicw) {
+                    this.params.inicCont = ss;
+                    return;
+                  }
+        
+                }*/
         // 1. Map simple group names to their respective method suffixes
         const groups = [
           ['cgkq', 'cgkqu_'], ['m', 'm_'], ['bp', 'bp_'], ['s', 'sc_'],
@@ -672,7 +676,7 @@
 
       }
       this._l = function (s) {
-        //   alert(s)
+        alert("al funcion " + s)
         lineWidth = 1;
         //  if (s.includes("ll") || s.includes("y")) lineWidth = 3;
         var p = params.lastPoint;
@@ -708,13 +712,11 @@
       }
 
       this.lyll_ = function (s) {
-
-
+        //  alert(s)
         lineWidth = 1;
         if (s.includes("ll") || s.includes("y")) lineWidth = 3;
         var p = params.lastPoint;
-        //    var path = new Path2D();
-        //    path.moveTo(p.x, p.y)
+
         if (params.inicw) {
           params.lastPoint.x + 20;
 
@@ -723,20 +725,12 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 15;
           //         path.moveTo(p.x, p.y)
         }
-        params.lastPoint = this.grLY(params.lastPoint, lineWidth, params.size)
-
-        /*
-        
-                p.x += params.size;
-                p.y -= params.size;
-                params.lastPoint = p;
-                path.quadraticCurveTo(p.x - 25, p.y - 5, p.x, p.y);
-        
-                ctx.lineWidth = lineWidth;
-                ctx.stroke(path); //  alert(JSON.stringify(params))
-                */
+        if (this.silabas.vocales.includes(s[0])) params.lastPoint = this.grAL(params.lastPoint, 1, this.params.size)
+        else params.lastPoint = this.grLY(params.lastPoint, lineWidth, params.size)
+        // params.lastPoint = this.grLY(params.lastPoint, lineWidth, params.size)
         params.lastLetter = params.letter;
-        ;
+        params.inicw = false;
+
         params.lastSimbol = "l"
 
       }
@@ -1153,10 +1147,9 @@
       this.grLY = function (inicPos, lineWidth, size) {
         var p = inicPos;
         if (params.lastSimbol === "l") {
-          //  p.x -= (0 + params.size / 2); p.y += (params.size / 1.3);
-
           return p;
         }
+
 
         var path = new Path2D();
         path.moveTo(p.x, p.y)
@@ -1398,11 +1391,12 @@
       }
       this.grAL = function (inicPos, lineWidth, size) {
         var p = inicPos;
+        var path = new Path2D();
         path.moveTo(p.x, p.y)
         p.x += size;
         p.y -= size;
 
-        path.quadraticCurveTo(p.x + 25, p.y - 5, p.x, p.y);
+        path.quadraticCurveTo(p.x + size / 4, p.y + size / 1.3, p.x, p.y);
 
         ctx.lineWidth = lineWidth;
         ctx.stroke(path);
@@ -1843,6 +1837,7 @@
       }
 
       this.lyll = function (params) {
+        alert("checar esta funcion al inicio de palabras porque no regresa la posicion correcta")
         var lineWidth = 1;
 
         ///////////////////////////////////
