@@ -317,9 +317,10 @@
           this.params.lastSilaba = "";
           this.params.lastWord = e.join("");
           this.params.lastWordSil = e;
-          this.inicw = false;
+          //  this.params.lastPoint.y=this.params.line;
           for (s of e) {
             this.grafSilaba(s)
+            this.inicw = false;
           }
           params.lastPoint.x += 20;
           //     alert(this.params.lastWord + JSON.stringify(this.params.lastPoint))
@@ -394,6 +395,7 @@
       this.silabas.jch = this.a_("j_").concat(this.a_("ch_"))
       this.silabas.fv = this.a_("f_").concat(this.a_("v_"))
       this.silabas.dt = this.a_("d_").concat(this.a_("t_"))
+      this.silabas._l = this.a_("_l");
       // this.silabas._l = this.a_("b_l").concat(this.a_("c_l")).concat(this.a_("d_l")).concat(this.a_("f_l")).concat(this.a_("g_l"));
       this.silabas.cgkqu_n = this.a_("c_n").concat(this.a_("g_n")).concat(this.a_("k_n")).concat(this.a_("qu_n"));
       this.silabas.c_n = this.a_("c_n");
@@ -401,6 +403,13 @@
       this.grafSilaba = function (ss) {
         this.params.lastsilaba = ss
         //alert(ss)
+
+        if (this.silabas._l.includes(s)) {
+          this.al_(ss);//
+          return;
+
+        }
+
 
         /*        if (this.params.inicCont === "con" || this.params.inicCont === "com") {
                   alert(ss)
@@ -421,9 +430,9 @@
         const groups = [
           ['cgkq', 'cgkqu_'], ['m', 'm_'], ['bp', 'bp_'], ['s', 'sc_'],
           ['rrr', 'rrr_'], ['nñ', 'nñ_'], ['lyll', 'lyll_'], ['jch', 'jch_'],
-          ['fv', 'fv_'], ['dt', 'dt_'], ['_l', '_l'], ['cgkqu_n', 'cgkqu_n']
+          ['fv', 'fv_'], ['dt', 'dt_'], ['cgkqu_n', 'cgkqu_n']
         ];
-
+        //['_l', '_l'], 
         for (const [key, method] of groups) {
           if (this.silabas[key]?.includes(ss)) {
             //   alert(this.silabas[key] + "\n\n" + method + "\n\n" + this[method])
@@ -431,7 +440,7 @@
             return; // Stops the loop and exits the method
           }
         }
-
+//
         // 2. Process inseparable syllables safely using dynamic bracket notation
         for (const e of this.silabas.inseparables) {
           const method = `${e}_`;
@@ -454,11 +463,7 @@
         if (match("j_m")) { this.j_(ss); return; }
         if (match("_")) { this.aeiou_(ss); return; }
 
-        /*      //   if (arpending.includes(ss)) return;
-              if (confirm("Silabas pendientes:\n" + arpending + "\n\nGrafico para esta silaba no existente... ' " + ss + " '' do you want to save it?")) {
-                arpending.push(ss);
-                localStorage.setItem("selpending", JSON.stringify(arpending))
-              }*/
+        
         var color = this.params.color;
         this.params.color = "green"
         var ar = [];
@@ -710,28 +715,55 @@
         params.lastSimbol = "_l"
 
       }
+      this.al_ = function (s) {
 
-      this.lyll_ = function (s) {
-        //  alert(s)
-        lineWidth = 1;
-        if (s.includes("ll") || s.includes("y")) lineWidth = 3;
-        var p = params.lastPoint;
 
-        if (params.inicw) {
-          params.lastPoint.x + 20;
+        if (this.params.inicw) {
+          this.params.lastPoint.x + 20;
 
-          if (s.includes("a")) params.lastPoint.y = params.line - 15;
-          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
-          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 15;
-          //         path.moveTo(p.x, p.y)
+          if (s[0] === "a") this.params.lastPoint.y = this.params.line - 15;
+          if (s[0] === "e" || s[0] === "i") this.params.lastPoint.y = this.params.line - 3;
+          if (s[0] === "o" || s[0] === "u") this.params.lastPoint.y = this.params.line + 15;
+
         }
-        if (this.silabas.vocales.includes(s[0])) params.lastPoint = this.grAL(params.lastPoint, 1, this.params.size)
-        else params.lastPoint = this.grLY(params.lastPoint, lineWidth, params.size)
-        // params.lastPoint = this.grLY(params.lastPoint, lineWidth, params.size)
-        params.lastLetter = params.letter;
-        params.inicw = false;
+        //   alert(JSON.stringify(this.params.lastPoint))
+        this.params.lastPoint = this.grAL(this.params.lastPoint, 1, this.params.size);
 
-        params.lastSimbol = "l"
+        this.params.inicw = false;
+
+
+
+
+      }
+      this.lyll_ = function (s) { //aqui
+        //    alert(s)
+        lineWidth = 1;
+
+        if (s.includes("ll") || s.includes("y")) lineWidth = 3;
+        var p = this.params.lastPoint;
+
+        if (this.params.inicw) {
+          this.params.lastPoint.x + 20;
+
+          if (s.includes("a")) this.params.lastPoint.y = this.params.line - 15;
+          if (s.includes("e") || s.includes("i")) this.params.lastPoint.y = this.params.line - 3;
+          if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line + 15;
+
+        }
+//alert(75765767)
+        for (const a of this.silabas._l) {
+          if (s.includes(a) && ! this.params.inicw){ this.params.lastPoint = this.grAL(this.params.lastPoint, lineWidth, this.params.size);
+          return;
+          }
+        }
+
+
+
+        this.params.lastPoint = this.grLY(this.params.lastPoint, lineWidth, this.params.size)
+        this.params.lastLetter = this.params.letter;
+        this.params.inicw = false;
+
+        this.params.lastSimbol = "l"
 
       }
 
@@ -784,23 +816,15 @@
           //  path.moveTo(p.x, p.y)
         }
         params.lastPoint = this.grM(params.lastPoint, lineWidth, params.size)
-        /*     params.size = params.size;//corregir  
-             path.moveTo(p.x, p.y)
-             p.x += params.size;
-             params.lastPoint = p;
-             path.quadraticCurveTo(p.x - 15, p.y - 25, p.x, p.y);
      
-             ctx.lineWidth = lineWidth;
-             ctx.stroke(path); //  alert(JSON.stringify(params))rams))
-             */
         params.lastLetter = params.letter;
         params.lastSimbol = "nm"
           ;
         params.inicw = false;
 
       }
-      this.nñ_ = function (s) {//aqui
-        /*    if (!params.inicw && s.includes("t") || s.includes("d")) { //aqui..
+      this.nñ_ = function (s) {
+        /*    if (!params.inicw && s.includes("t") || s.includes("d")) { ..
               this.cont(params.lastPoint, 5, 1, 180, false);
               return;
     
@@ -815,7 +839,7 @@
 
 
 
-
+//alert(s)
         lineWidth = 1;
         if (s.includes("ñ")) lineWidth = 3;
         var p = params.lastPoint;
@@ -832,15 +856,6 @@
         }
         params.lastPoint = this.grNñ(params.lastPoint, lineWidth, params.size)
 
-        /*  // params.size = params.size;//corregir  
-          path.moveTo(p.x, p.y)
-          p.x += params.size;
-          params.lastPoint = p;
-          path.quadraticCurveTo(p.x - 15, p.y + 25, p.x, p.y);
-  
-          ctx.lineWidth = lineWidth;
-          ctx.stroke(path); //  alert(JSON.stringify(params))rams))
-          */
         params.lastLetter = params.letter;
         params.lastSimbol = "n"
           ;
@@ -931,7 +946,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
           params.inicw = false;
         }
-        params.lastPoint = this.grContraccionR(params.inicPoint, 1, 4, 90);
+        params.lastPoint = this.grContraccionR(params.lastPoint, 1, 4, 90);
         params.lastPoint = this.grDT(params.lastPoint, 3, params.size);
         params.lastSimbol = "t"
       }
@@ -1088,8 +1103,8 @@
       }
       this.grDT = function (inicPos, lineWidth, size) {
         var p = inicPos;
-        // alert(this.params.lastSimbol)
-        if (params.lastSimbol.includes("t") || params.lastSimbol.includes("d")) {
+       //  alert(this.params.lastSimbol)
+        if (params.lastSimbol==="t" || params.lastSimbol==="d") {
           p.x += 4; p.y -= (params.size / 1.5);
 
         }
@@ -1168,7 +1183,7 @@
         path.moveTo(p.x, p.y)
 
         p.x += params.size;
-        path.quadraticCurveTo(p.x - size / 2, p.y - size / 2, p.x, p.y);//aqui
+        path.quadraticCurveTo(p.x - size / 2, p.y - size / 2, p.x, p.y);
 
         ctx.lineWidth = lineWidth;
         ctx.stroke(path); //  alert(JSON.stringify(params))rams))
@@ -1203,7 +1218,7 @@
         ctx.stroke(path);
         return p;
       }
-      this.grSZ = function (inicPos, lineWidth, size) { //aqui
+      this.grSZ = function (inicPos, lineWidth, size) {
         //   alert(" grsz")
         var p = inicPos;
         var radio = 3;
@@ -1391,6 +1406,7 @@
       }
       this.grAL = function (inicPos, lineWidth, size) {
         var p = inicPos;
+        //  p=this.params.lastPoint;
         var path = new Path2D();
         path.moveTo(p.x, p.y)
         p.x += size;
@@ -1400,6 +1416,7 @@
 
         ctx.lineWidth = lineWidth;
         ctx.stroke(path);
+        this.params.lastSimbol = "AL"
         return p;
 
       }
@@ -1859,7 +1876,7 @@
 
     }
     var params = {};
-    params.size = 20;//aqui //size
+    params.size = 20; //size
     params.inicPoint = { x: params.size, y: 80 }
     params.lastPoint = params.inicPoint;
     params.line = 80;
