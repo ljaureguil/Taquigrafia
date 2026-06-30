@@ -13,9 +13,9 @@
 <body>
 
   <canvas id="canvas" width="1000" height="500"></canvas>
-  <input id="imsg" type="text" value="" oninput="this.value=this.value.toLowerCase()"
+  <input id="imsg" type="text" value="" oninput="this.value=this.value.toLowerCase();lj.paragraph2(this.value);"
     placeholder="Type a short paragraph here" style="width:80%;background-color: aqua;"></input>
-  <button onclick="lj.2(imsg.value)//lj.word(imsg.value);//gets(imsg.value);">escribe en t grafia</button>
+  <button onclick="lj.paragraph2(imsg.value);//lj.word(imsg.value);//gets(imsg.value);">escribe en t grafia</button>
   <button onclick="clearCanvas()">clear</button>
 
   <button id="startBtn">Dictate</S></button>
@@ -24,7 +24,7 @@
   <textarea id="shs" style="width:90%;font-size:10px;height:fit-content"></textarea>
   <script>
 
-    alert("checar la silaba con y la terminacion ado, porque esta funcionando raro, \n**parece ser cuando se usa la ado en anterior palabra\n\nre hacer la funcionalidad de las contracciones ya que no estan funcionando")
+    alert("checar la contraccion l, cla gla etc... algunas no estan tomando la posicion del ultimo punto correctamente\n\nChecar contraccion br pr no estan funcionando")
     startBtn.addEventListener('click', () => speech.on());
     stopBtn.addEventListener('click', () => speech.off());
 
@@ -341,7 +341,6 @@
         //    alert("222\n\n" + JSON.stringify(k))
         params.Silabas.push(k);
         for (var i = 0; i < k.length; i++) {
-          // this.grafSilaba(k[i]);
           this.getSilabas(k[i])
           //  params.inicw = false;
         }
@@ -396,6 +395,7 @@
       this.silabas.fv = this.a_("f_").concat(this.a_("v_"))
       this.silabas.dt = this.a_("d_").concat(this.a_("t_"))
       this.silabas._l = this.a_("_l");
+      this.silabas._r = this.a_("_r")
       // this.silabas._l = this.a_("b_l").concat(this.a_("c_l")).concat(this.a_("d_l")).concat(this.a_("f_l")).concat(this.a_("g_l"));
       this.silabas.cgkqu_n = this.a_("c_n").concat(this.a_("g_n")).concat(this.a_("k_n")).concat(this.a_("qu_n"));
       this.silabas.c_n = this.a_("c_n");
@@ -404,12 +404,12 @@
         this.params.lastsilaba = ss
         //alert(ss)
 
+
         if (this.silabas._l.includes(s)) {
           this.al_(ss);//
           return;
 
         }
-
 
         /*        if (this.params.inicCont === "con" || this.params.inicCont === "com") {
                   alert(ss)
@@ -440,7 +440,7 @@
             return; // Stops the loop and exits the method
           }
         }
-//
+        //
         // 2. Process inseparable syllables safely using dynamic bracket notation
         for (const e of this.silabas.inseparables) {
           const method = `${e}_`;
@@ -463,13 +463,15 @@
         if (match("j_m")) { this.j_(ss); return; }
         if (match("_")) { this.aeiou_(ss); return; }
 
-        
+
         var color = this.params.color;
         this.params.color = "green"
         var ar = [];
         var i = this.params.inicw;
         //   alert(ss)
         // 1. Define the action map outside the loop (or as a static class property)
+
+
         const ACTION_MAP = {
           s: "sc_",
           c: "cgkqu_", g: "cgkqu_",
@@ -484,7 +486,6 @@
           j: "jch_",
           q: "cgkqu_"
         };
-
         // 2. The optimized loop
         for (const l of ss) {
           //   if (i) this.params.inicw = false;
@@ -495,9 +496,13 @@
             this[methodName](ss);
           }
 
-          this.params.inicw = false;
+          //   this.params.inicw = false;
           this.params.color = color;
         }
+
+
+
+
 
         this.match = function (ss) {
           return (...keys) => keys.some(key => this.a_(key).includes(ss));
@@ -735,7 +740,21 @@
 
 
       }
-      this.lyll_ = function (s) { //aqui
+      this.ar_ = function (s) {
+
+        if (this.params.inicw) {
+          this.params.lastPoint.x + 20;
+
+          if (s[0] === "a") this.params.lastPoint.y = this.params.line - this.params.size * 2.3;
+          if (s[0] === "e" || s[0] === "i") this.params.lastPoint.y = this.params.line - this.params.size - 3;
+          if (s[0] === "o" || s[0] === "u") this.params.lastPoint.y = this.params.line - this.params.size / 2;
+
+        }
+        this.params.lastPoint = this.grAR(this.params.lastPoint, 1, this.params.size);
+        this.params.inicw = false;
+
+      }
+      this.lyll_ = function (s) { //
         //    alert(s)
         lineWidth = 1;
 
@@ -750,10 +769,11 @@
           if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line + 15;
 
         }
-//alert(75765767)
+        //alert(75765767)
         for (const a of this.silabas._l) {
-          if (s.includes(a) && ! this.params.inicw){ this.params.lastPoint = this.grAL(this.params.lastPoint, lineWidth, this.params.size);
-          return;
+          if (s.includes(a) && !this.params.inicw) {
+            this.params.lastPoint = this.grAL(this.params.lastPoint, lineWidth, this.params.size);
+            return;
           }
         }
 
@@ -768,13 +788,15 @@
       }
 
       this.rrr_ = function (s) {
-        // ...
+
         if (params.lastSimbol === "r" && s.includes("rr")) return;
-        var ter = false
-        for (const v of this.silabas.vocales) {
-          var co = v + "r";
-          if (co.includes(co)) {
-            ter = true;
+
+        var ind = s.indexOf("r")
+        if (ind > 0) {
+          var v = s[ind - 1];
+          if (this.silabas.vocales.includes(v)) {
+            this.ar_(s);
+            return;
           }
 
         }
@@ -816,7 +838,7 @@
           //  path.moveTo(p.x, p.y)
         }
         params.lastPoint = this.grM(params.lastPoint, lineWidth, params.size)
-     
+
         params.lastLetter = params.letter;
         params.lastSimbol = "nm"
           ;
@@ -839,7 +861,7 @@
 
 
 
-//alert(s)
+        //alert(s)
         lineWidth = 1;
         if (s.includes("ñ")) lineWidth = 3;
         var p = params.lastPoint;
@@ -1103,8 +1125,8 @@
       }
       this.grDT = function (inicPos, lineWidth, size) {
         var p = inicPos;
-       //  alert(this.params.lastSimbol)
-        if (params.lastSimbol==="t" || params.lastSimbol==="d") {
+        //  alert(this.params.lastSimbol)
+        if (params.lastSimbol === "t" || params.lastSimbol === "d") {
           p.x += 4; p.y -= (params.size / 1.5);
 
         }
@@ -1420,20 +1442,22 @@
         return p;
 
       }
-      /*this.grAL = function(inicPos, lineWidth, size){
-          var p=inicPos;
-               var path = new Path2D();
-              path.moveTo(p.x, p.y)
-      
-              params.size = params.size;//corregir  
-              p.x += size;
-              p.y += size;
-              path.lineTo(p.x, p.y);
-      
-              ctx.lineWidth = lineWidth;
-              ctx.stroke(path);
-               return p;//pending       
-      }*/
+      this.grAR = function (inicPos, lineWidth, size) {//aqui
+        var p = inicPos;
+
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        p.x += size;
+        p.y += size;
+
+        path.quadraticCurveTo(p.x + size / 5, p.y - size / 1.5, p.x, p.y);
+        this.params.lastSilbol = "AR"
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  alert(JSON.stringify(params));
+
+        return p;
+      }
+
 
 
 
@@ -1887,7 +1911,6 @@
     var lj = new taq(params);
     ctx.strokeStyle = "blue";
 
-    //lj.grafSilaba("croz");
 
     shs.value = "uncon buen ejemplo";
     //lj.paragraph2()
