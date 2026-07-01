@@ -22,6 +22,8 @@
   <button id="stopBtn">Stop</button>
 
   <textarea id="shs" style="width:90%;font-size:10px;height:fit-content"></textarea>
+  <textarea id="ts" style="width:90%;font-size:10px;height:50%;"></textarea>
+
   <script>
 
     alert("** Checar el sonido es os us as al inicio y tambien la letra h\n\n*Verificar la letra z que y la Y se ocupa ajustar")
@@ -440,9 +442,10 @@
         
                 }*/
         // 1. Map simple group names to their respective method suffixes
+        //
         const groups = [
           ['cgkq', 'cgkqu_'], ['m', 'm_'], ['bp', 'bp_'], ['s', 'sc_'],
-          ['rrr', 'rrr_'], ['nñ', 'nñ_'], ['lyll', 'lyll_'], ['jch', 'jch_'],
+          ['rrr', 'rrr_'], ['nñ', 'nñ_'],/* ['lyll', 'lyll_'],*/['jch', 'jch_'],
           ['fv', 'fv_'], ['dt', 'dt_'], ['cgkqu_n', 'cgkqu_n']
         ];
         //['_l', '_l'], 
@@ -507,6 +510,7 @@
           if (methodName) {
 
             this[methodName](ss);
+            ts.value += "\n\n" + methodName + "  " + ss + "\n\n" + JSON.stringify(this.params.lastPoint)
             //  return;////aqui
           }
           //   this.params.inicw = false;
@@ -780,11 +784,12 @@
         var p = this.params.lastPoint;
 
         if (this.params.inicw) {
+          ts.value += " .." + s;
           this.params.lastPoint.x + 20;
 
-          if (s.includes("a")) this.params.lastPoint.y = this.params.line - 15;
+          if (s.includes("a")) this.params.lastPoint.y = this.params.line - params.size / 2;
           if (s.includes("e") || s.includes("i")) this.params.lastPoint.y = this.params.line - 3;
-          if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line + 15;
+          if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line + this.params.size / 3;
 
         }
         // alert(75765767)
@@ -1224,6 +1229,21 @@
         ctx.stroke(path); //  //alert(JSON.stringify(params))rams))
         return p;
       }
+      this.grES = function (inicPos, lineWidth, size) {//aqui
+        var p = inicPos;
+
+        var path = new Path2D();
+        path.moveTo(p.x, p.y)
+        //  p.x += size;
+        p.y += size;
+
+        path.quadraticCurveTo(p.x + size / 1, p.y - size / 1.5, p.x, p.y);
+        this.params.lastSilbol = "ES"
+        ctx.lineWidth = lineWidth;
+        ctx.stroke(path); //  //alert(JSON.stringify(params));
+
+        return p;
+      }
       this.grNñ = function (inicPos, lineWidth, size) {
 
         var p = inicPos;
@@ -1496,21 +1516,19 @@
         if (params.inicw) {
           p.x += 35;
           path.moveTo(p.x, p.y);
-          if (s.includes("a")) { params.lastPoint.y = params.line - 25 }
-          if (s.includes("e") || s.includes("i")) { params.lastPoint.y = params.line - 4 }
-          if (s.includes("o") || s.includes("u")) { params.lastPoint.y = params.line + 8 }
+          if (s.includes("a")) { this.params.lastPoint.y = this.params.line - 25 }
+          if (s.includes("e") || s.includes("i")) { this.params.lastPoint.y = this.params.line - 4 }
+          if (s.includes("o") || s.includes("u")) { this.params.lastPoint.y = this.params.line + 8 }
 
         }
 
-        /*    params.lastPoint = p;
-            if (s.length == 3) lineWidth = 4;
-            path.arc(p.x, p.y, radio, 0, 2 * Math.PI);
-    
-            ctx.lineWidth = 1;//lineWidth;
-            ctx.stroke(path);*/
-        ;
-        this.grSZ(params.lastPoint, 1, radio)
-        params.inicw = false;
+        if (this.silabas.vocales.includes(s[0]) && this.params.inicw) {
+          this.params.lastPoint = this.grES(this.params.lastPoint, 1, this.params.size)
+          return;
+        }
+
+        this.grSZ(this.params.lastPoint, 1, radio)
+        this.params.inicw = false;
 
 
       }
@@ -1986,13 +2004,31 @@
       if (!p) return [];
 
       const Fuertes = "aeoAEOáéóÁÉÓ";
-      const Debiles = "iuyIUYüÜíúÍÚ";
-      const Consonantes = "bcdfghjklmnñpqrstvwxyzBCDFGHJKLMNÑPQRSTVWXYZ".replace(/[yY]/g, '');
+      // Quitamos la 'Y' de las vocales débiles base
+      const Debiles = "iuIUüÜíúÍÚ";
+      // Mantenemos la lista de consonantes estándar
+      const Consonantes = "bcdfghjklmnñpqrstvwxyzBCDFGHJKLMNÑPQRSTVWXYZ";
 
-      const gruposInseparables = ["bl", "cl", "fl", "gl", "pl", "br", "cr", "fr", "gr", "pr", "tr", "dr", "ch", "ll", "rr"];
-
-      function tipo(char) {
+      // Nueva función 'tipo' que analiza el contexto de la 'Y'
+      function tipo(char, index) {
         if (!char) return 'X';
+
+        // Si es 'Y' o 'y', evaluamos su posición fonética
+        if (char.toLowerCase() === 'y') {
+          // Si está al inicio de la palabra, es Consonante
+          if (index === 0) return 'C';
+
+          // Si está entre vocales (ej: ra-yo), es Consonante
+          let anterior = p[index - 1];
+          let siguiente = p[index + 1];
+          let esVocalAnterior = anterior && (Fuertes.includes(anterior) || Debiles.includes(anterior));
+          let esVocalSiguiente = siguiente && (Fuertes.includes(siguiente) || Debiles.includes(siguiente));
+          if (esVocalAnterior && esVocalSiguiente) return 'C';
+
+          // En cualquier otro caso (final de palabra como 'rey', 'hoy' o sola 'y'), actúa como vocal Débil
+          return 'D';
+        }
+
         if (Fuertes.includes(char)) return 'F';
         if (Debiles.includes(char)) {
           return "íúÍÚ".includes(char) ? 'F' : 'D';
@@ -2001,13 +2037,15 @@
         return 'X';
       }
 
+      const gruposInseparables = ["bl", "cl", "fl", "gl", "pl", "br", "cr", "fr", "gr", "pr", "tr", "dr", "ch", "ll", "rr"];
       let puntosCorte = [];
       let i = 0;
 
+      // PASO 1: Análisis de bloques de consonantes
       while (i < p.length) {
-        if (tipo(p[i]) === 'C') {
+        if (tipo(p[i], i) === 'C') {
           let inicioC = i;
-          while (i < p.length && tipo(p[i]) === 'C') {
+          while (i < p.length && tipo(p[i], i) === 'C') {
             i++;
           }
           let finC = i - 1;
@@ -2051,7 +2089,9 @@
       }
       let silabasPrevia = tempWord.split("-");
 
+      // PASO 2: Análisis de hiatos y diptongos (reconstruyendo índices globales)
       let resultadoFinal = [];
+      let posicionGlobal = 0; // Rastreador para pasar el índice correcto a la función tipo()
 
       for (let silaba of silabasPrevia) {
         let subSilaba = "";
@@ -2065,13 +2105,16 @@
             let siguiente = silaba[k + 1];
 
             let esHIntercalada = false;
+            let offsetSiguiente = 1;
             if (siguiente.toLowerCase() === 'h' && k < silaba.length - 2) {
               siguiente = silaba[k + 2];
               esHIntercalada = true;
+              offsetSiguiente = 2;
             }
 
-            let t1 = tipo(actual);
-            let t2 = tipo(siguiente);
+            // Enviamos la posición global real de cada letra evaluada
+            let t1 = tipo(actual, posicionGlobal + k);
+            let t2 = tipo(siguiente, posicionGlobal + k + offsetSiguiente);
 
             if ((t1 === 'F' || t1 === 'D') && (t2 === 'F' || t2 === 'D')) {
               let separarVocal = false;
@@ -2097,6 +2140,7 @@
           k++;
         }
         if (subSilaba) resultadoFinal.push(subSilaba);
+        posicionGlobal += silaba.length; // Avanzamos el contador global al terminar la sílaba
       }
 
       return resultadoFinal;
@@ -2128,7 +2172,133 @@
 
   </script>
   <script>
-
+    /*
+    
+    function silabearPalabra(palabra, forzarHiatos = true) {
+          let p = palabra.trim();
+          if (!p) return [];
+    
+          const Fuertes = "aeoAEOáéóÁÉÓ";
+          const Debiles = "iuyIUYüÜíúÍÚ";
+          const Consonantes = "bcdfghjklmnñpqrstvwxyzBCDFGHJKLMNÑPQRSTVWXYZ".replace(/[yY]/g, '');
+    
+          const gruposInseparables = ["bl", "cl", "fl", "gl", "pl", "br", "cr", "fr", "gr", "pr", "tr", "dr", "ch", "ll", "rr"];
+    
+          function tipo(char) {
+            if (!char) return 'X';
+            if (Fuertes.includes(char)) return 'F';
+            if (Debiles.includes(char)) {
+              return "íúÍÚ".includes(char) ? 'F' : 'D';
+            }
+            if (Consonantes.includes(char)) return 'C';
+            return 'X';
+          }
+    
+          let puntosCorte = [];
+          let i = 0;
+    
+          while (i < p.length) {
+            if (tipo(p[i]) === 'C') {
+              let inicioC = i;
+              while (i < p.length && tipo(p[i]) === 'C') {
+                i++;
+              }
+              let finC = i - 1;
+    
+              if (inicioC === 0 || finC === p.length - 1) continue;
+    
+              let longitud = finC - inicioC + 1;
+              let par = p.substring(inicioC, finC + 1).toLowerCase();
+    
+              if (longitud === 1) {
+                puntosCorte.push(inicioC);
+              }
+              else if (longitud === 2) {
+                if (!gruposInseparables.includes(par)) {
+                  puntosCorte.push(inicioC + 1);
+                } else {
+                  puntosCorte.push(inicioC);
+                }
+              }
+              else if (longitud === 3) {
+                let ultimasDos = par.substring(1, 3);
+                if (gruposInseparables.includes(ultimasDos)) {
+                  puntosCorte.push(inicioC + 1);
+                } else {
+                  puntosCorte.push(inicioC + 2);
+                }
+              }
+              else if (longitud === 4) {
+                puntosCorte.push(inicioC + 2);
+              }
+            } else {
+              i++;
+            }
+          }
+    
+          let tempWord = "";
+          let indicesCorte = new Set(puntosCorte);
+          for (let j = 0; j < p.length; j++) {
+            if (indicesCorte.has(j)) tempWord += "-";
+            tempWord += p[j];
+          }
+          let silabasPrevia = tempWord.split("-");
+    
+          let resultadoFinal = [];
+    
+          for (let silaba of silabasPrevia) {
+            let subSilaba = "";
+            let k = 0;
+    
+            while (k < silaba.length) {
+              subSilaba += silaba[k];
+    
+              if (k < silaba.length - 1) {
+                let actual = silaba[k];
+                let siguiente = silaba[k + 1];
+    
+                let esHIntercalada = false;
+                if (siguiente.toLowerCase() === 'h' && k < silaba.length - 2) {
+                  siguiente = silaba[k + 2];
+                  esHIntercalada = true;
+                }
+    
+                let t1 = tipo(actual);
+                let t2 = tipo(siguiente);
+    
+                if ((t1 === 'F' || t1 === 'D') && (t2 === 'F' || t2 === 'D')) {
+                  let separarVocal = false;
+    
+                  if (t1 === 'F' && t2 === 'F') {
+                    separarVocal = true;
+                  }
+    
+                  if (forzarHiatos && ((t1 === 'D' && t2 === 'F') || (t1 === 'F' && t2 === 'D'))) {
+                    separarVocal = true;
+                  }
+    
+                  if (separarVocal) {
+                    if (esHIntercalada) {
+                      subSilaba += silaba[k + 1];
+                      k++;
+                    }
+                    resultadoFinal.push(subSilaba);
+                    subSilaba = "";
+                  }
+                }
+              }
+              k++;
+            }
+            if (subSilaba) resultadoFinal.push(subSilaba);
+          }
+    
+          return resultadoFinal;
+        }
+    
+    
+    
+    
+    */
 
   </script>
 
