@@ -1510,22 +1510,27 @@
         var radio = 3;
         var p = params.lastPoint;
         var path = new Path2D();
-        path.moveTo(p.x, p.y)
+      //  path.moveTo(p.x, p.y)
         var lineWidth = 1;
         //  //alert(params.inicw)
         if (params.inicw) {
-          p.x += 35;
-          path.moveTo(p.x, p.y);
-          if (s.includes("a")) { this.params.lastPoint.y = this.params.line - 25 }
+        //  p.x += 35;
+     //     path.moveTo(p.x, p.y);
+          if (s.includes("a")) { this.params.lastPoint.y = this.params.line - this.params.size/1.5 }
           if (s.includes("e") || s.includes("i")) { this.params.lastPoint.y = this.params.line - 4 }
           if (s.includes("o") || s.includes("u")) { this.params.lastPoint.y = this.params.line + 8 }
 
-        }
-
-        if (this.silabas.vocales.includes(s[0]) && this.params.inicw) {
+           if (this.silabas.vocales.includes(s[0]) ) {
+            this.params.lastPoint.y-=this.params.size/1.5
           this.params.lastPoint = this.grES(this.params.lastPoint, 1, this.params.size)
+             this.params.inicw = false;
+
           return;
         }
+
+        }
+
+       
 
         this.grSZ(this.params.lastPoint, 1, radio)
         this.params.inicw = false;
