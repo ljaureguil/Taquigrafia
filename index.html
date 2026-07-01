@@ -560,7 +560,12 @@
           if (s.includes("qu")) params.lastPoint.y -= 8;
 
         }
-
+        //   alert(this.params.lastSimbol)
+        if (this.params.lastSimbol === "c") {
+          //   alert("aqui")
+          this.params.lastPoint.x -= this.params.size / 1.5;
+          this.params.lastPoint.y += 3;
+        }//aqui
         this.params.lastPoint = this.grCG(this.params.lastPoint, lineWidth, this.params.size)
         //     
         this.params.inicw = false;
@@ -569,6 +574,7 @@
 
       }
       this.cgkqu_n = function (s) {
+        // alert("borrar")
         //  //alert(s)
         if (s.includes("ce") || s.includes("ci")) {
           this.sc_(s);
@@ -689,7 +695,7 @@
 
         }
 
-        params.lastPoint = this.grJCH(params.inicPoint, lineWidth, params.size)
+        params.lastPoint = this.grJCH(params.lastPoint, lineWidth, params.size)
           //     params.lastSimbol = "j"
           ;
         params.inicw = false;
@@ -862,19 +868,13 @@
       }
       this.nñ_ = function (s) {
 
-        if (s.includes("t") || s.includes("d")) { this.cont(params.lastPoint, 5, 1, 180, false); return; }
-        if (s.includes("p") || s.includes("b")) { this.cont(params.lastPoint, 5, 1, 125, false); return; }
-        if (s.includes("j") || s.includes("ch")) { this.cont(params.lastPoint, 5, 1, 45, false); return; }
-        if (s.includes("m") || s.includes("mp") || s.includes("mb")) { this.cont(params.lastPoint, 5, 2, 205, false); return; }
-        if (s.includes("f") || s.includes("v")) { this.cont(params.lastPoint, 5, 2, 90 + 45, true); return; }
-        if (s.includes("l") || s.includes("y")) { this.cont(params.lastPoint, 5, 1, 90, false); return; }
-        /*     if (s.includes("c") && s.length > 0 && !params.inicw) {
-               if (s[s.length - 1]) { this.cont(params.lastPoint, 8, 1, 95, true); return; }//
-     
-             }*/
+        if (s.includes("t") || s.includes("d")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 1, 180, false); return; }
+        if (s.includes("p") || s.includes("b")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 1, 125, false); return; }
+        if (s.includes("j") || s.includes("ch")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 1, 45, false); return; }
+        if (s.includes("m") || s.includes("mp") || s.includes("mb")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 205, false); return; }
+        if (s.includes("f") || s.includes("v")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 90 + 45, true); return; }
+        if (s.includes("l") || s.includes("y")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 1, 90, false); return; }
 
-
-        ////alert(s)
         lineWidth = 1;
         if (s.includes("ñ")) lineWidth = 3;
         var p = params.lastPoint;
@@ -915,7 +915,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
           params.inicw = false;
         }
-        params.lastPoint = this.grContraccionL(params.inicPoint, 1, 4, 45);
+        params.lastPoint = this.grContraccionL(params.lastPoint, 1, 4, 45);
         params.lastPoint = this.grBP(params.lastPoint, 3, params.size);
         params.lastSimbol = "b"
 
@@ -932,7 +932,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
           params.inicw = false;
         }
-        params.lastPoint = this.grContraccionR(params.inicPoint, 1, 4, 45);
+        params.lastPoint = this.grContraccionR(params.lastPoint, 1, 4, 45);
         params.lastPoint = this.grBP(params.lastPoint, 3, params.size);
         params.lastSimbol = "b"
       }
@@ -947,7 +947,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 4;
           params.inicw = false;
         }
-        params.lastPoint = this.grContraccionL(params.inicPoint, 1, 4, 0);
+        params.lastPoint = this.grContraccionL(params.lastPoint, 1, 4, 0);
         params.lastPoint = this.grCG(params.lastPoint, 1, params.size);
         params.lastSimbol = "c"
 
@@ -963,7 +963,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 8;
           params.inicw = false;
         }
-        params.lastPoint = this.grContraccionR(params.inicPoint, 1, 4, 0);
+        params.lastPoint = this.grContraccionR(params.lastPoint, 1, 4, 0);
         params.lastPoint = this.grCG(params.lastPoint, 1, params.size);
         params.lastSimbol = "c"
 
@@ -997,7 +997,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
           params.inicw = false;
         }
-        params.lastPoint = this.grContraccionL(params.inicPoint, 1, 4, 45);
+        params.lastPoint = this.grContraccionL(params.lastPoint, 1, 4, 45);
         params.lastPoint = this.grFV(params.lastPoint, 1, params.size - 5);
         params.lastSimbol = "f"
 
@@ -1012,7 +1012,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
           params.inicw = false;
         }
-        params.lastPoint = this.grContraccionL(params.inicPoint, 2, 4, 45);
+        params.lastPoint = this.grContraccionL(params.lastPoint, 2, 4, 45);
         params.lastPoint = this.grFV(params.lastPoint, 1, params.size - 5);
         params.lastSimbol = "f"
       }
@@ -1027,7 +1027,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 4;
           params.inicw = false;
         }
-        params.lastPoint = this.grContraccionL(params.inicPoint, 1, 4, 0);
+        params.lastPoint = this.grContraccionL(params.lastPoint, 1, 4, 0);
         params.lastPoint = this.grCG(params.lastPoint, 3, params.size);
         params.lastSimbol = "c"
       }
@@ -1058,7 +1058,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
           params.inicw = false;
         }
-        params.lastPoint = this.grContraccionL(params.inicPoint, 1, 4, 45);
+        params.lastPoint = this.grContraccionL(params.lastPoint, 1, 4, 45);
         params.lastPoint = this.grBP(params.lastPoint, 1, params.size);
         params.lastSimbol = "p"
       }
@@ -1073,7 +1073,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
           params.inicw = false;
         }
-        params.lastPoint = this.grContraccionR(params.inicPoint, 1, 4, 45);
+        params.lastPoint = this.grContraccionR(params.lastPoint, 1, 4, 45);
         params.lastPoint = this.grBP(params.lastPoint, 1, params.size);
         params.lastSimbol = "p"
       }
@@ -1089,7 +1089,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
           params.inicw = false;
         }
-        params.lastPoint = this.grContraccionL(params.inicPoint, 1, 4, 90);
+        params.lastPoint = this.grContraccionL(params.lastPoint, 1, 4, 90);
         params.lastPoint = this.grDT(params.lastPoint, 1, params.size);
         params.lastSimbol = "t"
       }
@@ -1103,7 +1103,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
           params.inicw = false;
         }
-        params.lastPoint = this.grContraccionR(params.inicPoint, 1, 4, 90);
+        params.lastPoint = this.grContraccionR(params.lastPoint, 1, 4, 90);
         params.lastPoint = this.grDT(params.lastPoint, 1, params.size);
         params.lastSimbol = "t";
 
@@ -1133,7 +1133,7 @@
 
         ctx.lineWidth = lineWidth;
         ctx.stroke(path);
-        this.params.lastSilbol = "c"
+        this.params.lastSimbol = "c"
         return p
       }
       this.grDT = function (inicPos, lineWidth, size) {
@@ -1313,15 +1313,19 @@
         // Moving the path start point fixes the disconnected curve bug.
         path.moveTo(p1.x, p1.y);
         path.quadraticCurveTo(cpX, cpY, endX, endY);
-
+        pend = {};
+        pend.x = endX;
+        pend.y = endY;
 
         // 6. Execute side-effect updates and drawing configurations
         ctx.lineWidth = lineWidth;
         ctx.stroke(path);
 
         // 7. Update state using clean object assignments
-        this.params.lastPoint = { x: endX, y: endY };
+        // this.params.lastPoint = { x: endX, y: endY };
         this.params.lastSimbol = `contraccion ${angle}`;
+        return pend;
+
       };
 
       this.grContracciones = function (inicPoint, lineWidth, size, angle, clockwise) {
