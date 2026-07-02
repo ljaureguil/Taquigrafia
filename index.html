@@ -9,6 +9,29 @@
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
 </head>
+<style>
+  button {
+    background-color: lightblue;
+    border-radius: 50px;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    color: rgb(75, 68, 220);
+  }
+
+  #startBtn {
+    color: white;
+    font-weight: bold;
+    background-color: #e6a97e;
+    ;
+    box-shadow: inset 0 0 35px rgb(88, 231, 114);
+  }
+</style>
 
 <body>
 
@@ -380,7 +403,7 @@
       }
 
       this.abreviasiones = [];
-      this.contraccionesInic = ["con"].concat(this.a_("pr_")).concat(this.a_("br_")).concat(this.a_("tr_")).concat(this.a_("dr_"))
+      this.contraccionesInic = this.a_("pr_").concat(this.a_("br_")).concat(this.a_("tr_")).concat(this.a_("dr_"))
       this.silabas = {};
       this.silabas.vocales = ["a", "e", "i", "o", "u"];
       this.silabas.consonantes = "bcdfghjklmnñpqrstvwxyzBCDFGHJKLMNÑPQRSTVWXYZ".replace(/[yY]/g, '');
@@ -427,40 +450,30 @@
           return;
 
         }
+        if (this.inicw) {
+          if (this.contraccionesInic.includes(ss)) {
+            this.inicCont = ss;
+            this.grInicCont(ss);
+            return;
+          }
 
-        /*      if (this.inicCont === "con" && !this.inicw) {
-                this.grInicCont(this.inicCont)
-                this.inicCont = "";
-      
-      
-              }
-      
-      
-              for (const c of this.contraccionesInic) {
-                if (ss === c && this.params.inicw) {
-                  ts.value = this.contraccionesInic.length + this.contraccionesInic + "\ncontraccion " + c
-                  if (c === "con") { this.inicCont = c; return; }
-                }
-      
-              }
-      */
+        }
 
-        //  if (ss === "con" && this.inicw) { this.grInicCont(ss) }
-        /*        if (this.params.inicCont === "con" || this.params.inicCont === "com") {
-                  //alert(ss)
-                  if (!this.params.inicw) this.grInicCont();
-                  this.params.inicCont = "";
-                  //   return
-                }
-        
-                if (ss === "con" || ss === "com") {
-                  //alert(ss)
-                  if (this.params.inicw) {
-                    this.params.inicCont = ss;
-                    return;
-                  }
-        
-                }*/
+        if (ss === "con" || ss === "com" && this.params.inicw) {
+          // this.grInicCont();
+          //   alert("iniciando con")
+          this.params.inicCont = ss;
+          return
+        }
+        if (this.params.inicCont === "con" && !this.params.inicw) {
+          //     alert("terminando con")
+          this.grInicCont(this.params.inicCont + ss);
+          this.params.inicCont = "";
+          //  return;
+        }
+
+
+
         // 1. Map simple group names to their respective method suffixes
         //
         const groups = [
@@ -1189,7 +1202,7 @@
         p.x += size;
         p.y += size;
         path.quadraticCurveTo(p.x - size / 1.5, p.y + size / 6, p.x, p.y);
-        this.params.lastSilbol = "f"
+        this.params.lastSimbol = "f"
         ctx.lineWidth = lineWidth;
         ctx.stroke(path); //  //alert(JSON.stringify(params))
 
@@ -1205,7 +1218,7 @@
 
         ctx.lineWidth = lineWidth;
         ctx.stroke(path); //  //alert(JSON.stringify(params))
-        this.params.lastSilbol = "h"
+        this.params.lastSimbol = "h"
         return p;
       }
       this.grJCH = function (inicPos, lineWidth, size) {
@@ -1222,7 +1235,7 @@
       }
       this.grLY = function (inicPos, lineWidth, size) {
         var p = inicPos;
-        if (params.lastSimbol === "l") {
+        if (this.params.lastSimbol === "l") {
           return p;
         }
 
@@ -1233,7 +1246,7 @@
         p.y -= size;
 
         path.quadraticCurveTo(p.x - size / 1.5, p.y - size / 5, p.x, p.y);
-        this.params.lastSilbol = "l"
+        this.params.lastSimbol = "l"
         ctx.lineWidth = lineWidth;
         ctx.stroke(path); //  //alert(JSON.stringify(params))
         return p;
@@ -1243,7 +1256,7 @@
         var path = new Path2D();
         path.moveTo(p.x, p.y)
 
-        p.x += params.size;
+        p.x += this.params.size;
         path.quadraticCurveTo(p.x - size / 2, p.y - size / 2, p.x, p.y);
 
         ctx.lineWidth = lineWidth;
@@ -1259,7 +1272,7 @@
         p.y += size;
 
         path.quadraticCurveTo(p.x + size / 1, p.y - size / 1.5, p.x, p.y);
-        this.params.lastSilbol = "ES"
+        this.params.lastSimbol = "ES"
         ctx.lineWidth = lineWidth;
         ctx.stroke(path); //  //alert(JSON.stringify(params));
 
@@ -1271,25 +1284,25 @@
         var path = new Path2D();
         path.moveTo(p.x, p.y)
         path.moveTo(p.x, p.y)
-        p.x += params.size;
-        params.lastPoint = p;
+        p.x += this.params.size;
+        this.params.lastPoint = p;
         path.quadraticCurveTo(p.x - size / 2, p.y + size / 1.5, p.x, p.y);
-        this.params.lastSilbol = "n"
+        this.params.lastSimbol = "n"
         ctx.lineWidth = lineWidth;
         ctx.stroke(path);
         return p;
       }
       this.grR = function (inicPos, lineWidth, size) {
         var p = inicPos;
-        if (params.lastSimbol === "r") {
-          p.x -= (0 + params.size / 2); p.y += (params.size / 1.3);
+        if (this.params.lastSimbol === "r") {
+          p.x -= (0 + this.params.size / 2); p.y += (this.params.size / 1.3);
         }
         var path = new Path2D();
         path.moveTo(p.x, p.y)
         p.x += size;
         p.y -= size;
         path.lineTo(p.x, p.y);
-        this.params.lastSilbol = "r"
+        this.params.lastSimbol = "r"
         ctx.lineWidth = lineWidth;
         ctx.stroke(path);
         return p;
@@ -1301,7 +1314,7 @@
         var path = new Path2D();
         path.moveTo(p.x, p.y)
         path.arc(p.x, p.y, radio, 0, 2 * Math.PI);
-        this.params.lastSilbol = "c"
+        this.params.lastSimbol = "c"
         ctx.lineWidth = lineWidth;
         ctx.stroke(path);
         p.x += 2; p.y += 1
@@ -1316,20 +1329,37 @@
         var x = this.params.lastPoint.x, y = this.params.lastPoint.y;
         if (this.params.lastSimbol != undefined) {
           if (this.params.lastSimbol === "c" || this.params.lastSimbol === "g") { x += x + 10; y -= 5 }
-          if (this.params.lastSimbol === "t" || this.params.lastSimbol === "d") { x += 5, y -= params.size + 5 }
+          if (this.params.lastSimbol === "t" || this.params.lastSimbol === "d") { x += 5, y -= this.params.size + 5 }
+          if (this.params.lastSimbol === "b" || this.params.lastSimbol === "p") { x += 5, y -= this.params.size + 5 }
+          if (this.params.lastSimbol === "l") { x += 5, y -= this.params.size + 5 }
+          if (this.params.lastSimbol === "f") { x += 5, y -= this.params.size + 5 }
+          if (this.params.lastSimbol === "r") { x += 5, y -= this.params.size + 5 }
+          if (this.params.lastSimbol === "n") { x += 5, y -= this.params.size + 5 }
+          if (this.params.lastSimbol === "h") { x += 5, y -= this.params.size + 5 }
+          if (this.params.lastSimbol === "j") { x += 5, y -= this.params.size + 5 }
+          if (this.params.lastSimbol === "y") { x += 5, y -= this.params.size + 5 }
+          if (this.params.lastSimbol === "m") { x += 5, y -= this.params.size + 5 }
+          if (this.params.lastSimbol === "v") { x += 5, y -= this.params.size + 5 }
+          if (this.params.lastSimbol === "s") { x += 5, y -= this.params.size + 5 }
+          if (this.params.lastSimbol === "AR") { x += 5, y -= this.params.size + 5 }
+          if (this.params.lastSimbol === "AL") { x += 5, y -= this.params.size + 5 }
+          if (this.params.lastSimbol === "ES") { x += 5, y -= this.params.size + 5 }
+
+
         }
-        else { x += 5; y -= params.size + 5 }
+        else { x += 5; y -= this.params.size + 5 }
         this.grDot(x, y, 2.5)
-        alert(c)
+        //   alert(c)
         //  //alert("");
         this.params.inicCont = "";
 
       }
       this.grDot = function (x, y, r) {
+        //   alert("dibujando punto")
         var path = new Path2D();
         path.moveTo(x, y)
         path.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fillStyle = params.color;
+        ctx.fillStyle = this.params.color;
         ctx.fill(path)
       }
       this.cont = function (p1, size, lineWidth, angle, ccw) {
@@ -1960,6 +1990,40 @@
         if (params.letter == "y" || params.letter == "ll") lineWidth = 3;
 
       }
+
+      //// ///PATHS SIMBOSL BASE///////////// 
+      this.sim = {};
+      this.sim.dt = new Path2D();
+      this.sim.bp = new Path2D();
+      this.sim.fv = new Path2D();
+      this.sim.nñ = new Path2D();
+      this.sim.lyll = new Path2D();
+      this.m = new Path2D();
+      this.sim.r = new Path2D();
+      this.sim.j = new Path2D();
+      this.sim.sz = new Path2D();
+      this.sim.al_ = new Path2D();
+      this.sim.ar_ = new Path2D();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ////////////////////////
+
+
+
 
     }
     var params = {};
