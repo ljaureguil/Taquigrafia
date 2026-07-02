@@ -379,6 +379,8 @@
 
       }
 
+      this.abreviasiones = [];
+      this.contraccionesInic = ["con"].concat(this.a_("pr_")).concat(this.a_("br_")).concat(this.a_("tr_")).concat(this.a_("dr_"))
       this.silabas = {};
       this.silabas.vocales = ["a", "e", "i", "o", "u"];
       this.silabas.consonantes = "bcdfghjklmnñpqrstvwxyzBCDFGHJKLMNÑPQRSTVWXYZ".replace(/[yY]/g, '');
@@ -426,6 +428,24 @@
 
         }
 
+        /*      if (this.inicCont === "con" && !this.inicw) {
+                this.grInicCont(this.inicCont)
+                this.inicCont = "";
+      
+      
+              }
+      
+      
+              for (const c of this.contraccionesInic) {
+                if (ss === c && this.params.inicw) {
+                  ts.value = this.contraccionesInic.length + this.contraccionesInic + "\ncontraccion " + c
+                  if (c === "con") { this.inicCont = c; return; }
+                }
+      
+              }
+      */
+
+        //  if (ss === "con" && this.inicw) { this.grInicCont(ss) }
         /*        if (this.params.inicCont === "con" || this.params.inicCont === "com") {
                   //alert(ss)
                   if (!this.params.inicw) this.grInicCont();
@@ -606,7 +626,8 @@
         }
         //   //alert("antes de ir a contracciones")
         params.lastPoint = this.grCG(params.lastPoint, lineWidth, params.size);
-        params.lastPoint = this.grContracciones(params.lastPoint, 1, 4, 230)
+        params.lastPoint = this.grContracciones(params.lastPoint, 1, 4, 230);
+        params.lastSimbol = "contn"
 
         //     params.inicw = false;
         // params.lastSimbol = "ci"
@@ -1290,14 +1311,16 @@
       }
 
       this.grInicCont = function (c) {
-        if (this.params.inicw) return;
+        // if (!this.params.inicw) return;
+
         var x = this.params.lastPoint.x, y = this.params.lastPoint.y;
         if (this.params.lastSimbol != undefined) {
-          if (this.params.lastSimbol.includes("c") || this.params.lastSimbol.includes("g")) { x += x + 10; y -= 5 }
-          if (this.params.lastSimbol.includes("t") || this.params.lastSimbol.includes("d")) { x += 5, y -= params.size + 5 }
+          if (this.params.lastSimbol === "c" || this.params.lastSimbol === "g") { x += x + 10; y -= 5 }
+          if (this.params.lastSimbol === "t" || this.params.lastSimbol === "d") { x += 5, y -= params.size + 5 }
         }
         else { x += 5; y -= params.size + 5 }
         this.grDot(x, y, 2.5)
+        alert(c)
         //  //alert("");
         this.params.inicCont = "";
 
@@ -1510,27 +1533,27 @@
         var radio = 3;
         var p = params.lastPoint;
         var path = new Path2D();
-      //  path.moveTo(p.x, p.y)
+        //  path.moveTo(p.x, p.y)
         var lineWidth = 1;
         //  //alert(params.inicw)
         if (params.inicw) {
-        //  p.x += 35;
-     //     path.moveTo(p.x, p.y);
-          if (s.includes("a")) { this.params.lastPoint.y = this.params.line - this.params.size/1.5 }
+          //  p.x += 35;
+          //     path.moveTo(p.x, p.y);
+          if (s.includes("a")) { this.params.lastPoint.y = this.params.line - this.params.size / 1.5 }
           if (s.includes("e") || s.includes("i")) { this.params.lastPoint.y = this.params.line - 4 }
           if (s.includes("o") || s.includes("u")) { this.params.lastPoint.y = this.params.line + 8 }
 
-           if (this.silabas.vocales.includes(s[0]) ) {
-            this.params.lastPoint.y-=this.params.size/1.5
-          this.params.lastPoint = this.grES(this.params.lastPoint, 1, this.params.size)
-             this.params.inicw = false;
+          if (this.silabas.vocales.includes(s[0])) {
+            this.params.lastPoint.y -= this.params.size / 1.5
+            this.params.lastPoint = this.grES(this.params.lastPoint, 1, this.params.size)
+            this.params.inicw = false;
 
-          return;
+            return;
+          }
+
         }
 
-        }
 
-       
 
         this.grSZ(this.params.lastPoint, 1, radio)
         this.params.inicw = false;
