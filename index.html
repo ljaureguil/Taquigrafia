@@ -43,6 +43,7 @@
 
   <button id="startBtn">Dictate</S></button>
   <button id="stopBtn">Stop</button>
+  <input type="numeric" id="isize" valaue=20></input>
 
   <textarea id="shs" style="width:90%;font-size:10px;height:fit-content"></textarea>
   <textarea id="ts" style="width:90%;font-size:10px;height:50%;"></textarea>
@@ -165,7 +166,7 @@
     var taq = function (params) {
 
 
-      if (params.color === undefined) params.color = "blue"
+      if (params.color === undefined) params.color = "black"
       this.params = params;
       params.inicw = false;
 
@@ -239,27 +240,27 @@
 
 
 
-
-      this.paragraph3 = function (paragraph, params) {
-        clearCanvas();
-        ctx.strokeStyle = "blue";
-        this.params.color = "blue";
-
-        this.params.lastPoint.x = 20;
-        this.params.lastPoint.y = this.params.line;
-        var ar = paragraph.split(" ");
-        for (e of ar) {
-
-
-        }
-
-        for (e of ar) {
-          this.grWord(e)
-
-        }
-
-      }
-
+      /*
+            this.paragraph3 = function (paragraph, params) {
+              clearCanvas();
+              ctx.strokeStyle = "blue";
+              this.params.color = "blue";
+      
+              this.params.lastPoint.x = 20;
+              this.params.lastPoint.y = this.params.line;
+              var ar = paragraph.split(" ");
+              for (e of ar) {
+      
+      
+              }
+      
+              for (e of ar) {
+                this.grWord(e)
+      
+              }
+      
+            }
+      */
 
       this.grWord = function (w) {
         this.params.inicw = false;
@@ -331,7 +332,7 @@
         //ESTE ESL EL BUENO  ...  ...
 
 
-        ctx.strokeStyle = "blue"
+        ctx.strokeStyle = this.params.color;
 
         this.params.lastPoint.x = 20;
         this.params.espacio = 80;
@@ -339,52 +340,59 @@
         this.params.lastPoint.y = this.params.line;
         var ars = procesarFrase(paragraph);
         shs.value = JSON.stringify(ars);
-        for (e of ars) {
+        for (var i = 0; i < ars.length; i++) {//e of ars
+          var e = ars[i];
           this.params.inicw = true;
           this.params.lastSimbol = "";
           this.params.lastsi = "";
           this.params.lastSilaba = "";
           this.params.lastWord = e.join("");
           this.params.lastWordSil = e;
+          /////////////////
+          //  alert(e);
+
+          var w = e.join("")
+
+          if (w === "con" && e.length === 1) { this.grPalabrasInd(w); i++; e = ars[i]; }
+          // else {
+
+          ////////////////
 
           for (s of e) {
             this.grafSilaba(s)
             this.inicw = false;
           }
+          //  }
           if (this.params.lastPoint.x > 500) {
             this.params.lastPoint.x = 0;
             this.params.renglon++;
 
             this.params.line += this.params.espacio;
 
-
-
           }
           params.lastPoint.x += 20;
-          //     //alert(this.params.lastWord + JSON.stringify(this.params.lastPoint))
-
-
         }
 
       }
 
-      this.word2 = function (word) {
-        params.lastSilaba = ""
-        params.lastSimbol = ""
-        params.inicw = true;
-        word = word.toLowerCase();
-        var ars = []
+      /*   this.word2 = function (word) {
+           params.lastSilaba = ""
+           params.lastSimbol = ""
+           params.inicw = true;
+           word = word.toLowerCase();
+           var ars = []
+   
+           var k = this.getSilabas(word);
+           //    //alert("222\n\n" + JSON.stringify(k))
+           params.Silabas.push(k);
+           for (var i = 0; i < k.length; i++) {
+             this.getSilabas(k[i])
+             //  params.inicw = false;
+           }
+           params.inicw = false;
+   
+         }*/
 
-        var k = this.getSilabas(word);
-        //    //alert("222\n\n" + JSON.stringify(k))
-        params.Silabas.push(k);
-        for (var i = 0; i < k.length; i++) {
-          this.getSilabas(k[i])
-          //  params.inicw = false;
-        }
-        params.inicw = false;
-
-      }
 
       this.a_ = function (word) {
         var vocales = "aeiou";
@@ -401,7 +409,8 @@
         return arc;
 
       }
-
+      this.terminaciones = "cion ando endo undo mente".split(" ")
+      this.palabras = "con el algo alguna alguno hacer hora mañana compañia por para tiempo fecha".split(" ")
       this.abreviasiones = [];
       this.contraccionesInic = this.a_("pr_").concat(this.a_("br_")).concat(this.a_("tr_")).concat(this.a_("dr_"))
       this.silabas = {};
@@ -439,7 +448,16 @@
       // this.silabas._l = this.a_("b_l").concat(this.a_("c_l")).concat(this.a_("d_l")).concat(this.a_("f_l")).concat(this.a_("g_l"));
       this.silabas.cgkqu_n = this.a_("c_n").concat(this.a_("g_n")).concat(this.a_("k_n")).concat(this.a_("qu_n"));
       this.silabas.c_n = this.a_("c_n");
-      /*      */
+
+
+
+
+
+      this.grPalabrasInd = function (w) {
+        this.grDot(this.params.lastPoint.x, this.params.line + 5, 3); this.params.lastPoint.x += 20
+
+      }
+
       this.grafSilaba = function (ss) {
         this.params.lastsilaba = ss
         ////alert(ss)
@@ -460,16 +478,15 @@
         }
 
         if (ss === "con" || ss === "com" && this.params.inicw) {
-          // this.grInicCont();
-          //   alert("iniciando con")
+
           this.params.inicCont = ss;
           return
         }
         if (this.params.inicCont === "con" && !this.params.inicw) {
-          //     alert("terminando con")
-          this.grInicCont(this.params.inicCont + ss);
+
+          this.grInicCont(this.params.inicCont, ss);
           this.params.inicCont = "";
-          //  return;
+
         }
 
 
@@ -1323,31 +1340,32 @@
 
       }
 
-      this.grInicCont = function (c) {
+      this.grInicCont = function (c, s) {
         // if (!this.params.inicw) return;
 
         var x = this.params.lastPoint.x, y = this.params.lastPoint.y;
+        var z = this.params.size;
         if (this.params.lastSimbol != undefined) {
-          if (this.params.lastSimbol === "c" || this.params.lastSimbol === "g") { x += x + 10; y -= 5 }
-          if (this.params.lastSimbol === "t" || this.params.lastSimbol === "d") { x += 5, y -= this.params.size + 5 }
-          if (this.params.lastSimbol === "b" || this.params.lastSimbol === "p") { x += 5, y -= this.params.size + 5 }
-          if (this.params.lastSimbol === "l") { x += 5, y -= this.params.size + 5 }
-          if (this.params.lastSimbol === "f") { x += 5, y -= this.params.size + 5 }
-          if (this.params.lastSimbol === "r") { x += 5, y -= this.params.size + 5 }
-          if (this.params.lastSimbol === "n") { x += 5, y -= this.params.size + 5 }
+          if (this.params.lastSimbol === "c" || this.params.lastSimbol === "g") { x += x + 5; y -= 5 }
+          if (this.params.lastSimbol === "t" || this.params.lastSimbol === "d") { x += 5, y -= z + 5 }
+          if (this.params.lastSimbol === "b" || this.params.lastSimbol === "p") { x -= z + 5, y -= z + 5 }
+          if (this.params.lastSimbol === "l") { x = z + 2, y -= z + 6 }
+          if (this.params.lastSimbol === "f" || this.params.lastSimbol === "v") { x -= z + 4, y -= z + 3 }
+          if (this.params.lastSimbol === "r") { x -= z + 2, y += z + 5 }
+          if (this.params.lastSimbol === "n") { x -= +5, y -= 1 }
           if (this.params.lastSimbol === "h") { x += 5, y -= this.params.size + 5 }
-          if (this.params.lastSimbol === "j") { x += 5, y -= this.params.size + 5 }
+          if (this.params.lastSimbol === "j") { x += z - 5, y -= z + 5 }
           if (this.params.lastSimbol === "y") { x += 5, y -= this.params.size + 5 }
-          if (this.params.lastSimbol === "m") { x += 5, y -= this.params.size + 5 }
-          if (this.params.lastSimbol === "v") { x += 5, y -= this.params.size + 5 }
-          if (this.params.lastSimbol === "s") { x += 5, y -= this.params.size + 5 }
-          if (this.params.lastSimbol === "AR") { x += 5, y -= this.params.size + 5 }
-          if (this.params.lastSimbol === "AL") { x += 5, y -= this.params.size + 5 }
-          if (this.params.lastSimbol === "ES") { x += 5, y -= this.params.size + 5 }
+          if (this.params.lastSimbol === "m") { x -= z + 2, y -= 5 }
+
+          if (this.params.lastSimbol === "s") { x -= 3, y -= 5 }
+          if (this.params.lastSimbol === "AR") { x -= z + 5, y -= z + 1 }
+          if (this.params.lastSimbol === "AL") { x -= z + 5, y += z - 5 }
+          if (this.params.lastSimbol === "ES") { x += 5, y -= z + 2 }
 
 
         }
-        else { x += 5; y -= this.params.size + 5 }
+        //  else { x += 5; y -= this.params.size + 5 }
         this.grDot(x, y, 2.5)
         //   alert(c)
         //  //alert("");
@@ -1359,7 +1377,7 @@
         var path = new Path2D();
         path.moveTo(x, y)
         path.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fillStyle = this.params.color;
+        ctx.fillStyle = "red";// this.params.color;
         ctx.fill(path)
       }
       this.cont = function (p1, size, lineWidth, angle, ccw) {
@@ -2032,11 +2050,11 @@
     params.lastPoint = params.inicPoint;
     params.line = 80;
 
-    params.color = "blue";
+    params.color = "black";
     params.inicw = false;
     var copyparams = JSON.stringify(params)
     var lj = new taq(params);
-    ctx.strokeStyle = "blue";
+    ctx.strokeStyle = "black";
 
 
     shs.value = "uncon buen ejemplo";
@@ -2048,7 +2066,7 @@
         lj.params.lastPoint.x = 10;
         lj.params.lastPoint.y = 80;
         lj.params.tx = "";
-        lj.params.color = "blue";
+        lj.params.color = "black";
         lj.params.line = 80;
         lj.params.inicPoint = lj.params.lastPoint;
         lj.params.lastLetter = ""
@@ -2058,7 +2076,7 @@
 
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-      ctx.strokeStyle = "red";
+      ctx.strokeStyle = "blue";
       ctx.lineWidth = .5
       for (var i = 0; i < 10; i++) {
         ctx.moveTo(0, 80 * i)
@@ -2067,6 +2085,7 @@
 
 
       }
+      //    ctx.strokeStyle = "black"
     }
 
     function gets(word) {
