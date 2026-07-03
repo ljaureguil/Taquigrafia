@@ -39,7 +39,7 @@
   <input id="imsg" type="text" value="" oninput="this.value=this.value.toLowerCase();lj.paragraph2(this.value);"
     placeholder="Type a short paragraph here" style="width:80%;background-color: aqua;"></input>
   <button onclick="lj.paragraph2(imsg.value);//lj.word(imsg.value);//gets(imsg.value);">escribe en t grafia</button>
-  <button onclick="clearCanvas()">clear</button>
+  <button onclick="clearCanvas();imsg.value = '';setTimeout(imsg.focus(),1000)">clear</button>
 
   <button id="startBtn">Dictate</S></button>
   <button id="stopBtn">Stop</button>
@@ -357,10 +357,11 @@
           // else {
 
           ////////////////
-
-          for (s of e) {
-            this.grafSilaba(s)
-            this.inicw = false;
+          if (e !== undefined) {
+            for (s of e) {
+              this.grafSilaba(s)
+              this.inicw = false;
+            }
           }
           //  }
           if (this.params.lastPoint.x > 500) {
@@ -375,23 +376,6 @@
 
       }
 
-      /*   this.word2 = function (word) {
-           params.lastSilaba = ""
-           params.lastSimbol = ""
-           params.inicw = true;
-           word = word.toLowerCase();
-           var ars = []
-   
-           var k = this.getSilabas(word);
-           //    //alert("222\n\n" + JSON.stringify(k))
-           params.Silabas.push(k);
-           for (var i = 0; i < k.length; i++) {
-             this.getSilabas(k[i])
-             //  params.inicw = false;
-           }
-           params.inicw = false;
-   
-         }*/
 
 
       this.a_ = function (word) {
@@ -914,7 +898,7 @@
         params.lastPoint = this.grM(params.lastPoint, lineWidth, params.size)
 
         params.lastLetter = params.letter;
-        params.lastSimbol = "nm"
+        params.lastSimbol = "m"
           ;
         params.inicw = false;
 
@@ -1248,6 +1232,7 @@
 
         ctx.lineWidth = lineWidth;
         ctx.stroke(path);
+        this.params.lastSimbol = "j"
         return p;
       }
       this.grLY = function (inicPos, lineWidth, size) {
@@ -1278,6 +1263,7 @@
 
         ctx.lineWidth = lineWidth;
         ctx.stroke(path); //  //alert(JSON.stringify(params))rams))
+        this.params.lastSimbol = "m"
         return p;
       }
       this.grES = function (inicPos, lineWidth, size) {//aqui
@@ -1345,14 +1331,15 @@
 
         var x = this.params.lastPoint.x, y = this.params.lastPoint.y;
         var z = this.params.size;
+        alert(c + "\n\n" + s + "\n\nlast simbol: " + this.params.lastSimbol)
         if (this.params.lastSimbol != undefined) {
-          if (this.params.lastSimbol === "c" || this.params.lastSimbol === "g") { x += x + 5; y -= 5 }
+          if (this.params.lastSimbol === "c" || this.params.lastSimbol === "g") { x -= z - 5; y -= 6 }
           if (this.params.lastSimbol === "t" || this.params.lastSimbol === "d") { x += 5, y -= z + 5 }
-          if (this.params.lastSimbol === "b" || this.params.lastSimbol === "p") { x -= z + 5, y -= z + 5 }
+          if (this.params.lastSimbol === "b" || this.params.lastSimbol === "p") { x -= z - 7, y -= z + 0 }
           if (this.params.lastSimbol === "l") { x = z + 2, y -= z + 6 }
           if (this.params.lastSimbol === "f" || this.params.lastSimbol === "v") { x -= z + 4, y -= z + 3 }
           if (this.params.lastSimbol === "r") { x -= z + 2, y += z + 5 }
-          if (this.params.lastSimbol === "n") { x -= +5, y -= 1 }
+          if (this.params.lastSimbol === "n") { x -= z - 5, y -= 2 }
           if (this.params.lastSimbol === "h") { x += 5, y -= this.params.size + 5 }
           if (this.params.lastSimbol === "j") { x += z - 5, y -= z + 5 }
           if (this.params.lastSimbol === "y") { x += 5, y -= this.params.size + 5 }
@@ -1366,7 +1353,7 @@
 
         }
         //  else { x += 5; y -= this.params.size + 5 }
-        this.grDot(x, y, 2.5)
+        this.grDot(x, y, 2)
         //   alert(c)
         //  //alert("");
         this.params.inicCont = "";
@@ -2061,6 +2048,7 @@
     //lj.paragraph2()
 
     function clearCanvas() {
+      //  
       if (params != undefined) {
         lj.params.inicw = false;
         lj.params.lastPoint.x = 10;
