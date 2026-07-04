@@ -25,11 +25,11 @@
   }
 
   #startBtn {
-    color: white;
+    color: rgb(23, 17, 17);
     font-weight: bold;
-    background-color: #e6a97e;
+    background-color: #2ff344;
     ;
-    box-shadow: inset 0 0 35px rgb(88, 231, 114);
+    box-shadow: inset 0 0 8px rgb(16, 17, 16);
   }
 </style>
 
@@ -38,6 +38,7 @@
   <canvas id="canvas" width="1000" height="500"></canvas>
   <input id="imsg" type="text" value="" oninput="this.value=this.value.toLowerCase();lj.paragraph2(this.value);"
     placeholder="Type a short paragraph here" style="width:80%;background-color: aqua;"></input>
+  <input id="ion" oninput="this.value=this.value.toLowerCase();lj.prossPal(this.value);"></input>
   <button onclick="lj.paragraph2(imsg.value);//lj.word(imsg.value);//gets(imsg.value);">escribe en t grafia</button>
   <button onclick="clearCanvas();imsg.value = '';setTimeout(imsg.focus(),1000)">clear</button>
 
@@ -173,6 +174,17 @@
       this.params.x = this.params.lastPoint.x
       this.params.y = this.params.lastPoint.y;
 
+      //////////////////////
+
+      ctx.strokeStyle = this.params.color;
+
+      this.params.lastPoint.x = 20;
+      this.params.espacio = 80;
+      this.params.line = this.params.espacio;
+      this.params.lastPoint.y = this.params.line;
+
+      ////////////////////////////
+
 
       this.paragraph = function (paragraph) {
         var ar = paragraph.split(" ");
@@ -265,7 +277,7 @@
       this.grWord = function (w) {
         this.params.inicw = false;
         this.params.lastLetter = ""
-        this.params.lastSilbol = "";
+        this.params.lastSimbol = "";
         this.params.index = 0;
         var c = this.chkInicCont(w)
         //    //alert(c);
@@ -320,7 +332,39 @@
 
 
 
+      this.prossPal = function (palabra) {
+        if (palabra.includes(" ")) {
+          this.params.lastPoint.x += 20;
+          ion.value = "";
 
+          return;
+        }
+        clearCanvas()
+        var as = silabearPalabra(palabra, true);
+
+
+        this.params.inicw = true;
+        this.params.lastSimbol = "";
+        this.params.lastsi = "";
+        this.params.lastSilaba = "";
+        this.params.lastWord = palabra;
+        // 
+        this.params.lastWordSil = as;
+        shs.value = JSON.stringify(as)
+
+        for (const s of as) {
+
+          this.grafSilaba(s)
+        }
+
+        if (this.params.lastPoint.x > 500) {
+          this.params.lastPoint.x = 0;
+          this.params.renglon++;
+
+          this.params.line += this.params.espacio;
+
+        }
+      }
 
 
 
@@ -329,7 +373,7 @@
       this.paragraph2 = function (paragraph) {
         clearCanvas();
 
-        //ESTE ESL EL BUENO  ...  ...
+        //ESTE ESL EL BUENO  ... 
 
 
         ctx.strokeStyle = this.params.color;
@@ -340,6 +384,7 @@
         this.params.lastPoint.y = this.params.line;
         var ars = procesarFrase(paragraph);
         shs.value = JSON.stringify(ars);
+
         for (var i = 0; i < ars.length; i++) {//e of ars
           var e = ars[i];
           this.params.inicw = true;
@@ -348,22 +393,17 @@
           this.params.lastSilaba = "";
           this.params.lastWord = e.join("");
           this.params.lastWordSil = e;
-          /////////////////
-          //  alert(e);
 
           var w = e.join("")
 
           if (w === "con" && e.length === 1) { this.grPalabrasInd(w); i++; e = ars[i]; }
-          // else {
 
-          ////////////////
           if (e !== undefined) {
             for (s of e) {
               this.grafSilaba(s)
               this.inicw = false;
             }
           }
-          //  }
           if (this.params.lastPoint.x > 500) {
             this.params.lastPoint.x = 0;
             this.params.renglon++;
@@ -373,7 +413,6 @@
           }
           params.lastPoint.x += 20;
         }
-
       }
 
 
@@ -396,7 +435,8 @@
       this.terminaciones = "cion ando endo undo mente".split(" ")
       this.palabras = "con el algo alguna alguno hacer hora mañana compañia por para tiempo fecha".split(" ")
       this.abreviasiones = [];
-      this.contraccionesInic = this.a_("pr_").concat(this.a_("br_")).concat(this.a_("tr_")).concat(this.a_("dr_"))
+      this.contraccionesInic = this.a_("pr_").concat(this.a_("br_")).concat(this.a_("tr_")).concat(this.a_("dr_"));
+      // alert(this.contraccionesInic)
       this.silabas = {};
       this.silabas.vocales = ["a", "e", "i", "o", "u"];
       this.silabas.consonantes = "bcdfghjklmnñpqrstvwxyzBCDFGHJKLMNÑPQRSTVWXYZ".replace(/[yY]/g, '');
@@ -444,17 +484,17 @@
 
       this.grafSilaba = function (ss) {
         this.params.lastsilaba = ss
-        ////alert(ss)
-
 
         if (this.silabas._l.includes(s)) {
           this.al_(ss);//
           return;
 
         }
-        if (this.inicw) {
+        if (this.params.lastWordSil.indexOf(ss) === 0) {
+
           if (this.contraccionesInic.includes(ss)) {
-            this.inicCont = ss;
+            //  alert("ok  " + ss)
+            // this.inicCont = ss;
             this.grInicCont(ss);
             return;
           }
@@ -462,13 +502,12 @@
         }
 
         if (ss === "con" || ss === "com" && this.params.inicw) {
-
           this.params.inicCont = ss;
           return
         }
         if (this.params.inicCont === "con" && !this.params.inicw) {
 
-          this.grInicCont(this.params.inicCont, ss);
+          this.grCon(this.params.inicCont, ss);
           this.params.inicCont = "";
 
         }
@@ -714,7 +753,7 @@
         params.lastPoint = this.grFV(params.lastPoint, lineWidth, params.size)
         params.lastLetter = params.letter;
         ;
-        //     params.lastSilbol = "f"
+        //     params.lastSimbol = "f"
         params.inicw = false
 
 
@@ -890,9 +929,9 @@
         if (params.inicw) {
 
 
-          if (s.includes("a")) params.lastPoint.y = params.line - 15;
+          if (s.includes("a")) params.lastPoint.y = params.line + 10;
           if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 3;
-          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 15;
+          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 10;
           //  path.moveTo(p.x, p.y)
         }
         params.lastPoint = this.grM(params.lastPoint, lineWidth, params.size)
@@ -1188,6 +1227,7 @@
         var path = new Path2D();
         path.moveTo(p.x, p.y)
         //    p.x += size;
+
         p.y += size;
         path.lineTo(p.x, p.y);
 
@@ -1228,6 +1268,7 @@
         path.moveTo(p.x, p.y)
         p.x -= size;
         p.y += size;
+        if (this.params.lastSimbol === "r") { p.x += 3; p.y += 2; }
         path.lineTo(p.x, p.y);
 
         ctx.lineWidth = lineWidth;
@@ -1304,6 +1345,7 @@
         path.moveTo(p.x, p.y)
         p.x += size;
         p.y -= size;
+        if (this.params.lastSimbol === "j") { p.x += 6; p.y += 2; }
         path.lineTo(p.x, p.y);
         this.params.lastSimbol = "r"
         ctx.lineWidth = lineWidth;
@@ -1326,12 +1368,26 @@
 
       }
 
-      this.grInicCont = function (c, s) {
+      this.grInicCont = function (c) {
+        var p = this.params.lastPoint;
+        var z = this.params.line;
+        if (c.includes("a")) { p.y = z - z / 5 };
+        if (c.includes("e" || c.includes("i"))) { p.y = z - 7 };
+        if (c.includes("u") || c.includes("o")) { p.y = z + z / 8; }
+        if (c.includes("p")) { this.grBP(p, 1, 5); p.x += -5; p.y += 0; }
+        if (c.includes("n")) { this.grBP(p, 2, 5); p.x += 0; p.y += 0; }
+        if (c.includes("t")) { this.grDT(p, 1, 5); p.x += 0; p.y += 0; }
+        if (c.includes("d")) { this.grDT(p, 2, 5); p.x += 0; p.y += 0; }
+
+        this.params.inicw = false;
+
+      }
+      this.grCon = function (c, s) {
         // if (!this.params.inicw) return;
 
         var x = this.params.lastPoint.x, y = this.params.lastPoint.y;
         var z = this.params.size;
-        alert(c + "\n\n" + s + "\n\nlast simbol: " + this.params.lastSimbol)
+        //   alert(c + "\n\n" + s + "\n\nlast simbol: " + this.params.lastSimbol)
         if (this.params.lastSimbol != undefined) {
           if (this.params.lastSimbol === "c" || this.params.lastSimbol === "g") { x -= z - 5; y -= 6 }
           if (this.params.lastSimbol === "t" || this.params.lastSimbol === "d") { x += 5, y -= z + 5 }
@@ -1546,9 +1602,9 @@
         p.y += size;
 
         path.quadraticCurveTo(p.x + size / 5, p.y - size / 1.5, p.x, p.y);
-        this.params.lastSilbol = "AR"
+        this.params.lastSimbol = "AR"
         ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //  //alert(JSON.stringify(params));
+        ctx.stroke(path); //
 
         return p;
       }
