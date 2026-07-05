@@ -184,55 +184,6 @@
       this.params.lastPoint.y = this.params.line;
 
       ////////////////////////////
-
-
-      this.paragraph = function (paragraph) {
-        var ar = paragraph.split(" ");
-        for (var i = 0; i < ar.length; i++) {
-
-          this.params.lastPoint.y = 220
-          this.word(ar[i]);
-          this.params.lastPoint.x += 20;
-          this.params.lastPoint.y = 220;
-          //   //alert(JSON.stringify(this.params))
-
-        }
-
-
-      }
-
-
-
-
-      this.word = function (word) {
-        word = " " + word;
-        params.tx = word;
-        params.inicw = false;
-
-        for (var i = 0; i < word.length; i++) {
-          var l = word[i];
-          params.index = i;
-          params.inicw = true
-          //  params.wsilabas = this.getSilabas(l)
-
-          this.letter(l, i);
-
-        }
-
-      }
-
-
-
-
-
-
-
-
-
-
-
-
-
       //////////////////////////////////////////////////////////////////////////////
       this.vocales = ["a", "e", "i", "o", "u"];
       this.consonantes = "bcdfghjklmnñpqrstvwxyzBCDFGHJKLMNÑPQRSTVWXYZ".replace(/[yY]/g, '');
@@ -248,79 +199,6 @@
           this.inseparablesConv.push(e + v)
         }
       }
-      //   //alert(this.inseparablesConv)
-
-
-
-      /*
-            this.paragraph3 = function (paragraph, params) {
-              clearCanvas();
-              ctx.strokeStyle = "blue";
-              this.params.color = "blue";
-      
-              this.params.lastPoint.x = 20;
-              this.params.lastPoint.y = this.params.line;
-              var ar = paragraph.split(" ");
-              for (e of ar) {
-      
-      
-              }
-      
-              for (e of ar) {
-                this.grWord(e)
-      
-              }
-      
-            }
-      */
-
-      this.grWord = function (w) {
-        this.params.inicw = false;
-        this.params.lastLetter = ""
-        this.params.lastSimbol = "";
-        this.params.index = 0;
-        var c = this.chkInicCont(w)
-        //    //alert(c);
-        if (c != "") {
-          var cont = false;
-          if (c.includes("br" || c.includes("pr") || c.includes("tr"))) {
-            //alert(c + "\n\nneeds contraccion")
-            cont = true
-          }
-          if (c.includes("l") && c.includes("c") && !cont) {
-            if (w[0] === "c") {
-              this.params.lastPoint = this.grContracciones(this.params.lastPoint, 1, 10, 90, false);
-              this.params.lastPoint = this.grCG(this.params.lastPoint, 1, this.params.size)
-
-            }
-
-
-
-          }
-
-
-          if (c.includes("r") && !cont) {
-            this.params.lastPoint = this.grContracciones(this.params.lastPoint, 1, 10, 95)
-          }
-        }
-
-        for (let c of w) {
-
-
-        }
-
-      }
-
-
-      this.chkInicCont = function (w) {
-        for (let e of this.inseparablesConv) {
-          if (w.indexOf(e) === 0) return e;
-        }
-        return "";
-
-
-      }
-
 
 
       /////////////////////////////////////////////////////////////////////////
@@ -396,14 +274,15 @@
 
           var w = e.join("")
 
-          if (w === "con" && e.length === 1) { this.grPalabrasInd(w); i++; e = ars[i]; }
-
+          if (w === "con" && e.length === 1) { this.grPalabrasInd(w); i++; e = ars[i]; this.params.inicw = true; }
+          //aqui
           if (e !== undefined) {
             for (s of e) {
               this.grafSilaba(s)
-              this.inicw = false;
+              // this.params.inicw = false;
             }
           }
+          this.params.inicw = true;
           if (this.params.lastPoint.x > 500) {
             this.params.lastPoint.x = 0;
             this.params.renglon++;
@@ -501,14 +380,16 @@
 
         }
 
-        if (ss === "con" || ss === "com" && this.params.inicw) {
+        if (ss === "con" && this.params.inicw) {
           this.params.inicCont = ss;
+          this.params.inicw = true;
           return
         }
         if (this.params.inicCont === "con" && !this.params.inicw) {
 
           this.grCon(this.params.inicCont, ss);
           this.params.inicCont = "";
+          this.params.inicw = false;
 
         }
 
@@ -758,6 +639,7 @@
 
 
       }
+
       this.jch_ = function (s) {
         //  alert("jch")//aqui
         lineWidth = 1;
@@ -765,10 +647,10 @@
         var p = params.lastPoint;
 
         if (params.inicw) {
-          params.lastPoint.x += (20 + params.size + 20);
+          params.lastPoint.x += (params.size + 20);
 
           if (s.includes("a")) params.lastPoint.y = params.line - params.size - 15
-          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 1;
+          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - params.size - 1;
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
 
         }
@@ -1319,7 +1201,7 @@
         this.params.lastSimbol = "ES"
         ctx.lineWidth = lineWidth;
         ctx.stroke(path); //  //alert(JSON.stringify(params));
-
+        this.params.inicw = false;
         return p;
       }
       this.grNñ = function (inicPos, lineWidth, size) {
@@ -1698,359 +1580,6 @@
 
       }
 
-
-      this.letter = function (l, index) {
-        //alert(borrar)
-
-        ctx.strokeStyle = params.color
-        params.inicw = false;
-        // //alert(params.tx[params.index]+params.index)
-        if (params.index > 0) {
-          if (params.tx[params.index - 1] === " ") {
-            params.lastPoint.y = params.line;
-            params.lastPoint.x += 10;
-            params.inicw = true
-
-          }
-
-        }
-
-        this.params.letter = l;
-
-        if (l === "p" || l === "b") {
-          this.bp(this.params)
-        } else if (l === "f" || l === "v") {
-          this.fv(this.params)
-        } else if (l === "c" || l === "g" || l === "q" || l === "k") {
-          this.ckq(this.params)
-        } else if (l === "n" || l === "ñ") {
-          this.nñ(this.params)
-        } else if (l === "m") {
-          this.m(this.params)
-        } else if (l === "l" || l === "y" || l === "ll") {
-          this.lyll(this.params)
-        } else if (l === "r" || l === "rr") {
-          this.r(this.params)
-        } else if (l === "j" || l === "ch") {
-          this.j(this.params)
-        } else if (l === "t" || l === "d") {
-          this.dt(this.params)
-        }
-        else if (l === "s" || l === "z") {
-          this.sz(this.params)
-        }
-
-
-        //  this.params.letter = l;
-
-        return;
-
-
-      }
-
-      this.sz = function (params) {
-        //alert(borrar)
-        var lineWidth = 1;
-
-        ///////////////////////////////////
-        if (params.inicw) {
-          var p = params.tx[params.index + 1]
-          if (p === "a") params.lastPoint.y -= 15
-          if (p === "e" || p === "i") params.lastPoint.y -= 5
-          if (p === "o" || p === "u") params.lastPoint.y += 8
-
-        }
-        //////////////////////////////////
-        var p = params.lastPoint;
-        var path = new Path2D();
-        path.moveTo(p.x, p.y)
-        // //alert("ok")
-        p.x += 1.5;
-        p.y += 1.5;
-        path.lastPoint = p;
-        //  path.lineTo(p.x, p.y);
-        path.arc(p.x, p.y, 4, 0, 2 * Math.PI);
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //)
-        params.lastLetter = params.letter;
-
-      }
-
-      this.ckq = function (params) {
-        //alert(borrar)
-        var lineWidth = 1;
-        var lineWidth = 1;
-
-        ///////////////////////////////////
-        if (params.inicw) {
-          var p = params.tx[params.index + 1]
-          if (p === "a") params.lastPoint.y -= 25
-          if (p === "e" || p === "i") params.lastPoint.y -= 5
-          if (p === "o" || p === "u") params.lastPoint.y += 8
-          //       //alert(JSON.stringify(params))
-          params.inicw = false;
-
-        }
-        //////////////////////////////////-   
-        if (params.letter == "g") lineWidth = 3;
-        var p = params.lastPoint;
-        var path = new Path2D();
-        path.moveTo(p.x, p.y)
-        p.x += params.size;
-        path.lastPoint = p;
-        path.lineTo(p.x, p.y);
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); // //alert(JSON.stringify(params))
-        params.lastLetter = params.letter;
-
-      }
-      this.nñ = function (params) {
-        //alert(borrar)
-        var lineWidth = 1;
-
-        ///////////////////////////////////
-        if (params.inicw) {
-          var p = params.tx[params.index + 1]
-          if (p === "a") params.lastPoint.y -= 25
-          if (p === "e" || p === "i") params.lastPoint.y -= 16
-          if (p === "o" || p === "u") params.lastPoint.y += 5
-
-        }
-        //////////////////////////////////
-
-        var path = new Path2D();
-        //  //alert(JSON.stringify(params))   
-        var p = params.lastPoint;
-        var lineWidth = 1;
-        if (params.letter == "ñ") lineWidth = 3;
-
-
-        path.moveTo(p.x, p.y)
-        p.x += params.size;;
-        params.lastPoint = p;
-        path.quadraticCurveTo(p.x - 15, p.y + 25, p.x, p.y);
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //  //alert(JSON.stringify(params))rams))
-        params.lastLetter = params.letter;
-      }
-
-      this.m = function (params) {
-        //alert(borrar)
-        var lineWidth = 1;
-
-        ///////////////////////////////////
-        if (params.inicw) {
-          var p = params.tx[params.index + 1]
-          if (p === "a") params.lastPoint.y -= 25
-          if (p === "e" || p === "i") params.lastPoint.y -= 5
-          if (p === "o" || p === "u") params.lastPoint.y += 8
-
-        }
-        //////////////////////////////////
-
-        var path = new Path2D();
-        //  //alert(JSON.stringify(params))   
-        var p = params.lastPoint;
-        var lineWidth = 1;
-        //  if(params.letter=="ñ") lineWidth=3;
-
-
-        path.moveTo(p.x, p.y)
-        p.x += params.size;;
-        params.lastPoint = p;
-        path.quadraticCurveTo(p.x - 15, p.y - 20, p.x, p.y);
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //  //alert(JSON.stringify(params))rams))
-        params.lastLetter = params.letter;
-      }
-
-      this.bp = function (params) {
-        //alert(borrar)
-
-        var lineWidth = 1;
-
-        ///////////////////////////////////
-        if (params.inicw) {
-          var p = params.tx[params.index + 1]
-          if (p === "a") params.lastPoint.y -= 45
-          if (p === "e" || p === "i") params.lastPoint.y -= 33
-          if (p === "o" || p === "u") params.lastPoint.y -= 15
-
-        }
-        //////////////////////////////////
-        var path = new Path2D();
-        //   //alert(JSON.stringify(params))
-        var p = params.lastPoint;
-        var lineWidth = 3;
-        if (params.letter == "p") lineWidth = 1;
-
-        path.moveTo(p.x, p.y);
-        p.x += params.size;
-        p.y += params.size;
-        path.lineTo(p.x, p.y);
-        // path.lastPoint = p;
-        params.lastPoint = p;
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //)
-        params.lastLetter = params.letter;
-      }
-
-      this.dt = function (params) {
-        var lineWidth = 1;
-
-        ///////////////////////////////////
-        if (params.inicw) {
-          var p = params.tx[params.index + 1]
-          if (p === "a") params.lastPoint.y -= 45
-          if (p === "e" || p === "i") params.lastPoint.y -= 33
-          if (p === "o" || p === "u") params.lastPoint.y -= 15
-
-        }
-        //////////////////////////////////
-
-        var path = new Path2D();
-        //   //alert(JSON.stringify(params))
-        var p = params.lastPoint;
-        var lineWidth = 1;
-        if (params.letter == "d") lineWidth = 3;
-
-        path.moveTo(p.x, p.y);
-
-        p.y += params.size;
-        path.lineTo(p.x, p.y);
-        // path.lastPoint = p;
-        params.lastPoint = p;
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //)
-        params.lastLetter = params.letter;
-      }
-
-
-      this.r = function (params) {
-        //alert(borrar)
-        var lineWidth = 1;
-
-        ///////////////////////////////////
-        if (params.inicw) {
-          var p = params.tx[params.index + 1]
-          if (p === "a") params.lastPoint.y -= 15
-          if (p === "e" || p === "i") params.lastPoint.y -= 3
-          if (p === "o" || p === "u") params.lastPoint.y += 15
-
-        }
-        //////////////////////////////////
-
-        var path = new Path2D();
-        //   //alert(JSON.stringify(params))
-        var p = params.lastPoint;
-        var lineWidth = 1;
-        if (params.letter == "rr") lineWidth = 3;
-
-        path.moveTo(p.x, p.y);
-        p.x += params.size;
-        p.y -= params.size;
-        if (params.lastLetter == "j") p.x += 10;;
-        //  //alert(JSON.stringify(params))
-        path.lineTo(p.x, p.y);
-        path.lastPoint = p;
-        params.lastPoint = p;
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //)
-        params.lastLetter = params.letter;
-      }
-
-
-      this.j = function (params) {
-        //alert(borrar)
-        var lineWidth = 1;
-
-        ///////////////////////////////////
-        if (params.inicw) {
-          var p = params.tx[params.index + 1]
-          if (p === "a") params.lastPoint.y -= 45
-          if (p === "e" || p === "i") params.lastPoint.y -= 32
-          if (p === "o" || p === "u") params.lastPoint.y -= 15
-          params.lastPoint.x += 60;
-
-        }
-        //////////////////////////////////
-        var path = new Path2D();
-        //   //alert(JSON.stringify(params))
-        var p = params.lastPoint;
-        var lineWidth = 1;
-        if (params.letter == "j") lineWidth = 3;
-
-        path.moveTo(p.x, p.y);
-        p.x -= params.size;
-        p.y += params.size;
-        if (params.lastLetter == "r") p.x += 10;;
-        path.lineTo(p.x, p.y);
-        // path.lastPoint = p;
-        params.lastPoint = p;
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //)
-        params.lastLetter = params.letter;
-      }
-
-
-
-      this.fv = function (params) {
-        //alert(borrar)
-        var lineWidth = 1;
-
-        ///////////////////////////////////
-        if (params.inicw) {
-          var p = params.tx[params.index + 1]
-          if (p === "a") params.lastPoint.y -= 45
-          if (p === "e" || p === "i") params.lastPoint.y -= 33
-          if (p === "o" || p === "u") params.lastPoint.y -= 15
-
-        }
-        //////////////////////////////////
-
-        var path = new Path2D();
-        var p = params.lastPoint;
-        var lineWidth = 1;
-        if (params.letter == "v") lineWidth = 3;
-        path.moveTo(p.x, p.y)
-        p.x += params.size;
-        p.y += params.size;
-        params.lastPoint = p;
-        path.quadraticCurveTo(p.x - 25, p.y + 5, p.x, p.y);
-
-        ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //  //alert(JSON.stringify(params))
-        params.lastLetter = params.letter;
-      }
-
-      this.lyll = function (params) {
-        //alert("checar esta funcion al inicio de palabras porque no regresa la posicion correcta")
-        var lineWidth = 1;
-
-        ///////////////////////////////////
-        if (params.inicw) {
-          var p = params.tx[params.index + 1]
-          if (p === "a") params.lastPoint.y -= 15
-          if (p === "e" || p === "i") params.lastPoint.y -= 3
-          if (p === "o" || p === "u") params.lastPoint.y += 15
-
-        }
-        //////////////////////////////////
-
-        var path = new Path2D();
-        var p = params.lastPoint;
-        var lineWidth = 1;
-        if (params.letter == "y" || params.letter == "ll") lineWidth = 3;
-
-      }
 
       //// ///PATHS SIMBOSL BASE///////////// 
       this.sim = {};
