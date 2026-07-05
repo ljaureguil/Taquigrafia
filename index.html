@@ -48,7 +48,7 @@
 
   <textarea id="shs" style="width:90%;font-size:10px;height:fit-content"></textarea>
   <textarea id="ts" style="width:90%;font-size:10px;height:50%;"></textarea>
-
+  <button onclick="printTaq()">graf taq</button>
   <script>
 
     alert("** Checar el sonido es os us as al inicio y tambien la letra h\n\n*Verificar la letra z que y la Y se ocupa ajustar")
@@ -182,6 +182,7 @@
       this.params.espacio = 80;
       this.params.line = this.params.espacio;
       this.params.lastPoint.y = this.params.line;
+      this.taqPalabras = []
 
       ////////////////////////////
       //////////////////////////////////////////////////////////////////////////////
@@ -273,7 +274,8 @@
           this.params.lastWordSil = e;
 
           var w = e.join("")
-
+          if (this.params.inicw) this.taqPalabras.push({ word: w, silabas: e, path: new Path2D() })
+          //  alert(JSON.stringify(this.taqPalabras))
           if (w === "con" && e.length === 1) { this.grPalabrasInd(w); i++; e = ars[i]; this.params.inicw = true; }
           //aqui
           if (e !== undefined) {
@@ -282,6 +284,7 @@
               // this.params.inicw = false;
             }
           }
+
           this.params.inicw = true;
           if (this.params.lastPoint.x > 500) {
             this.params.lastPoint.x = 0;
@@ -505,7 +508,7 @@
           return;
         }
         var lineWidth = 1;
-        if (s.includes("g")) lineWidth = 3
+        if (s.includes("g")) lineWidth = 2
 
         var p = params.lastPoint;
 
@@ -547,7 +550,7 @@
 
 
         var lineWidth = 1;
-        if (s.includes("g")) lineWidth = 3
+        if (s.includes("g")) lineWidth = 2
 
         var p = params.lastPoint;
 
@@ -571,7 +574,7 @@
 
 
         lineWidth = 1;
-        if (s.includes("b")) lineWidth = 3;
+        if (s.includes("b")) lineWidth = 2;
         var p = params.lastPoint;
 
         if (params.inicw) {
@@ -596,7 +599,7 @@
 
         lineWidth = 1;
         var params = this.params;
-        if (s.includes("d")) lineWidth = 3;
+        if (s.includes("d")) lineWidth = 2;
         var p = params.lastPoint;
 
         if (params.inicw) {
@@ -620,7 +623,7 @@
         //   var path = new Path2D();
         var p = params.lastPoint;
         var lineWidth = 1;
-        if (s.includes("v")) lineWidth = 3;
+        if (s.includes("v")) lineWidth = 2;
         ///////////////////////////////////
         if (params.inicw) {
           // var p = params.tx[params.index + 1]
@@ -643,7 +646,7 @@
       this.jch_ = function (s) {
         //  alert("jch")//aqui
         lineWidth = 1;
-        if (s.includes("j")) lineWidth = 3;
+        if (s.includes("j")) lineWidth = 2;
         var p = params.lastPoint;
 
         if (params.inicw) {
@@ -666,7 +669,7 @@
       this._l = function (s) {
         //alert("al funcion " + s)
         lineWidth = 1;
-        //  if (s.includes("ll") || s.includes("y")) lineWidth = 3;
+        //  if (s.includes("ll") || s.includes("y")) lineWidth = 2;
         var p = params.lastPoint;
         var path = new Path2D();
         //    path.moveTo(p.x, p.y)
@@ -692,7 +695,11 @@
         path.quadraticCurveTo(p.x + 25, p.y - 5, p.x, p.y);
 
         ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //  //alert(JSON.stringify(params))
+
+        ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
         params.lastLetter = params.letter;
         ;
         params.lastSimbol = "_l"
@@ -736,7 +743,7 @@
         //   alert(s)
         lineWidth = 1;
 
-        if (s.includes("ll") || s.includes("y")) lineWidth = 3;
+        if (s.includes("ll") || s.includes("y")) lineWidth = 2;
         var p = this.params.lastPoint;
 
         if (this.params.inicw) {
@@ -803,7 +810,7 @@
 
       this.m_ = function (s) {
         lineWidth = 1;
-        if (s.includes("mp")) lineWidth = 3;
+        if (s.includes("mp")) lineWidth = 2;
         var p = params.lastPoint;
         //   var path = new Path2D();
         //   path.moveTo(p.x, p.y)
@@ -837,7 +844,7 @@
         if (s.includes("l") || s.includes("y")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 1, 90, false); return; }
 
         lineWidth = 1;
-        if (s.includes("ñ")) lineWidth = 3;
+        if (s.includes("ñ")) lineWidth = 2;
         var p = params.lastPoint;
         ////var path = new Path2D();
         //  path.moveTo(p.x, p.y)
@@ -1080,7 +1087,11 @@
         path.lineTo(p.x, p.y);
 
         ctx.lineWidth = lineWidth;
+
         ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+          ;
         this.params.lastSimbol = "b"
         return p;
       }
@@ -1093,7 +1104,15 @@
         path.lineTo(p.x, p.y);
 
         ctx.lineWidth = lineWidth;
+
         ctx.stroke(path);
+        //    alert(JSON.stringify(this.taqPalabras.silabas) + "\n,,,\n" + this.taqPalabras[this.taqPalabras.length - 1].path)
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+          //aqui
+
+
+          ;
         this.params.lastSimbol = "c"
         return p
       }
@@ -1114,7 +1133,14 @@
         path.lineTo(p.x, p.y);
 
         ctx.lineWidth = lineWidth;
+
         ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ;
         this.params.lastSimbol = "d"
         return p;
       }
@@ -1127,7 +1153,14 @@
         path.quadraticCurveTo(p.x - size / 1.5, p.y + size / 6, p.x, p.y);
         this.params.lastSimbol = "f"
         ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //  //alert(JSON.stringify(params))
+
+        ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ; //  //alert(JSON.stringify(params))
 
         return p;
       }
@@ -1140,7 +1173,14 @@
         path.quadraticCurveTo(p.x - 35, p.y + 15, p.x, p.y);
 
         ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //  //alert(JSON.stringify(params))
+
+        ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ; //  //alert(JSON.stringify(params))
         this.params.lastSimbol = "h"
         return p;
       }
@@ -1154,7 +1194,14 @@
         path.lineTo(p.x, p.y);
 
         ctx.lineWidth = lineWidth;
+
         ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ;
         this.params.lastSimbol = "j"
         return p;
       }
@@ -1173,7 +1220,14 @@
         path.quadraticCurveTo(p.x - size / 1.5, p.y - size / 5, p.x, p.y);
         this.params.lastSimbol = "l"
         ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //  //alert(JSON.stringify(params))
+
+        ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ; //  //alert(JSON.stringify(params))
         return p;
       }
       this.grM = function (inicPos, lineWidth, size) {
@@ -1185,7 +1239,14 @@
         path.quadraticCurveTo(p.x - size / 2, p.y - size / 2, p.x, p.y);
 
         ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //  //alert(JSON.stringify(params))rams))
+
+        ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ; //  //alert(JSON.stringify(params))rams))
         this.params.lastSimbol = "m"
         return p;
       }
@@ -1200,7 +1261,14 @@
         path.quadraticCurveTo(p.x + size / 1, p.y - size / 1.5, p.x, p.y);
         this.params.lastSimbol = "ES"
         ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //  //alert(JSON.stringify(params));
+
+        ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ; //  //alert(JSON.stringify(params));
         this.params.inicw = false;
         return p;
       }
@@ -1215,7 +1283,14 @@
         path.quadraticCurveTo(p.x - size / 2, p.y + size / 1.5, p.x, p.y);
         this.params.lastSimbol = "n"
         ctx.lineWidth = lineWidth;
+
         ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ;
         return p;
       }
       this.grR = function (inicPos, lineWidth, size) {
@@ -1231,7 +1306,14 @@
         path.lineTo(p.x, p.y);
         this.params.lastSimbol = "r"
         ctx.lineWidth = lineWidth;
+
         ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ;
         return p;
       }
       this.grSZ = function (inicPos, lineWidth, size) {
@@ -1243,7 +1325,14 @@
         path.arc(p.x, p.y, radio, 0, 2 * Math.PI);
         this.params.lastSimbol = "c"
         ctx.lineWidth = lineWidth;
+
         ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ;
         p.x += 2; p.y += 1
         //  //alert("chk s")
         return p;
@@ -1335,7 +1424,14 @@
 
         // 6. Execute side-effect updates and drawing configurations
         ctx.lineWidth = lineWidth;
+
         ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ;
 
         // 7. Update state using clean object assignments
         // this.params.lastPoint = { x: endX, y: endY };
@@ -1378,7 +1474,14 @@
 
         // Aplicar estilos de línea antes de dibujar
         ctx.lineWidth = lineWidth;
+
         ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ;
 
 
         // 7. Retornar el objeto pFinal directamente
@@ -1403,7 +1506,14 @@
         path.quadraticCurveTo(pc.x, pc.y, p.x, p.y)
 
         ctx.lineWidth = lineWidth;
+
         ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ;
         return p;//pending       
       }
       this.grContraccionL = function (inicPos, lineWidth, size, angle) {
@@ -1421,7 +1531,14 @@
         path.quadraticCurveTo(pc.x, pc.y, p.x, p.y)
 
         ctx.lineWidth = lineWidth;
+
         ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ;
         return p;
       }
       this.grContraccionN = function (inicPos, lineWidth, size, angle) {
@@ -1442,7 +1559,14 @@
         path.quadraticCurveTo(pc.x, pc.y, p.x, p.y)
 
         ctx.lineWidth = lineWidth;
+
         ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ;
         return p;//pending       
       }
       this.grContraccionFB = function (inicPos, lineWidth, size, angle) {
@@ -1456,7 +1580,14 @@
         path.lineTo(p.x, p.y);
 
         ctx.lineWidth = lineWidth;
+
         ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ;
         return p;//pending      
       }
       this.grAL = function (inicPos, lineWidth, size) {
@@ -1470,7 +1601,14 @@
         path.quadraticCurveTo(p.x + size / 4, p.y + size / 1.3, p.x, p.y);
 
         ctx.lineWidth = lineWidth;
+
         ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ;
         this.params.lastSimbol = "AL"
         return p;
 
@@ -1486,7 +1624,14 @@
         path.quadraticCurveTo(p.x + size / 5, p.y - size / 1.5, p.x, p.y);
         this.params.lastSimbol = "AR"
         ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //
+
+        ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
+
+
+          ; //
 
         return p;
       }
@@ -1555,8 +1700,11 @@
         path.arc(p.x, p.y, radio, 0, 2 * Math.PI);
 
         ctx.lineWidth = lineWidth;
-        ctx.stroke(path); //)
-        //    params.lastLetter = params.letter;
+
+        ctx.stroke(path);
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
         params.inicw = false;
       }
       this.grafLin = function (ob) {
@@ -1675,7 +1823,16 @@
     }
 
 
+    function printTaq() {
+      alert(lj.taqPalabras.length)
 
+      for (const p of lj.taqPalabras) {
+
+        ctx.stroke(p.path);
+        // ctx.
+
+      }
+    }
 
 
   </script>
