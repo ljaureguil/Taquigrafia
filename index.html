@@ -212,29 +212,31 @@
 
 
       this.prossPal = function (palabra) {
+        var as = silabearPalabra(palabra, true);
+        if (this.params.capturePath === undefined) {
+          this.taqPalabras.push({ word: "", silabas: [], path: new Path2D() })
+          this.params.capturePath = true
+        }
+
+
         if (palabra.includes(" ")) {
           this.params.lastPoint.x += 20;
           ion.value = "";
+          this.params.capturePath = undefined;
+          this.taqPalabras[this.taqPalabras.length - 1] = null;
+          this.taqPalabras.pop();
+          //
+          this.taqPalabras.push({ word: palabra, silabas: as, path: new Path2D() })
+
+          /* this.taqPalabras[this.taqPalabras.length - 1].word = palabra;
+           this.taqPalabras[this.taqPalabras.length - 1].silabas = as;*/
+          this.grPalSilabas(as)
+
+          alert(this.taqPalabras.length)
 
           return;
         }
-        clearCanvas()
-        var as = silabearPalabra(palabra, true);
-
-
-        this.params.inicw = true;
-        this.params.lastSimbol = "";
-        this.params.lastsi = "";
-        this.params.lastSilaba = "";
-        this.params.lastWord = palabra;
-        // 
-        this.params.lastWordSil = as;
-        shs.value = JSON.stringify(as)
-
-        for (const s of as) {
-
-          this.grafSilaba(s)
-        }
+        this.grPalSilabas(as)
 
         if (this.params.lastPoint.x > 500) {
           this.params.lastPoint.x = 0;
@@ -244,7 +246,22 @@
 
         }
       }
+      this.grPalSilabas = function (as) {
+        clearCanvas()
+        this.params.inicw = true;
+        this.params.lastSimbol = "";
+        this.params.lastsi = "";
+        this.params.lastSilaba = "";
+        this.params.lastWord = as.join("");
+        // 
+        this.params.lastWordSil = as;
+        shs.value = JSON.stringify(as)
 
+        for (const s of as) {
+
+          this.grafSilaba(s)
+        }
+      }
 
 
 
@@ -1393,6 +1410,9 @@
         path.arc(x, y, r, 0, Math.PI * 2);
         ctx.fillStyle = "red";// this.params.color;
         ctx.fill(path)
+        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+
+
       }
       this.cont = function (p1, size, lineWidth, angle, ccw) {
         // 1. Map ccw boolean directly to 1 or -1 (removes variable declaration and conditional branching)
