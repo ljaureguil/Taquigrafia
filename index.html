@@ -315,6 +315,7 @@
           }
           //  alert(JSON.stringify(this.taqPalabras))
           if (w === "con" && e.length === 1) { this.grPalabrasInd(w); i++; e = ars[i]; this.params.inicw = true; }
+          if (this.especiales.includes(w)) { this.grEspeciales(w); i++; e = ars[i]; this.params.inicw = true; }
           //aqui
           if (e !== undefined) {
             for (s of e) {
@@ -353,7 +354,7 @@
 
       }
       this.terminaciones = "cion ando endo undo mente".split(" ")
-      this.palabras = "con el algo alguna alguno hacer hora mañana compañia por para tiempo fecha".split(" ")
+      this.especiales = "el mucho mucha mente algo alguna alguno hacer hora ahora mañana compañia por para tiempo fecha algo hacer".split(" ")
       this.abreviasiones = [];
       this.contraccionesInic = this.a_("pr_").concat(this.a_("tr_"));//.concat(this.a_("br_")).concat(this.a_("dr_"))
       // alert(this.contraccionesInic)
@@ -1750,55 +1751,43 @@
         }
       }
 
-      this.t_ = function (s) { }// //alert(s)
-      this.x_ = function (s) { }////alert(s)
-      this.w_ = function (s) { }////alert(s)
-
-
       this.aeiou_ = function (s) { }////alert(s)
-      ////    this.f_ = function (s) { //alert(s) }
-      ////    this.j_ = function (s) { //alert(s) }
-      //        this.l_ = function (s) { //alert(s) }
-
-      this.grafC = function (ob) {
-        //alert(" grafC")
-        var lineWidth = ob.lineWidth;
-        var radio = ob.radio;
-        var p = params.lastPoint;
-        var path = new Path2D();
-        path.moveTo(p.x, p.y)
-        path.lastPoint = p;
-        //  path.lineTo(p.x, p.y);
-        path.arc(p.x, p.y, radio, 0, 2 * Math.PI);
-
-        ctx.lineWidth = lineWidth;
-
-        ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
-
-
-        params.inicw = false;
-      }
-      this.grafLin = function (ob) {
-        var lineWidth = ob.lineWidth;
-
-        if (ob.dir === "c") { params.lastPoint.y = params.line - 25 }
-        if (ob.dir === "p") { params.lastPoint.y = params.line - 25 }
-        if (ob.dir === "t") { params.lastPoint.y = params.line - 25 }
-        if (ob.dir === "j") {
-          params.lastPoint.y = params.line - 25; params.lastPoint.x += 15
-
-          if (ob.dir === "r") { params.lastPoint.y = params.line - 8; }
-          var p = params.lastPoint;
-          var path = new Path2D();
-          path.moveTo(p.x, p.y)
-
-
-
-
+      this.grEspeciales = function (s) {
+        //  alert(s)
+        if (s === "ahora") {
+          this.h_("ha");
+          var p = {}; p.x = this.params.lastPoint.x + 4; p.y = this.params.y - this.params.size - 5;
+          this.cruz(p)
         }
+        if (s === "hora") {
+          this.h_("ho");
+          var p = {}; p.x = this.params.lastPoint.x + 4; p.y = this.params.y - this.params.size - 5;
+          this.cruz(p)
+        }
+        if (s === "alguna") {
+          this.cgkqu_("ga");//this.params.lastPoint, 1, this.params.size);
+          var p = {}; p.x = this.params.lastPoint.x - this.params.size + 4; p.y = this.params.lastPoint.y - 5;
+          this.cruz(p)
+        }
+        //  if()
+
+
 
       }
+      this.cruz = function (pos, size) {
+
+        var m = 2
+        if (size != undefined) m = m = size / 2;
+        var path = new Path2D()
+        path.moveTo(pos.x - m, pos.y - m)
+        path.lineTo(pos.x + m, pos.y + m)
+        path.moveTo(pos.x - m, pos.y + m)
+        path.lineTo(pos.x + m, pos.y - m)
+        ctx.stroke(path)
+
+      }
+
+
 
     }
 
