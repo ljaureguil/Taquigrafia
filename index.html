@@ -463,6 +463,15 @@
         // 2. Process inseparable syllables safely using dynamic bracket notation
         for (const e of this.silabas.inseparables) {
           const method = `${e}_`;
+
+          ////
+          if (ss.includes(e)) {
+            this[method](ss);
+            return;
+          }
+
+
+          //// checar esto a lo mejor hay que desacerse
           if (this.silabas[method]?.includes(ss)) {
             this[method](ss);
             return; // Stops the loop and exits the method
@@ -520,6 +529,13 @@
           //   this.params.inicw = false;
           this.params.color = color;
         }
+
+        this.grInseparables = function (s) {
+          const gruposInseparables = ["bl", "cl", "fl", "gl", "pl", "br", "cr", "fr", "gr", "pr", "tr", "dr", "ch", "ll", "rr"];
+          if (silabas.inseparables.includes[s]) { }
+
+        }
+
 
         this.match = function (ss) {
           return (...keys) => keys.some(key => this.a_(key).includes(ss));
@@ -894,8 +910,8 @@
         if (params.inicw) {
 
 
-          if (s.includes("a")) params.lastPoint.y = params.line - 35;
-          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 15;
+          if (s.includes("a")) params.lastPoint.y = params.line - this.params.size;
+          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - 6;
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 3;
           //   path.moveTo(p.x, p.y)
         }
@@ -927,6 +943,7 @@
         }
         params.lastPoint = this.grContraccionL(params.lastPoint, 1, 4, 45);
         params.lastPoint = this.grBP(params.lastPoint, 3, params.size);
+        if (s[s.length - 1] === "n") { params.lastPoint = this.cont(params.lastPoint, 4, 1, 180, true); }
         params.lastSimbol = "b"
 
 
@@ -944,6 +961,7 @@
         }
         params.lastPoint = this.grContraccionR(params.lastPoint, 1, 4, 45);
         params.lastPoint = this.grBP(params.lastPoint, 3, params.size);
+        if (s[s.length - 1] === "n") { params.lastPoint = this.cont(params.lastPoint, 4, 1, 120, false); }
         params.lastSimbol = "b"
       }
 
@@ -959,6 +977,7 @@
         }
         params.lastPoint = this.grContraccionL(params.lastPoint, 1, 4, 0);
         params.lastPoint = this.grCG(params.lastPoint, 1, params.size);
+        if (s[s.length - 1] === "n") { params.lastPoint = this.cont(params.lastPoint, 4, 1, 90, false); }
         params.lastSimbol = "c"
 
       }
@@ -975,6 +994,7 @@
         }
         params.lastPoint = this.grContraccionR(params.lastPoint, 1, 4, 0);
         params.lastPoint = this.grCG(params.lastPoint, 1, params.size);
+        if (s[s.length - 1] === "n") { params.lastPoint = this.cont(params.lastPoint, 4, 1, 90, true); }
         params.lastSimbol = "c"
 
 
@@ -993,6 +1013,7 @@
         }
         params.lastPoint = this.grContraccionR(params.lastPoint, 1, 4, 90);
         params.lastPoint = this.grDT(params.lastPoint, 3, params.size);
+        if (s[s.length - 1] === "n") { params.lastPoint = this.cont(params.lastPoint, 4, 1, 180, true); }
         params.lastSimbol = "t"
       }
 
@@ -1009,6 +1030,7 @@
         }
         params.lastPoint = this.grContraccionL(params.lastPoint, 1, 4, 45);
         params.lastPoint = this.grFV(params.lastPoint, 1, params.size - 5);
+        if (s[s.length - 1] === "n") { params.lastPoint = this.cont(params.lastPoint, 4, 1, 0, true); }
         params.lastSimbol = "f"
 
       }
@@ -1024,6 +1046,7 @@
         }
         params.lastPoint = this.grContraccionL(params.lastPoint, 2, 4, 45);
         params.lastPoint = this.grFV(params.lastPoint, 1, params.size - 5);
+        if (s[s.length - 1] === "n") { params.lastPoint = this.cont(params.lastPoint, 4, 1, 0, true); }
         params.lastSimbol = "f"
       }
 
@@ -1039,6 +1062,7 @@
         }
         params.lastPoint = this.grContraccionL(params.lastPoint, 1, 4, 0);
         params.lastPoint = this.grCG(params.lastPoint, 3, params.size);
+        if (s[s.length - 1] === "n") { params.lastPoint = this.cont(params.lastPoint, 6, 1, 180, false); }
         params.lastSimbol = "c"
       }
 
@@ -1055,6 +1079,7 @@
         }
         params.lastPoint = this.grContraccionR(params.lastPoint, 1, 4, 0);
         params.lastPoint = this.grCG(params.lastPoint, 3, params.size);
+        if (s[s.length - 1] === "n") { params.lastPoint = this.cont(params.lastPoint, 4, 1, 180, false); }
         params.lastSimbol = "c"
 
       }
@@ -1070,6 +1095,8 @@
         }
         params.lastPoint = this.grContraccionL(params.lastPoint, 1, 4, 45);
         params.lastPoint = this.grBP(params.lastPoint, 1, params.size);
+
+        if (s[s.length - 1] === "n") { params.lastPoint = this.cont(params.lastPoint, 4, 1, 180, false); }
         params.lastSimbol = "p"
       }
 
@@ -1085,6 +1112,7 @@
         }
         params.lastPoint = this.grContraccionR(params.lastPoint, 1, 4, 45);
         params.lastPoint = this.grBP(params.lastPoint, 1, params.size);
+        if (s[s.length - 1] === "n") { params.lastPoint = this.cont(params.lastPoint, 4, 1, 180, false); }
         params.lastSimbol = "p"
       }
 
@@ -1101,6 +1129,7 @@
         }
         params.lastPoint = this.grContraccionL(params.lastPoint, 1, 4, 90);
         params.lastPoint = this.grDT(params.lastPoint, 1, params.size);
+        if (s[s.length - 1] === "n") { params.lastPoint = this.cont(params.lastPoint, 4, 1, 90, true); }
         params.lastSimbol = "t"
       }
       this.tr_ = function (s) {
@@ -1115,6 +1144,7 @@
         }
         params.lastPoint = this.grContraccionR(params.lastPoint, 1, 4, 90);
         params.lastPoint = this.grDT(params.lastPoint, 1, params.size);
+        if (s[s.length - 1] === "n") { params.lastPoint = this.cont(params.lastPoint, 5, 1, 135, false); }
         params.lastSimbol = "t";
 
       }
@@ -1400,14 +1430,14 @@
         var z = this.params.line;
         if (c.includes("a")) { p.y = z - z / 5 };
         if (c.includes("e") || c.includes("i")) { p.y = z - 7 };
-        if (c.includes("u") || c.includes("o")) { p.y = z + z / 8; }
+        if (c.includes("u") || c.includes("o")) { p.y = z - 1; }
         if (c.includes("p")) { this.grBP(p, 1, 5); p.x += -5; p.y += 0; }
         //     if (c.includes("n")) { this.grBP(p, 2, 5); p.x += 0; p.y += 0; }
         if (c.includes("t")) { this.grDT(p, 1, 5); p.x += 0; p.y += 0; }
         //     if (c.includes("d")) { this.grDT(p, 2, 5); p.x += 0; p.y += 0; }
         //    if (c.includes("m")) { this.grDT(p, 1, 5); p.x += 0; p.y -= 4; }
         //   alert(c)
-        p.y += 4;
+        p.y += 2;
         p.x -= 3;
 
         this.params.inicw = false;
