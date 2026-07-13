@@ -38,7 +38,8 @@
   <canvas id="canvas" width="1000" height="500" style="position:relative;top:0%;left:0%;"></canvas>
   <input id="imsg" type="text" value="" oninput="this.value=this.value.toLowerCase();lj.paragraph2(this.value);"
     placeholder="Type a short paragraph here" style="width:80%;background-color: aqua;"></input>
-  <input id="ion" oninput="this.value=this.value.toLowerCase();lj.prossPal(this.value);"></input>
+  <input id="ion" oninput="this.value=this.value.toLowerCase();lj.prossPal(this.value);"
+    style="background:#2ff344"></input>
   <button onclick="lj.paragraph2(imsg.value);//lj.word(imsg.value);//gets(imsg.value);">escribe en t grafia</button>
   <button onclick="clearCanvas();imsg.value = '';setTimeout(imsg.focus(),1000)">clear</button>
 
@@ -132,7 +133,7 @@
 
             this.outputTarget.value += cleanText + '. ';
             this.outputTarget.oninput()
-            //aqui
+
             this.outputTarget.scrollTop = this.outputTarget.scrollHeight;
           }
         };
@@ -157,13 +158,15 @@
     //  //alert(arpending)
 
     imsg.addEventListener("keypress", function (e) { if (e.keyCode == 13) lj.paragraph2(imsg.value); })
+    ion.addEventListener("keypress", function (e) { if (e.keyCode == 13) lj.paragraph2(imsg.value); })
 
     const canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
     var ctxbase = canvasbase.getContext("2d");
     clearCanvas();
 
-    imsg.focus();
+    // imsg.focus();
+    ion.focus()
 
     //  ctx.scale(0.5, 0.5);
 
@@ -171,6 +174,7 @@
 
 
       if (params.color === undefined) params.color = "black"
+
       this.params = params;
       params.inicw = false;
 
@@ -188,7 +192,7 @@
       this.taqPalabras = [];
       this.taqPalabras.push({ word: "", silabas: [], path: new Path2D() })
 
-
+      this.params.puntero = { x: this.params.lastPoint.x, y: this.params.lastPoint.y }
 
 
 
@@ -220,33 +224,37 @@
 
 
       this.prossPal = function (palabra) {
-        this.params.lastPoint.x = 20;
+        //  this.params.lastPoint.x = 20;
         ctx = canvasbase.getContext("2d");
         var as = silabearPalabra(palabra, true);
         if (this.params.capturePath === undefined) {
-          this.taqPalabras.push({ word: "", silabas: [], path: new Path2D() })
+          //   this.taqPalabras.push({ word: "", silabas: [], path: new Path2D() })
           this.params.capturePath = true
         }
 
 
-        if (palabra.includes(" ")) {
+        if (palabra.includes(" ")) {//poraqui
+          ctx.clearRect(0, 0, canvasbase.width, canvasbase.height);
           //  this.params.lastPoint.x += 20;
+          imsg.value += ion.value; this.paragraph2(imsg.value)//lj.paragraph2(imsg.value)// imsg.oninput()
           ion.value = "";
           this.params.capturePath = undefined;
-          this.taqPalabras[this.taqPalabras.length - 1] = null;
-          this.taqPalabras.pop();
+
+
+          //   this.taqPalabras[this.taqPalabras.length - 1] = null;
+          //   this.taqPalabras.pop();
           //
-          this.taqPalabras.push({ word: palabra, silabas: as, path: new Path2D() })
+          // this.taqPalabras.push({ word: palabra, silabas: as, path: new Path2D() })
 
           /* this.taqPalabras[this.taqPalabras.length - 1].word = palabra;
            this.taqPalabras[this.taqPalabras.length - 1].silabas = as;*/
-          this.grPalSilabas(as)
+          //   this.grPalSilabas(as)
 
-          alert(this.taqPalabras.length)
+          //     alert(this.taqPalabras.length)
 
           return;
         }
-
+        //   this.params.lastPoint = this.params.puntero;
         this.grPalSilabas(as)
 
         if (this.params.lastPoint.x > 500) {
@@ -270,11 +278,15 @@
         // 
         this.params.lastWordSil = as;
         shs.value = JSON.stringify(as)
+        this.params.lastPoint.x = this.params.puntero.x;
+        this.params.lastPoint.y = this.params.puntero.y;
 
         for (const s of as) {
 
           this.grafSilaba(s)
+
         }
+
       }
 
 
@@ -282,9 +294,6 @@
 
 
       this.paragraph2 = function (paragraph) {
-
-
-
         ctx = canvas.getContext("2d");
         clearCanvas();
 
@@ -312,15 +321,15 @@
           var w = e.join("")
           if (paragraph[paragraph.length - 1] === " ") {
             ;
-            this.taqPalabras[this.taqPalabras.length - 1].word = w;
-            this.taqPalabras[this.taqPalabras.length - 1].silabas = e;
-            this.taqPalabras.push({ word: w, silabas: e, path: new Path2D() })
+            //  this.taqPalabras[this.taqPalabras.length - 1].word = w;
+            //  this.taqPalabras[this.taqPalabras.length - 1].silabas = e;
+            // this.taqPalabras.push({ word: w, silabas: e, path: new Path2D() })
 
           }
           //  alert(JSON.stringify(this.taqPalabras))
           if (w === "con" && e.length === 1) { this.grPalabrasInd(w); i++; e = ars[i]; this.params.inicw = true; }
           if (this.especiales.includes(w)) { this.grEspeciales(w); i++; e = ars[i]; this.params.inicw = true; }
-          //aqui
+
           if (e !== undefined) {
             for (s of e) {
               this.grafSilaba(s)
@@ -337,6 +346,8 @@
 
           }
           params.lastPoint.x += 20;
+          params.puntero.x = this.params.lastPoint.x;
+          params.puntero.y = this.params.lastPoint.y;
         }
       }
 
@@ -487,7 +498,7 @@
         //   if (match("cr_s", "cr_z")) { this.c_(ss); return; }
         //  if (match("m_n")) { this.m_(ss); return; }
         //   if (match("t_n", "d_n")) { this.t_(ss); return; }
-        //   if (match("_n")) { this.nñ_(ss); return; }//aqui
+        //   if (match("_n")) { this.nñ_(ss); return; }
         //     if (match("j_m")) { this.j_(ss); return; }
         if (match("_")) { this.aeiou_(ss); return; }
 
@@ -524,7 +535,7 @@
 
             this[methodName](ss);
             ts.value += "\n\n" + methodName + "  " + ss + "\n\n" + JSON.stringify(this.params.lastPoint)
-            //  return;////aqui
+            //  return;//
           }
           //   this.params.inicw = false;
           this.params.color = color;
@@ -582,7 +593,7 @@
           //   alert("aqui")
           this.params.lastPoint.x -= this.params.size / 1.5;
           this.params.lastPoint.y += 3;
-        }//aqui
+        }
         this.params.lastPoint = this.grCG(this.params.lastPoint, lineWidth, this.params.size)
         //     
         this.params.inicw = false;
@@ -700,7 +711,7 @@
       }
 
       this.jch_ = function (s) {
-        //  alert("jch")//aqui
+        //  alert("jch")
         lineWidth = 1;
         if (s.includes("j")) lineWidth = 2;
         var p = params.lastPoint;
@@ -753,7 +764,7 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
         params.lastLetter = params.letter;
@@ -1161,9 +1172,9 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
-          ;
+        ;
         this.params.lastSimbol = "b"
         return p;
       }
@@ -1179,12 +1190,12 @@
 
         ctx.stroke(path);
         //    alert(JSON.stringify(this.taqPalabras.silabas) + "\n,,,\n" + this.taqPalabras[this.taqPalabras.length - 1].path)
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
-
-          //aqui
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
-          ;
+
+
+        ;
         this.params.lastSimbol = "c"
         return p
       }
@@ -1207,12 +1218,12 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
 
 
-          ;
+        ;
         this.params.lastSimbol = "d"
         return p;
       }
@@ -1227,12 +1238,12 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
 
 
-          ; //  //alert(JSON.stringify(params))
+        ; //  //alert(JSON.stringify(params))
 
         return p;
       }
@@ -1249,7 +1260,7 @@
           ctx.lineWidth = lineWidth;
   
           ctx.stroke(path);
-          this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+          //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
   
   
   
@@ -1270,12 +1281,12 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
 
 
-          ;
+        ;
         this.params.lastSimbol = "j"
         return p;
       }
@@ -1296,12 +1307,12 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
 
 
-          ; //  //alert(JSON.stringify(params))
+        ; //  //alert(JSON.stringify(params))
         return p;
       }
       this.grM = function (inicPos, lineWidth, size) {
@@ -1315,16 +1326,16 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
 
 
-          ; //  //alert(JSON.stringify(params))rams))
+        ; //  //alert(JSON.stringify(params))rams))
         this.params.lastSimbol = "m"
         return p;
       }
-      this.grES = function (inicPos, lineWidth, size) {//aqui
+      this.grES = function (inicPos, lineWidth, size) {
         var p = inicPos;
 
         var path = new Path2D();
@@ -1337,12 +1348,12 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
         this.params.inicw = false;
         return p;
       }
-      this.grH = function (inicPos, lineWidth, size) {//aqui
+      this.grH = function (inicPos, lineWidth, size) {
         var p = inicPos;
         // alert(99)
         var path = new Path2D();
@@ -1355,7 +1366,7 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
         this.params.inicw = false;
         return p;
@@ -1374,7 +1385,7 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
         return p;
       }
@@ -1393,12 +1404,12 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
 
 
-          ;
+        ;
         return p;
       }
       this.grSZ = function (inicPos, lineWidth, size) {
@@ -1412,12 +1423,12 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
 
 
-          ;
+        ;
         p.x += 2; p.y += 1
         //  //alert("chk s")
         return p;
@@ -1483,7 +1494,7 @@
         path.arc(x, y, r, 0, Math.PI * 2);
         ctx.fillStyle = "red";// this.params.color;
         ctx.fill(path)
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
       }
@@ -1519,12 +1530,12 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
 
 
-          ;
+        ;
 
         // 7. Update state using clean object assignments
         // this.params.lastPoint = { x: endX, y: endY };
@@ -1569,12 +1580,12 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
 
 
-          ;
+        ;
 
 
         // 7. Retornar el objeto pFinal directamente
@@ -1601,12 +1612,12 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
 
 
-          ;
+        ;
         return p;//pending       
       }
       this.grContraccionL = function (inicPos, lineWidth, size, angle) {
@@ -1626,12 +1637,12 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
 
 
-          ;
+        ;
         return p;
       }
       this.grContraccionN = function (inicPos, lineWidth, size, angle) {
@@ -1654,12 +1665,12 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
 
 
-          ;
+        ;
         return p;//pending       
       }
       this.grContraccionFB = function (inicPos, lineWidth, size, angle) {
@@ -1675,12 +1686,12 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
 
 
-          ;
+        ;
         return p;//pending      
       }
       this.grAL = function (inicPos, lineWidth, size) {
@@ -1696,7 +1707,7 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
         this.params.lastSimbol = "AL"
@@ -1716,12 +1727,12 @@
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
+        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
 
 
 
 
-          ; //
+        ; //
 
         return p;
       }
