@@ -38,8 +38,8 @@
   <canvas id="canvas" width="1000" height="500" style="position:relative;top:0%;left:0%;"></canvas>
   <input id="imsg" type="text" value="" oninput="this.value=this.value.toLowerCase();lj.paragraph2(this.value);"
     placeholder="Type a short paragraph here" style="width:80%;background-color: aqua;"></input>
-  <input id="ion" oninput="this.value=this.value.toLowerCase();lj.prossPal(this.value);"
-    style="background:#2ff344"></input>
+  <input id="ion" oninput="this.value=this.value.toLowerCase();lj.prossPal(this.value);" style=" background:#f3f244"
+    placeholder="Type here..."></input>
   <button onclick="lj.paragraph2(imsg.value);//lj.word(imsg.value);//gets(imsg.value);">w grafia</button>
   <button onclick="clearCanvas();imsg.value = '';setTimeout(ion.focus(),1000)">clear</button>
 
@@ -54,7 +54,7 @@
     style="position:absolute;left:8px;top:8px;background:rgba(200,250,200,.25);"></canvas>
   <script>
 
-    alert("** Checar la palabra control no toma la contraccion con y el simblo dt la coantraccion la toma muy abajo")
+    alert("** Checar la palabra control no toma la contraccion con y el simblo dt la coantraccion la toma muy abajo\n\nchecar vocales ya casi esta")
     startBtn.addEventListener('click', () => speech.on());
     stopBtn.addEventListener('click', () => speech.off());
 
@@ -193,6 +193,7 @@
       this.taqPalabras.push({ word: "", silabas: [], path: new Path2D() })
 
       this.params.puntero = { x: this.params.lastPoint.x, y: this.params.lastPoint.y }
+      this.params.vocal = "";
 
 
 
@@ -423,7 +424,22 @@
       }
 
       this.grafSilaba = function (ss) {
+        //  alert(ss)
+
+
         this.params.lastsilaba = ss
+
+        if (this.vocales.includes(ss) && this.params.inicw && ss.length === 1) {
+          //  this.grVocales(ss) 
+          //   alert("vocal "+ss)
+          this.params.vocal = ss;
+          return;
+
+        } // Skip vowels
+        //   else this.params.vocal = "";
+
+
+
 
         if (this.silabas._l.includes(ss)) {
           this.al_(ss);//
@@ -530,11 +546,12 @@
           h: "h_"
         };
         // 2. The optimized loop
+        //
+        //   if (this.vocales.includes(ss) && this.params.inicw && ss.lenght === 1) { alert(l + "\n\n" + ss); this.grVocales(l) } // Skip vowels
 
         for (const l of ss) {
-          //   alert(ss + " ... " + l)
-          //   if (ss.length === 1 && this.vocales.includes(l)) alert(l); // Skip vowels
-          if (this.vocales.includes(l) && this.params.inicw) { alert(l + "\n\n" + ss); this.grVocales(l) } // Skip vowels
+
+          //   
           const methodName = ACTION_MAP[l];
           if (methodName) {
 
@@ -544,6 +561,8 @@
           }
           //   this.params.inicw = false;
           this.params.color = color;
+          //    if (this.vocales.includes(l) && this.params.inicw) { alert(l + "\n\n" + ss); this.grVocales(l) } // Skip vowels
+
         }
 
         this.match = function (ss) {
@@ -579,11 +598,13 @@
 
         if (this.params.inicw) {
 
-
+          //       alert("dentro " + s + "\n\nvocal " + this.params.vocal)
           if (s.includes("a")) this.params.lastPoint.y = this.params.line - 25;
           if (s.includes("e") || s.includes("i")) this.params.lastPoint.y = this.params.line - 3;
           if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line + 5;
           if (s.includes("qu")) this.params.lastPoint.y -= 8;
+          if (this.params.vocal != "") { this.grVocales(s[0]) } // Skip vowels
+
 
         }
         //   alert(this.params.lastSimbol)
@@ -661,7 +682,7 @@
 
       }
 
-      this.dt_ = function (s) {
+      this.dt_ = function (s, l) {
 
         lineWidth = 1;
         var params = this.params;
@@ -682,6 +703,7 @@
         //      params.lastSimbol = "d"
         params.inicw = false;
       }
+
       this.fv_ = function (s) {
 
         var lineWidth = 1;
@@ -1108,55 +1130,65 @@
         params.lastPoint = this.grBP(params.lastPoint, 1, params.size);
 
         if (s[s.length - 1] === "n") { params.lastPoint = this.cont(params.lastPoint, 4, 1, 180, false); }
-        params.lastSimbol = "p"
+        ////  params.lastSimbol = "p"
       }
 
       this.pr_ = function (s) {
 
-        var p = params.lastPoint;// //alert(JSON.stringify(p))
-        if (params.inicw) {
+        var p = this.params.lastPoint;// //alert(JSON.stringify(p))
+        if (this.params.inicw) {
           p.x += 20;
-          if (s.includes("a")) params.lastPoint.y = params.line - params.size - 15;
-          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - params.size - 1;
-          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
-          params.inicw = false;
+          if (s.includes("a")) this.params.lastPoint.y = this.params.line - this.params.size - 15;
+          if (s.includes("e") || s.includes("i")) this.params.lastPoint.y = this.params.line - this.params.size - 1;
+          if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line - this.params.size / 2;
+          this.params.inicw = false;
         }
-        params.lastPoint = this.grContraccionR(params.lastPoint, 1, 4, 45);
-        params.lastPoint = this.grBP(params.lastPoint, 1, params.size);
-        if (s[s.length - 1] === "n") { params.lastPoint = this.cont(params.lastPoint, 4, 1, 180, false); }
-        params.lastSimbol = "p"
+
+        this.params.lastPoint = this.grContraccionR(this.params.lastPoint, 1, 4, 45);
+        this.params.lastPoint = this.grBP(this.params.lastPoint, 1, this.params.size);
+        if (s[s.length - 1] === "n") { this.params.lastPoint = this.cont(this.params.lastPoint, 4, 1, 180, false); }
+        if (s[s.length - 1] === "l") { this.al_(s); this.params.inicw = false; }//pending
+        if (s[s.length - 1] === "r") { this.ar_(s); this.params.inicw = false; }//pending
+
+
+        // this.params.lastSimbol = "p"
       }
 
       this.tl_ = function (s) {
 
         //    //alert(params.line + "\n\n" + params.size)
-        var p = params.lastPoint;// //alert(JSON.stringify(p))
-        if (params.inicw) {
+        var p = this.params.lastPoint;// //alert(JSON.stringify(p))
+        if (this.params.inicw) {
           p.x += 20;
-          if (s.includes("a")) params.lastPoint.y = params.line - params.size - 8;
-          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - params.size - 3;
-          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
-          params.inicw = false;
+          if (s.includes("a")) this.params.lastPoint.y = this.params.line - this.params.size - 8;
+          if (s.includes("e") || s.includes("i")) this.params.lastPoint.y = this.params.line - this.params.size - 3;
+          if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line - this.params.size / 2;
+          this.params.inicw = false;
         }
-        params.lastPoint = this.grContraccionL(params.lastPoint, 1, 4, 90);
-        params.lastPoint = this.grDT(params.lastPoint, 1, params.size);
-        if (s[s.length - 1] === "n") { params.lastPoint = this.cont(params.lastPoint, 4, 1, 90, true); }
-        params.lastSimbol = "t"
+        this.params.lastPoint = this.grContraccionL(this.params.lastPoint, 1, 4, 90);
+        this.params.lastPoint = this.grDT(this.params.lastPoint, 1, this.params.size);
+        if (s[s.length - 1] === "n") { this.params.lastPoint = this.cont(this.params.lastPoint, 4, 1, 90, true); }
+        this.params.lastSimbol = "t"
       }
       this.tr_ = function (s) {
 
-        var p = params.lastPoint; ////alert(JSON.stringify(p))
-        if (params.inicw) {
+        var p = this.params.lastPoint; ////alert(JSON.stringify(p))
+        if (this.params.inicw) {
           p.x += 20;
-          if (s.includes("a")) params.lastPoint.y = params.line - params.size - 8;
-          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - params.size - 3;
-          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
-          params.inicw = false;
+          if (s.includes("a")) this.params.lastPoint.y = this.params.line - this.params.size - 8;
+          if (s.includes("e") || s.includes("i")) this.params.lastPoint.y = this.params.line - this.params.size - 3;
+          if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line - this.params.size / 2;
+          this.params.inicw = false;
         }
-        params.lastPoint = this.grContraccionR(params.lastPoint, 1, 4, 90);
-        params.lastPoint = this.grDT(params.lastPoint, 1, params.size);
-        if (s[s.length - 1] === "n") { params.lastPoint = this.cont(params.lastPoint, 5, 1, 135, false); }
-        params.lastSimbol = "t";
+        this.params.lastPoint = this.grContraccionR(this.params.lastPoint, 1, 4, 90);
+        this.params.lastPoint = this.grDT(this.params.lastPoint, 1, this.params.size);
+        if (s[s.length - 1] === "n") { this.params.lastPoint = this.cont(this.params.lastPoint, 5, 1, 135, false); }
+        if (s[s.length - 1] === "l") { this.al_(s); }
+        if (s[s.length - 1] === "r") { this.ar_(s); }
+
+
+
+        //  this.params.lastSimbol = "t";
 
       }
 
@@ -1202,8 +1234,8 @@
       this.grDT = function (inicPos, lineWidth, size) {
         var p = inicPos;
         //  //alert(this.params.lastSimbol)
-        if (params.lastSimbol === "t" || params.lastSimbol === "d") {
-          p.x += 4; p.y -= (params.size / 1.5);
+        if (this.params.lastSimbol === "t" || this.params.lastSimbol === "d") {
+          p.x += 4; p.y -= (this.params.size / 1.5);
 
         }
 
@@ -1239,11 +1271,6 @@
 
         ctx.stroke(path);
         //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
-
-
-
-
-        ; //  //alert(JSON.stringify(params))
 
         return p;
       }
@@ -1330,8 +1357,7 @@
 
 
 
-
-        ; //  //alert(JSON.stringify(params))rams))
+        ;
         this.params.lastSimbol = "m"
         return p;
       }
@@ -1805,23 +1831,23 @@
 
         if (s === "a") {
           alert("vocal: " + s);
-          this.params.lastPoint = this.cont(this.params.lastPoint, 4, 1, 180, false);
+          this.params.lastPoint = this.cont(this.params.lastPoint, 5, 1, 0, false);
 
         }
         if (s === "e" || s === "i") {
           alert("vocal: " + s)
-          this.params.lastPoint = this.cont(this.params.lastPoint, 4, 1, 90, true);
+          this.params.lastPoint = this.cont(this.params.lastPoint, 5, 1, 90, true);
           //    return this.params.lastPoint;
           //return this.cont(this.params.lastPoint, 4, 1, 90, true);
         }
 
         if (s === "o" || s === "u") {
           alert("vocal: " + s);
-          this.params.lastPoint = this.cont(this.params.lastPoint, 4, 1, 90, false);
+          this.params.lastPoint = this.cont(this.params.lastPoint, 5, 1, 90, false);
           //    return this.params.lastPoint;
         }
         this.params.inicw = true;
-
+           this.params.vocal = ""
         return this.params.lastPoint;
 
       }////alert(s)
@@ -1973,7 +1999,7 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       ctx.strokeStyle = "blue";
-      ctx.lineWidth = .5
+      ctx.lineWidth = .15
       for (var i = 0; i < 10; i++) {
         ctx.moveTo(0, 80 * i)
         ctx.lineTo(800, 80 * i)
