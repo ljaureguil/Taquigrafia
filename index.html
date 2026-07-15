@@ -287,6 +287,7 @@
         for (const s of as) {
           this.params.color = "green";
           ctx.strokeStyle = "green";
+          if (this.params.lastSimbol === "j") this.params.lastPoint.x += 20;
           this.grafSilaba(s)
 
         }
@@ -313,8 +314,9 @@
         var ars = procesarFrase(paragraph);
         shs.value = JSON.stringify(ars);
 
-        for (var i = 0; i < ars.length; i++) {//e of ars
-          var e = ars[i];
+        //   for (var i = 0; i < ars.length; i++) {//e of ars
+        for (let e of ars) {
+          //   var e = ars[i];
           this.params.inicw = true;
           this.params.lastSimbol = "";
           this.params.lastsi = "";
@@ -331,10 +333,14 @@
 
           }
           //  alert(JSON.stringify(this.taqPalabras))
-          if (w === "con" && e.length === 1) { this.grPalabrasInd(w); i++; e = ars[i]; this.params.inicw = true; }
-          if (this.especiales.includes(w)) { this.grEspeciales(w); i++; e = ars[i]; this.params.inicw = true; }
+          //       if (w === "con" && e.length === 1) { this.grPalabrasInd(w); i++; e = ars[i]; this.params.inicw = true; }
+          //         if (this.especiales.includes(w)) { this.grEspeciales(w); i++; e = ars[i]; this.params.inicw = true; this.params.lastPoint.x += 20; }
+
+          if (w === "con" && e.length === 1) { this.grPalabrasInd(w); this.params.inicw = true; continue; }
+          if (this.especiales.includes(w)) { this.grEspeciales(w); this.params.inicw = true; this.params.lastPoint.x += 20; continue; }
 
           if (e !== undefined) {
+
             for (s of e) {
               this.grafSilaba(s)
               // this.params.inicw = false;
@@ -350,6 +356,7 @@
 
           }
           this.params.lastPoint.x += 20;
+          if (this.params.lastSimbol === "j") this.params.lastPoint.x += 20;
           this.params.puntero.x = this.params.lastPoint.x;
           this.params.puntero.y = this.params.lastPoint.y;
         }
@@ -373,7 +380,7 @@
 
       }
       this.terminaciones = "cion ando endo undo mente".split(" ")
-      this.especiales = "el mucho mucha mente algo alguna algunas alguno algunos hacer hora ahora mañana compañia por para tiempo fecha hacer".split(" ");
+      this.especiales = "hoy el mucho mucha mente algo alguna algunas alguno algunos hice hiso hace hacer hora ahora mañana compañia por para tiempo fecha hacer".split(" ");
       //   if(this.especiales.includes("algunos")) alert("ok")
       this.abreviasiones = [];
       this.contraccionesInic = this.a_("pr_").concat(this.a_("tr_"));//.concat(this.a_("br_")).concat(this.a_("dr_"))
@@ -764,9 +771,9 @@
 
         }
 
-        params.lastPoint = this.grJCH(params.lastPoint, lineWidth, params.size)
-          //     params.lastSimbol = "j"
-          ;
+        params.lastPoint = this.grJCH(params.lastPoint, lineWidth, params.size);
+        //     params.lastSimbol = "j"
+        ;
         params.inicw = false;
 
 
@@ -1546,7 +1553,7 @@
         var path = new Path2D();
         path.moveTo(p.x, p.y)
         path.arc(p.x, p.y, radio, 0, 2 * Math.PI);
-        this.params.lastSimbol = "c"
+        this.params.lastSimbol = "s"
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
@@ -1888,9 +1895,12 @@
           if (s.includes("e") || s.includes("i")) { this.params.lastPoint.y = this.params.line - 4 }
           if (s.includes("o") || s.includes("u")) { this.params.lastPoint.y = this.params.line + 8 }
 
+
+
           if (this.silabas.vocales.includes(s[0])) {
             this.params.lastPoint.y -= this.params.size / 1.5
-            this.params.lastPoint = this.grES(this.params.lastPoint, 1, this.params.size)
+            this.params.lastPoint = this.grES(this.params.lastPoint, 1, this.params.size);
+
             this.params.inicw = false;
 
             return;
@@ -1898,7 +1908,8 @@
 
         }
 
-        this.grSZ(this.params.lastPoint, 1, radio)
+        this.grSZ(this.params.lastPoint, 1, radio);
+        //       alert("sc_ " + JSON.stringify(this.params.lastPoint))
         this.params.inicw = false;
 
 
@@ -1952,98 +1963,160 @@
         return this.params.lastPoint;
 
       }////alert(s)
+
       this.grEspeciales = function (s) {
-        alert(s)
+        // 1. Initialize and cache the lookup map inside the function scope on the very first run
+        if (!this.grEspeciales.map) {
+          const size = this.params.size;
+          this.grEspeciales.map = {
+            // format: [drawMethod, drawString, [xOffset, yOffset], extraMethod, extraString]
+            "ahora": ["h_", "ha", [-5, -size - 1]],
+            "hora": ["h_", "ho", [-5, -size - 1]],
+            "hoy": ["h_", "he", [5, -size + 4]],
+            "alguna": ["cgkqu_", "ga", [-size + 3, -5]],
+            "algunas": ["cgkqu_", "ga", [-size + 3, -5], "sc_", "sa"],
+            "alguno": ["cgkqu_", "go", [-size + 3, -5]],
+            "algo": ["cgkqu_", "go", [-size + 3, -5]],
+            "algunos": ["cgkqu_", "go", [-size + 3, -5], "sc_", "so"],
+            "por": ["bp_", "po", [-size + 3, -size + 5]],
+            "para": ["bp_", "pa", [-size + 3, -size + 5]],
+            "porque": ["bp_", "po", [-size + 3, -size + 5]],
+            "pero": ["bp_", "pe", [-size + 3, -size + 5]],
+            "mañana": ["m_", "ma", [-size + 3, -5]],
+            "tiempo": ["dt_", "ti", [4, -size - 1]],
+            "ayer": ["lyll_", "ye", [-size + 3, -5]],
+            "fecha": ["fv_", "fe", [-size + 7, -size + 4]],
+            "hacer": ["sc_", "as", [-5, -size + 5]],
+            "hice": ["sc_", "es", [-5, -size + 5]],
+            "hiso": ["sc_", "os", [-5, -size + 5]],
+            "hace": ["sc_", "as", [-5, -size + 5]],
+
+
+            "compañia": ["nñ_", "ñi", [-size + 3, -5]],
+            "el": ["grInicCont", "pre", [10, -8]]
+          };
+        }
+        //aqui
+
+        // 2. Safety guard checks
+        if (!s || !this.especiales.includes(s)) return;
+        const config = this.grEspeciales.map[s];
+        if (!config) return;
+
+        //    this.params.inicw = true;
+
+        // 3. Unpack layout configurations and fire runtime drawing routines
+        const [drawMethod, drawStr, offset, extraMethod, extraStr] = config;
+
+        this[drawMethod](drawStr);
+        if (extraMethod) this[extraMethod](extraStr);
+
+        // 4. Compute independent final coordinates and dispatch to cruz
+        const p = {
+          x: this.params.lastPoint.x + offset[0],
+          y: this.params.lastPoint.y + offset[1]
+        };
+
+        this.cruz(p);
         this.params.inicw = true;
-        if (s === "ahora") {
-          this.h_("ha");
-          var p = {}; p.x = this.params.lastPoint.x - 5; p.y = this.params.lastPoint.y - this.params.size - 1;
-          this.cruz(p)
-        }
-        if (s === "hora") {
-          this.h_("ho");
-          var p = {}; p.x = this.params.lastPoint.x - 5; p.y = this.params.lastPoint.y - this.params.size - 1;
-          this.cruz(p)
-        }
-        if (s === "alguna" || s === "algunas") {
-          //  alert(s)
-          this.cgkqu_("ga");//this.params.lastPoint, 1, this.params.size);
-          var p = {}; p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
-          this.cruz(p);
-          if (s === "algunas") this.sc_("sa")
-        }
-        if (s === "alguno" || s === "algo" || s === "algunos") {
-          // alert(s)
-          this.cgkqu_("go");//this.params.lastPoint, 1, this.params.size);
-          var p = {}; p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
-          this.cruz(p);
-          if (s === "algunos") this.sc_("so")
-
-        }
-        if (s === "por") {
-          this.bp_("po");
-          var p = {}; p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
-          this.cruz(p);
-        }
-        if (s === "para") {
-          this.bp_("pa");
-          var p = {}; p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
-          this.cruz(p);
-        }
-        if (s === "porque") {
-          this.bp_("po");
-          var p = {}; p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
-          this.cruz(p);
-        }
-        if (s === "pero") {
-          this.bp_("pe");
-          var p = {}; p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
-          this.cruz(p);
-        }
-        if (s === "mañana") {
-          this.m_("ma");
-          var p = {}; p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
-          this.cruz(p);
-        }
-        if (s === "tiempo") {
-          this.dt_("ti");
-          var p = {}; p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
-          this.cruz(p);
-        }
-        if (s === "ayer") {
-          this.lyll_("ye");
-          var p = {}; p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
-          this.cruz(p);
-        }
-        if (s === "fecha") {
-          this.fv_("fe");
-          var p = {}; p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
-          this.cruz(p);
-        }
-        if (s === "hacer") {
-          this.h_("ha");
-          var p = {}; p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
-          this.cruz(p);
-        }
-        if (s === "compañia") {
-          this.nñ_("ñi");
-          var p = {}; p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
-          this.cruz(p);
-        }
-        if (s === "el") {
-          this.grInicCont("pre");
-          var p = {}; p.x = this.params.lastPoint.x + 10; p.y = this.params.lastPoint.y - 8;
-          this.cruz(p);
-        }
-
-
-        this.params.lastPoint.x += 20;
-        this.params.inicw = true;
+      };
 
 
 
 
-      }
+      /*
+            this.grEspeciales = function (s) {
+              alert(s)
+               var p = {}; 
+              this.params.inicw = true;
+              if (s === "ahora") {
+                this.h_("ha");
+               p.x = this.params.lastPoint.x - 5; p.y = this.params.lastPoint.y - this.params.size - 1;
+            //    this.cruz(p)
+              }
+              if (s === "hora") {
+                this.h_("ho");
+               p.x = this.params.lastPoint.x - 5; p.y = this.params.lastPoint.y - this.params.size - 1;
+                this.cruz(p)
+              }
+              if (s === "alguna" || s === "algunas") {
+                //  alert(s)
+                this.cgkqu_("ga");//this.params.lastPoint, 1, this.params.size);
+                p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
+            //    this.cruz(p);
+                if (s === "algunas") this.sc_("sa")
+              }
+              if (s === "alguno" || s === "algo" || s === "algunos") {
+                // alert(s)
+                this.cgkqu_("go");//this.params.lastPoint, 1, this.params.size);
+              p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
+              //  this.cruz(p);
+                if (s === "algunos") this.sc_("so")
+      
+              }
+              if (s === "por") {
+                this.bp_("po");
+         p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
+               // this.cruz(p);
+              }
+              if (s === "para") {
+                this.bp_("pa");
+                p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
+             ///   this.cruz(p);
+              }
+              if (s === "porque") {
+                this.bp_("po");
+               p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
+              //  this.cruz(p);
+              }
+              if (s === "pero") {
+                this.bp_("pe");
+               p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
+             //   this.cruz(p);
+              }
+              if (s === "mañana") {
+                this.m_("ma");
+              p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
+               // this.cruz(p);
+              }
+              if (s === "tiempo") {
+                this.dt_("ti");
+               p.x = this.params.lastPoint.x + 4; p.y = this.params.lastPoint.y - this.params.size - 1;
+              //  this.cruz(p);
+              }
+              if (s === "ayer") {
+                this.lyll_("ye");
+             p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
+              //  this.cruz(p);
+              }
+              if (s === "fecha") {
+                this.fv_("fe");
+             p.x = this.params.lastPoint.x - this.params.size + 7; p.y = this.params.lastPoint.y - this.params.size + 4;
+               // this.cruz(p);
+              }
+              if (s === "hacer") {
+                this.h_("ha");
+              p.x = this.params.lastPoint.x - this.params.size + 5; p.y = this.params.lastPoint.y - 5;
+               // this.cruz(p);
+              }
+              if (s === "compañia") {
+                this.nñ_("ñi");
+             p.x = this.params.lastPoint.x - this.params.size + 3; p.y = this.params.lastPoint.y - 5;
+               // this.cruz(p);
+              }
+              if (s === "el") {
+                this.grInicCont("pre");
+              p.x = this.params.lastPoint.x + 10; p.y = this.params.lastPoint.y - 8;
+       
+              }
+      
+               this.cruz(p);
+              this.params.lastPoint.x += 20;
+              this.params.inicw = true;
+      
+            }
+            */
+
       this.cruz = function (pos, size) {
 
         var m = 2
