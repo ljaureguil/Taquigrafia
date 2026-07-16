@@ -380,7 +380,7 @@
 
       }
       this.terminaciones = "cion ando endo undo mente".split(" ")
-      this.especiales = "mucho mejor hoy el mucho mucha mente algo alguna algunas alguno algunos hice hiso hace hacer hora ahora mañana compañia por para tiempo fecha hacer".split(" ");
+      this.especiales = "momento mucho mejor hoy el mucho mucha mente algo alguna algunas alguno algunos hice hiso hace hacer hora ahora mañana compañia por para tiempo fecha hacer".split(" ");
       //   if(this.especiales.includes("algunos")) alert("ok")
       this.abreviasiones = [];
       this.contraccionesInic = this.a_("pr_").concat(this.a_("tr_"));//.concat(this.a_("br_")).concat(this.a_("dr_"))
@@ -613,7 +613,7 @@
           if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line + 5;
           if (s.includes("qu")) this.params.lastPoint.y -= 8;
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
         }
         //   alert(this.params.lastSimbol)
@@ -656,7 +656,7 @@
           if (s.includes("e") || s.includes("i")) this.params.lastPoint.y = this.params.line - 3;
           if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line + 5;
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
           this.params.inicw = false;
         }
@@ -683,12 +683,25 @@
           if (s.includes("e") || s.includes("i")) this.params.lastPoint.y = this.params.line - this.params.size - 1;
           if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line - this.params.size / 2;
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
 
         }
 
-        this.params.lastPoint = this.grBP(this.params.lastPoint, lineWidth, this.params.size);
+        var ls = this.params.lastSimbol;//aqui //pendiente de checar 
+        // alert(ls)
+        //    var l = lineWidth;
+        if (ls === "d") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 180, true);
+        else if (ls === "b") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 90, true);
+        else if (ls === "j") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 0, true);
+        else if (ls === "c") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 90, true);
+        //       else params.lastPoint = this.grFV(params.lastPoint, lineWidth, params.size)
+
+
+
+        // else params.lastPoint = this.grDT(params.lastPoint, lineWidth, params.size)
+
+        else this.params.lastPoint = this.grBP(this.params.lastPoint, lineWidth, this.params.size);
         //  if (s.length > 1 && s.includes("n")) this.params.lastPoint = this.grContracciones(this.params.lastPoint, 1, 4, 230);
         //       this.params.lastSimbol = "b"
         ;
@@ -713,15 +726,12 @@
           if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - params.size - 2;
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
 
           //   path.moveTo(p.x, p.y)
         }
         params.lastPoint = this.grDT(params.lastPoint, lineWidth, params.size)
-
-          ;
-        //      params.lastSimbol = "d"
         params.inicw = false;
       }
 
@@ -740,15 +750,19 @@
           if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - params.size - 2
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
 
         }
-
-        params.lastPoint = this.grFV(params.lastPoint, lineWidth, params.size)
+        var ls = this.params.lastSimbol;//aqui //pendiente de checar
+        var l = lineWidth;
+        if (ls === "d") params.lastPoint = this.cont(this.params.lastPoint, 5, l, 180, true);
+        else if (ls === "b") params.lastPoint = this.cont(this.params.lastPoint, 5, l, 90, true);
+        else if (ls === "j") params.lastPoint = this.cont(this.params.lastPoint, 5, l, 0, true);
+        else if (ls === "c") params.lastPoint = this.cont(this.params.lastPoint, 5, l, 90, true);
+        else params.lastPoint = this.grFV(params.lastPoint, lineWidth, params.size)
         params.lastLetter = params.letter;
-        ;
-        //     params.lastSimbol = "f"
+
         params.inicw = false
 
 
@@ -767,7 +781,7 @@
           if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - params.size - 1;
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
         }
 
@@ -867,7 +881,7 @@
           if (s.includes("e") || s.includes("i")) this.params.lastPoint.y = this.params.line - 3;
           if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line + this.params.size / 3;
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
         }
         // alert(75765767)
@@ -916,7 +930,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 15;
           //      path.moveTo(p.x, p.y)
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
 
         }
@@ -945,7 +959,7 @@
           //  path.moveTo(p.x, p.y)
 
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
         }
         params.lastPoint = this.grM(params.lastPoint, lineWidth, params.size)
@@ -967,7 +981,7 @@
         if (s.includes("m") || s.includes("mp") || s.includes("mb")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 135, false); return; }
         if (this.params.lastSimbol === "n" && s.length > 2 && s[s.length - 1] === "n" && this.vocales.includes(s[s.length - 2])) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 0, true); return; }
         if (this.params.lastSimbol === "ñ" && s.length > 2 && s[s.length - 1] === "ñ" && this.vocales.includes(s[s.length - 2])) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 0, true); return; }
-        //aqui
+
         if (s.includes("f") || s.includes("v")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 90 + 45, true); return; }
         if (s.includes("l") || s.includes("y")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 1, 90, false); return; }
 
@@ -984,7 +998,7 @@
           //   path.moveTo(p.x, p.y)
 
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
         }
         params.lastPoint = this.grNñ(params.lastPoint, lineWidth, params.size)
@@ -1013,7 +1027,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
 
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
 
 
@@ -1037,7 +1051,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
 
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
 
 
@@ -1059,7 +1073,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 4;
 
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
           params.inicw = false;
         }
@@ -1080,7 +1094,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 8;
 
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
 
 
@@ -1105,7 +1119,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
 
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
 
 
@@ -1128,7 +1142,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
 
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
 
           params.inicw = false;
@@ -1150,7 +1164,7 @@
 
 
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
 
           params.inicw = false;
@@ -1171,7 +1185,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 4;
 
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
 
           params.inicw = false;
@@ -1193,7 +1207,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line + 8;
 
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
 
 
@@ -1215,7 +1229,7 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
 
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
 
           params.inicw = false;
@@ -1237,7 +1251,7 @@
           if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line - this.params.size / 2;
 
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
 
           this.params.inicw = false;
@@ -1264,7 +1278,7 @@
           if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line - this.params.size / 2;
 
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
 
           this.params.inicw = false;
@@ -1284,7 +1298,7 @@
           if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line - this.params.size / 2;
 
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
-          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }//aqui
+          else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
           this.params.inicw = false;
         }
@@ -1993,6 +2007,7 @@
             "mañana": ["m_", "ma", [-size + 3, -7]],
             "mejor": ["m_", "me", [-size + 3, -7]],
             "mucho": ["m_", "mu", [-size + 3, -7]],
+            "momento": ["m_", "mo", [-size + 3, -7], "m_", "mo"],
             "tiempo": ["dt_", "ti", [4, -size - 1]],
             "ayer": ["lyll_", "ye", [-size + 3, -5]],
             "fecha": ["fv_", "fe", [-size + 7, -size + 4]],
@@ -2006,7 +2021,7 @@
             "el": ["grInicCont", "pre", [10, -8]]
           };
         }
-        //aqui
+
 
         // 2. Safety guard checks
         if (!s || !this.especiales.includes(s)) return;
@@ -2183,7 +2198,7 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       ctx.strokeStyle = "blue";
-      ctx.lineWidth = .15
+      ctx.lineWidth = .5
       for (var i = 0; i < 10; i++) {
         ctx.moveTo(0, 80 * i)
         ctx.lineTo(800, 80 * i)
