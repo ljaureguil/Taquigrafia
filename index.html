@@ -54,7 +54,7 @@
     style="position:absolute;left:8px;top:8px;background:rgba(200,250,200,.25);"></canvas>
   <script>
 
-    alert("** Checar la palabra control no toma la contraccion con y el simblo dt la coantraccion la toma muy abajo\n\nchecar vocales ya casi esta\n\nla vocal con la cgk sirve y pa pb tambien, checar el resto")
+    alert("** Checar la terminacion mente, esta afectando las palabras como pendiente revisar bien esos cambios...")
     startBtn.addEventListener('click', () => speech.on());
     stopBtn.addEventListener('click', () => speech.off());
 
@@ -242,18 +242,6 @@
           ion.value = "";
           this.params.capturePath = undefined;
 
-
-          //   this.taqPalabras[this.taqPalabras.length - 1] = null;
-          //   this.taqPalabras.pop();
-          //
-          // this.taqPalabras.push({ word: palabra, silabas: as, path: new Path2D() })
-
-          /* this.taqPalabras[this.taqPalabras.length - 1].word = palabra;
-           this.taqPalabras[this.taqPalabras.length - 1].silabas = as;*/
-          //   this.grPalSilabas(as)
-
-          //     alert(this.taqPalabras.length)
-
           return;
         }
         //   this.params.lastPoint = this.params.puntero;
@@ -332,10 +320,8 @@
             // this.taqPalabras.push({ word: w, silabas: e, path: new Path2D() })
 
           }
-          //  alert(JSON.stringify(this.taqPalabras))
-          //       if (w === "con" && e.length === 1) { this.grPalabrasInd(w); i++; e = ars[i]; this.params.inicw = true; }
-          //         if (this.especiales.includes(w)) { this.grEspeciales(w); i++; e = ars[i]; this.params.inicw = true; this.params.lastPoint.x += 20; }
-          if (w === "y") { this.grVocales("i"); this.params.lastPoint.x += 20; continue; }
+          // this.grDot()
+          if (w === "y") { this.grDot(this.params.lastPoint.x, this.params.line - 2, 2); this.params.lastPoint.x += 20; continue; }//this.grVocales("i");
           if (this.vocales.includes(w) && w.length === 1) { this.grVocales(w); this.params.lastPoint.x += 20; continue; }
           if (w === "con" && e.length === 1) { this.grPalabrasInd(w); this.params.inicw = true; continue; }
           if (this.especiales.includes(w)) { this.grEspeciales(w); this.params.inicw = true; this.params.lastPoint.x += 20; continue; }
@@ -380,7 +366,7 @@
         return arc;
 
       }
-      this.terminaciones = "cion ando endo undo mente".split(" ")
+      this.terminaciones = "cion ando endo undo mente".split(" ");
       this.especiales = "como momento mucho mejor hoy el mucho mucha mente algo alguna algunas alguno algunos hice hiso hace hacer hora ahora mañana compañia por para tiempo fecha hacer".split(" ");
       //   if(this.especiales.includes("algunos")) alert("ok")
       this.abreviasiones = [];
@@ -728,11 +714,10 @@
           if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
           else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
-
-
-          //   path.moveTo(p.x, p.y)
         }
-        params.lastPoint = this.grDT(params.lastPoint, lineWidth, params.size)
+        if (("men" + s) === "mente") this.cruz({ x: this.params.lastPoint.x + 2, y: this.params.lastPoint.y - 10 }, 5);//aqui
+        else
+          params.lastPoint = this.grDT(params.lastPoint, lineWidth, params.size)
         params.inicw = false;
       }
 
@@ -975,14 +960,18 @@
         return this.silabas.vocales.includes(v)
       }
       this.nñ_ = function (s) {
+        //  alert(s)
 
         if (s.includes("t") || s.includes("d")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 1, 180, false); return; }
         if (s.includes("p") || s.includes("b")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 1, 125, false); return; }
         if (s.includes("j") || s.includes("ch")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 1, 45, false); return; }
         if (s.includes("m") || s.includes("mp") || s.includes("mb")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 135, false); return; }
-        if (this.params.lastSimbol === "n" && s.length > 2 && s[s.length - 1] === "n" && this.vocales.includes(s[s.length - 2])) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 0, true); return; }
+        //    if (this.params.lastSimbol === "n" && s.length > 2 && s[s.length - 1] === "n" && this.vocales.includes(s[s.length - 2])) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 0, true); return; }
         if (this.params.lastSimbol === "ñ" && s.length > 2 && s[s.length - 1] === "ñ" && this.vocales.includes(s[s.length - 2])) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 0, true); return; }
 
+        //      if (this.params.lastSimbol === "ñ" && s.length > 2 && s[s.length - 1] === "ñ" && this.vocales.includes(s[s.length - 2])) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 0, true); return; }
+        if (this.params.lastSimbol === "n") { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 0, true); return; }
+        //&& s.length > 2 && s[s.length - 1] === "n" && this.vocales.includes(s[s.length - 2])
         if (s.includes("f") || s.includes("v")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 90 + 45, true); return; }
         if (s.includes("l") || s.includes("y")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 1, 90, false); return; }
 
@@ -1002,6 +991,9 @@
           else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
         }
+        //alert(this.params.lastSimbol)
+        //    if (this.params.lastSimbol === "n") this.cont(this.params.lastPoint, 5, 1, 180, true);//aqui
+        //  else
         params.lastPoint = this.grNñ(params.lastPoint, lineWidth, params.size)
 
         params.lastLetter = params.letter;
@@ -1604,7 +1596,6 @@
 
       }
       this.grCon = function (c, s) {
-        // if (!this.params.inicw) return;
 
         var x = this.params.lastPoint.x, y = this.params.lastPoint.y;
         var z = this.params.size;
@@ -1649,6 +1640,9 @@
       }
       this.cont = function (p1, size, lineWidth, angle, ccw) {
         // 1. Map ccw boolean directly to 1 or -1 (removes variable declaration and conditional branching)
+        var color = ctx.strokeStyle;
+        // this.params.color = "green"
+        ctx.strokeStyle = "orange";
         const d = ccw ? -1 : 1;
 
         // 2. Convert degrees to radians using a pre-calculated multiplier constant (saves a division)
@@ -1680,11 +1674,7 @@
 
         ctx.stroke(path);
         //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
-
-
-
-
-        ;
+        ctx.strokeStyle = color; // Restore original stroke color
 
         // 7. Update state using clean object assignments
         // this.params.lastPoint = { x: endX, y: endY };
@@ -1957,6 +1947,9 @@
 
       this.grVocales = function (s) {
         //   alert(s)
+        var color = ctx.strokeStyle;
+        ctx.strokeStyle = "green"
+
         var ws = this.params.lastWordSil;
         var w = this.params.lastWord;
         var n = w[1]
@@ -1974,7 +1967,9 @@
           if (n === undefined) {
             this.params.lastPoint.y = this.params.line - 5;
           }
-          this.params.lastPoint = this.grBP(this.params.lastPoint, 1, 5, 90);
+          if (this.params.lastWord[1] === "n") this.params.lastPoint = this.grR(this.params.lastPoint, 1, 5);
+          else
+            this.params.lastPoint = this.grBP(this.params.lastPoint, 1, 5, 90);
           //   if (n === "c" || n === "g" || n === "m" || n === "ñ" || n === "l" || n === "y") this.params.lastPoint = this.grBP(this.params.lastPoint, 1, 5);
           //   if (n === "n" || n === "j" || n === "ñ" || n === "t" || n === "d" || n === "ch" || n === "p" || n === "b") this.params.lastPoint = this.cont(this.params.lastPoint, 1, 5);
 
@@ -1992,6 +1987,7 @@
         }
         this.params.inicw = true;
         this.params.vocal = ""
+        ctx.strokeStyle = color;
         return this.params.lastPoint;
 
       }////alert(s)
@@ -2157,12 +2153,17 @@
 
         var m = 2
         if (size != undefined) m = m = size / 2;
-        var path = new Path2D()
+        var path = new Path2D();
+        var c = ctx.strokeStyle;
+
         path.moveTo(pos.x - m, pos.y - m)
         path.lineTo(pos.x + m, pos.y + m)
         path.moveTo(pos.x - m, pos.y + m)
         path.lineTo(pos.x + m, pos.y - m)
-        ctx.stroke(path)
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "red"
+        ctx.stroke(path);
+        ctx.strokeStyle = c;
 
       }
 
