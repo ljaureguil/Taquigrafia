@@ -335,7 +335,8 @@
           //  alert(JSON.stringify(this.taqPalabras))
           //       if (w === "con" && e.length === 1) { this.grPalabrasInd(w); i++; e = ars[i]; this.params.inicw = true; }
           //         if (this.especiales.includes(w)) { this.grEspeciales(w); i++; e = ars[i]; this.params.inicw = true; this.params.lastPoint.x += 20; }
-          if (this.vocales.includes(w) && w.length === 1) { this.grVocales(w); alert(w); this.params.lastPoint.x += 20; continue; }
+          if (w === "y") { this.grVocales("i"); this.params.lastPoint.x += 20; continue; }
+          if (this.vocales.includes(w) && w.length === 1) { this.grVocales(w); this.params.lastPoint.x += 20; continue; }
           if (w === "con" && e.length === 1) { this.grPalabrasInd(w); this.params.inicw = true; continue; }
           if (this.especiales.includes(w)) { this.grEspeciales(w); this.params.inicw = true; this.params.lastPoint.x += 20; continue; }
 
