@@ -335,7 +335,7 @@
           //  alert(JSON.stringify(this.taqPalabras))
           //       if (w === "con" && e.length === 1) { this.grPalabrasInd(w); i++; e = ars[i]; this.params.inicw = true; }
           //         if (this.especiales.includes(w)) { this.grEspeciales(w); i++; e = ars[i]; this.params.inicw = true; this.params.lastPoint.x += 20; }
-
+          if (this.vocales.includes(w) && w.length === 1) { this.grVocales(w); alert(w); this.params.lastPoint.x += 20; continue; }
           if (w === "con" && e.length === 1) { this.grPalabrasInd(w); this.params.inicw = true; continue; }
           if (this.especiales.includes(w)) { this.grEspeciales(w); this.params.inicw = true; this.params.lastPoint.x += 20; continue; }
 
@@ -380,7 +380,7 @@
 
       }
       this.terminaciones = "cion ando endo undo mente".split(" ")
-      this.especiales = "momento mucho mejor hoy el mucho mucha mente algo alguna algunas alguno algunos hice hiso hace hacer hora ahora mañana compañia por para tiempo fecha hacer".split(" ");
+      this.especiales = "como momento mucho mejor hoy el mucho mucha mente algo alguna algunas alguno algunos hice hiso hace hacer hora ahora mañana compañia por para tiempo fecha hacer".split(" ");
       //   if(this.especiales.includes("algunos")) alert("ok")
       this.abreviasiones = [];
       this.contraccionesInic = this.a_("pr_").concat(this.a_("tr_"));//.concat(this.a_("br_")).concat(this.a_("dr_"))
@@ -1955,17 +1955,24 @@
       }
 
       this.grVocales = function (s) {
-
+        //   alert(s)
         var ws = this.params.lastWordSil;
         var w = this.params.lastWord;
         var n = w[1]
-        if (s === "a") {
 
+        if (s === "a") {
+          if (n === undefined) {
+            this.params.lastPoint.y = this.params.line - this.params.size / 2;
+            this.params.lastPoint = this.cont(this.params.lastPoint, 5, 1, 0, false);
+          }
           if (n === "c" || n === "g" || n === "m" || n === "ñ" || n === "l" || n === "y") this.params.lastPoint = this.cont(this.params.lastPoint, 5, 1, 0, false);
           if (n === "n" || n === "j" || n === "ñ" || n === "t" || n === "d" || n === "ch" || n === "p" || n === "b") this.params.lastPoint = this.cont(this.params.lastPoint, 5, 1, 180, true);
 
         }
         if (s === "e" || s === "i") {
+          if (n === undefined) {
+            this.params.lastPoint.y = this.params.line - 5;
+          }
           this.params.lastPoint = this.grBP(this.params.lastPoint, 1, 5, 90);
           //   if (n === "c" || n === "g" || n === "m" || n === "ñ" || n === "l" || n === "y") this.params.lastPoint = this.grBP(this.params.lastPoint, 1, 5);
           //   if (n === "n" || n === "j" || n === "ñ" || n === "t" || n === "d" || n === "ch" || n === "p" || n === "b") this.params.lastPoint = this.cont(this.params.lastPoint, 1, 5);
@@ -1974,7 +1981,9 @@
         }
 
         if (s === "o" || s === "u") {
-          //  alert("vocal: " + s);
+          if (n === undefined) {
+            this.params.lastPoint.y = this.params.line + 5;
+          }
           this.params.lastPoint = this.cont(this.params.lastPoint, 5, 1, 90, false);
           //      if (n === "c" || n === "g" || n === "m" || n === "ñ" || n === "l" || n === "y") this.params.lastPoint = this.cont(this.params.lastPoint, 5, 1, 90, false);
           //  if (n === "n" || n === "j" || n === "ñ" || n === "t" || n === "d" || n === "ch" || n === "p" || n === "b") this.params.lastPoint = this.cont(this.params.lastPoint, 5, 1, 0, true);
@@ -1993,6 +2002,7 @@
           this.grEspeciales.map = {
             // format: [drawMethod, drawString, [xOffset, yOffset], extraMethod, extraString]
             "ahora": ["h_", "ha", [-5, -size - 1]],
+            "como": ["cgkqu_", "co", [-size + 5, - 3]],
             "hora": ["h_", "ho", [-5, -size - 1]],
             "hoy": ["h_", "ho", [5, -size + 4]],
             "alguna": ["cgkqu_", "ga", [-size + 3, -5]],
