@@ -302,15 +302,16 @@
         var ars = procesarFrase(paragraph);
         shs.value = JSON.stringify(ars);
 
-        //   for (var i = 0; i < ars.length; i++) {//e of ars
-        for (let e of ars) {
-          //   var e = ars[i];
+        for (var i = 0; i < ars.length; i++) {//e of ars
+          //   for (let e of ars) {
+          var e = ars[i];
           this.params.inicw = true;
           this.params.lastSimbol = "";
           this.params.lastsi = "";
           this.params.lastSilaba = "";
           this.params.lastWord = e.join("");
           this.params.lastWordSil = e;
+          this.params.silIndex = i;
 
           var w = e.join("")
           if (paragraph[paragraph.length - 1] === " ") {
@@ -325,10 +326,21 @@
           if (this.vocales.includes(w) && w.length === 1) { this.grVocales(w); this.params.lastPoint.x += 20; continue; }
           if (w === "con" && e.length === 1) { this.grPalabrasInd(w); this.params.inicw = true; continue; }
           if (this.especiales.includes(w)) { this.grEspeciales(w); this.params.inicw = true; this.params.lastPoint.x += 20; continue; }
-
+          ////////////////////////////////////////////////////////////
+          if (w.includes("ndo")) {
+            var aw = w.split("ndo");
+            e = silabearPalabra(aw[0])
+            e.push("na");
+          }
+          //////////////////////////////////////////////////////
           if (e !== undefined) {
 
             for (s of e) {
+              ///////////////////////////////////////////////////////
+
+              if (s === "na" && s == e.at(-1)) this.params.extended = "n";
+
+              /////////////////////////////////////////////////////////////////
               this.grafSilaba(s)
               // this.params.inicw = false;
             }
@@ -968,9 +980,15 @@
         if (s.includes("m") || s.includes("mp") || s.includes("mb")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 135, false); return; }
         //    if (this.params.lastSimbol === "n" && s.length > 2 && s[s.length - 1] === "n" && this.vocales.includes(s[s.length - 2])) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 0, true); return; }
         if (this.params.lastSimbol === "ñ" && s.length > 2 && s[s.length - 1] === "ñ" && this.vocales.includes(s[s.length - 2])) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 0, true); return; }
-
         //      if (this.params.lastSimbol === "ñ" && s.length > 2 && s[s.length - 1] === "ñ" && this.vocales.includes(s[s.length - 2])) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 0, true); return; }
-        if (this.params.lastSimbol === "n") { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 0, true); return; }
+        var silbefore = this.params.lastWordSil[this.params.silIndex - 1];
+        var co = ""
+        if (silbefore != undefined) co = silbefore.at(-1)
+
+
+
+
+        if (this.params.lastSimbol === "n" && this.consonantes.includes(co)) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 0, true); return; }
         //&& s.length > 2 && s[s.length - 1] === "n" && this.vocales.includes(s[s.length - 2])
         if (s.includes("f") || s.includes("v")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 90 + 45, true); return; }
         if (s.includes("l") || s.includes("y")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 1, 90, false); return; }
@@ -1518,8 +1536,13 @@
         var p = inicPos;
         var path = new Path2D();
         path.moveTo(p.x, p.y)
-        path.moveTo(p.x, p.y)
-        p.x += this.params.size;
+        // path.moveTo(p.x, p.y)
+        //////////////////////////////////////////////////
+        var ady = 0;
+        if (this.params.extended === "n") { p.x += this.params.size * 2; this.params.extended = ""; ady = size / 1.8 }
+        else p.x += this.params.size;
+        ////////////////////////////////////////////////////////////
+        //   p.x += this.params.size;
         this.params.lastPoint = p;
         path.quadraticCurveTo(p.x - size / 2, p.y + size / 1.5, p.x, p.y);
         this.params.lastSimbol = "n"
@@ -2209,7 +2232,7 @@
 
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-      ctx.strokeStyle = "blue";
+      ctx.strokeStyle = "rgba(0,0,255,.25)";
       ctx.lineWidth = .5
       for (var i = 0; i < 10; i++) {
         ctx.moveTo(0, 80 * i)
