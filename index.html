@@ -314,14 +314,7 @@
           this.params.silIndex = i;
 
           var w = e.join("")
-          if (paragraph[paragraph.length - 1] === " ") {
-            ;
-            //  this.taqPalabras[this.taqPalabras.length - 1].word = w;
-            //  this.taqPalabras[this.taqPalabras.length - 1].silabas = e;
-            // this.taqPalabras.push({ word: w, silabas: e, path: new Path2D() })
 
-          }
-          // this.grDot()
           if (w === "y") { this.grDot(this.params.lastPoint.x, this.params.line - 2, 2); this.params.lastPoint.x += 20; continue; }//this.grVocales("i");
           if (this.vocales.includes(w) && w.length === 1) { this.grVocales(w); this.params.lastPoint.x += 20; continue; }
           if (w === "con" && e.length === 1) { this.grPalabrasInd(w); this.params.inicw = true; continue; }
@@ -2038,6 +2031,7 @@
             "mejor": ["m_", "me", [-size + 3, -7]],
             "mucho": ["m_", "mu", [-size + 3, -7]],
             "momento": ["m_", "mo", [-size + 3, -7], "m_", "mo"],
+            "mente": ["m_", "men", [-size + 3, -7], "nñ_", "men"],
             "tiempo": ["dt_", "ti", [4, -size - 1]],
             "ayer": ["lyll_", "ye", [-size + 3, -5]],
             "fecha": ["fv_", "fe", [-size + 7, -size + 4]],
@@ -2047,7 +2041,7 @@
             "hace": ["sc_", "as", [-5, -size + 5]],
 
 
-            "compañia": ["nñ_", "ñi", [-size + 3, -5]],
+            "compañia": ["nñ_", "ñi", [- 3, -5]],
             "el": ["grInicCont", "pre", [10, -8]]
           };
         }
@@ -2064,6 +2058,8 @@
         const [drawMethod, drawStr, offset, extraMethod, extraStr] = config;
 
         this[drawMethod](drawStr);
+        //   alert(this[extraMethod]);
+        //   alert(extraStr)
         if (extraMethod) this[extraMethod](extraStr);
 
         // 4. Compute independent final coordinates and dispatch to cruz
