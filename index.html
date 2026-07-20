@@ -343,7 +343,6 @@
               this.grafSilaba(s)
               // this.params.inicw = false;
             }
-            ts.value = this.params.track.toString().replace(/,/g, "\n")
 
           }
 
@@ -360,6 +359,8 @@
           this.params.puntero.x = this.params.lastPoint.x;
           this.params.puntero.y = this.params.lastPoint.y;
         }
+        ts.value = this.params.track.toString().replace(/grafSilaba/g, "\ngrafSilaba").replace(/,/g, "\n")
+
       }
 
 
@@ -518,20 +519,20 @@
             //   return; // Stops the loop and exits the method
           }
         }
-
-        // Helper to quickly check if 'ss' exists in any of the passed array keys
-        const match = (...keys) => keys.some(key => this.a_(key).includes(ss));
-
-        // 3. Process complex combined checks cleanly with early returns
-        //if (match("tr_", "dr_"))   { this.t_(ss); return; }
-
-        //   if (match("cr_s", "cr_z")) { this.c_(ss); return; }
-        //  if (match("m_n")) { this.m_(ss); return; }
-        //   if (match("t_n", "d_n")) { this.t_(ss); return; }
-        //   if (match("_n")) { this.nñ_(ss); return; }
-        //     if (match("j_m")) { this.j_(ss); return; }
-        if (match("_")) { this.aeiou_(ss); return; }
-
+        /*
+                // Helper to quickly check if 'ss' exists in any of the passed array keys
+                const match = (...keys) => keys.some(key => this.a_(key).includes(ss));
+        
+                // 3. Process complex combined checks cleanly with early returns
+                //if (match("tr_", "dr_"))   { this.t_(ss); return; }
+        
+                //   if (match("cr_s", "cr_z")) { this.c_(ss); return; }
+                //  if (match("m_n")) { this.m_(ss); return; }
+                //   if (match("t_n", "d_n")) { this.t_(ss); return; }
+                //   if (match("_n")) { this.nñ_(ss); return; }
+                //     if (match("j_m")) { this.j_(ss); return; }
+                if (match("_")) { this.aeiou_(ss); return; }
+        */
 
         var color = this.params.color;
         this.params.color = "green"
