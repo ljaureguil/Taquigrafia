@@ -267,10 +267,10 @@
         this.params.inicw = true;
         this.params.lastSimbol = "";
         this.params.lastsi = "";
-        this.params.lastSilaba = "";
-        this.params.lastWord = as.join("");
+        this.params.actualSilaba = "";
+        this.params.actualWord = as.join("");
         // 
-        this.params.lastWordSil = as;
+        this.params.actualWordSil = as;
         shs.value = JSON.stringify(as)
         this.params.lastPoint.x = this.params.puntero.x;
         this.params.lastPoint.y = this.params.puntero.y;
@@ -314,9 +314,9 @@
           this.params.inicw = true;
           this.params.lastSimbol = "";
           this.params.lastsi = "";
-          this.params.lastSilaba = "";
-          this.params.lastWord = e.join("");
-          this.params.lastWordSil = e;
+          this.params.actualSilaba = "";
+          this.params.actualWord = e.join("");
+          this.params.actualWordSil = e;
           this.params.silIndex = i;
 
           var w = e.join("")
@@ -331,6 +331,14 @@
             e = silabearPalabra(aw[0])
             e.push("na");
           }
+          if (w.includes("mente")) {
+
+            var aw = w.split("mente");
+            if (aw.indexOf("mente") === aw.length - 1)
+              e = silabearPalabra(aw[0])
+            e.push("men");//aqui
+          }
+
           //////////////////////////////////////////////////////
           if (e !== undefined) {
 
@@ -438,7 +446,7 @@
         //  alert(ss)
 
 
-        this.params.lastsilaba = ss
+        this.params.actualSilaba = ss
 
         if (this.vocales.includes(ss) && this.params.inicw && ss.length === 1) {
           //  this.grVocales(ss) 
@@ -458,7 +466,7 @@
           return;
 
         }
-        if (this.params.lastWordSil.indexOf(ss) === 0) {
+        if (this.params.actualWordSil.indexOf(ss) === 0) {
 
           if (this.contraccionesInic.includes(ss)) {
             //  alert("ok  " + ss)
@@ -694,7 +702,7 @@
 
         }
 
-        var ls = this.params.lastSimbol;//aqui //pendiente de checar 
+        var ls = this.params.lastSimbol; //pendiente de checar 
         // alert(ls)
         //    var l = lineWidth;
         if (ls === "d") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 180, true);
@@ -734,9 +742,9 @@
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
           else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
         }
-        if (("men" + s) === "mente") this.cruz({ x: this.params.lastPoint.x + 2, y: this.params.lastPoint.y - 10 }, 5);//aqui
-        else
-          params.lastPoint = this.grDT(params.lastPoint, lineWidth, params.size)
+        //   if (("men" + s) === "mente") this.cruz({ x: this.params.lastPoint.x + 2, y: this.params.lastPoint.y - 10 }, 5);
+        //  else
+        params.lastPoint = this.grDT(params.lastPoint, lineWidth, params.size)
         params.inicw = false;
       }
 
@@ -759,7 +767,7 @@
 
 
         }
-        var ls = this.params.lastSimbol;//aqui //pendiente de checar
+        var ls = this.params.lastSimbol; //pendiente de checar
         var l = lineWidth;
         if (ls === "d") params.lastPoint = this.cont(this.params.lastPoint, 5, l, 180, true);
         else if (ls === "b") params.lastPoint = this.cont(this.params.lastPoint, 5, l, 90, true);
@@ -993,14 +1001,19 @@
         //    if (this.params.lastSimbol === "n" && s.length > 2 && s[s.length - 1] === "n" && this.vocales.includes(s[s.length - 2])) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 0, true); return; }
         if (this.params.lastSimbol === "ñ" && s.length > 2 && s[s.length - 1] === "ñ" && this.vocales.includes(s[s.length - 2])) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 0, true); return; }
         //      if (this.params.lastSimbol === "ñ" && s.length > 2 && s[s.length - 1] === "ñ" && this.vocales.includes(s[s.length - 2])) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 0, true); return; }
-        var silbefore = this.params.lastWordSil[this.params.silIndex - 1];
+        var silbefore = this.params.actualWordSil[this.params.silIndex - 1];
         var co = ""
         if (silbefore != undefined) co = silbefore.at(-1)
 
 
 
 
-        if (this.params.lastSimbol === "n" && this.consonantes.includes(co)) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 0, true); return; }
+        if (this.params.lastSimbol === "n" && this.consonantes.includes(co)) {
+
+          pc.x = this.params.lastPoint.x - 5; pc.y = this.params.lastPoint.y - 6;
+
+          ; return;//aqui
+        }
         //&& s.length > 2 && s[s.length - 1] === "n" && this.vocales.includes(s[s.length - 2])
         if (s.includes("f") || s.includes("v")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 2, 90 + 45, true); return; }
         if (s.includes("l") || s.includes("y")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 1, 90, false); return; }
@@ -1022,7 +1035,7 @@
 
         }
         //alert(this.params.lastSimbol)
-        //    if (this.params.lastSimbol === "n") this.cont(this.params.lastPoint, 5, 1, 180, true);//aqui
+        //    if (this.params.lastSimbol === "n") this.cont(this.params.lastPoint, 5, 1, 180, true);
         //  else
         params.lastPoint = this.grNñ(params.lastPoint, lineWidth, params.size)
 
@@ -1687,12 +1700,13 @@
 
 
       }
-      this.cont = function (p1, size, lineWidth, angle, ccw) {
-        this.params.track.push("cont: " + s)
+      this.cont = function (p1, size, lineWidth, angle, ccw) {//
+        this.params.track.push("cont: " + this.params.actualWord)
+        
         // 1. Map ccw boolean directly to 1 or -1 (removes variable declaration and conditional branching)
         var color = ctx.strokeStyle;
         // this.params.color = "green"
-        ctx.strokeStyle = "orange";
+        ctx.strokeStyle = "red";
         const d = ccw ? -1 : 1;
 
         // 2. Convert degrees to radians using a pre-calculated multiplier constant (saves a division)
@@ -1727,8 +1741,11 @@
         ctx.strokeStyle = color; // Restore original stroke color
 
         // 7. Update state using clean object assignments
-        // this.params.lastPoint = { x: endX, y: endY };
+        this.params.lastPoint = { x: endX, y: endY };
         this.params.lastSimbol = `contraccion ${angle}`;
+
+
+
         return pend;
 
       };
@@ -2011,8 +2028,8 @@
         var color = ctx.strokeStyle;
         ctx.strokeStyle = "green"
 
-        var ws = this.params.lastWordSil;
-        var w = this.params.lastWord;
+        var ws = this.params.actualWordSil;
+        var w = this.params.actualWord;
         var n = w[1]
 
         if (s === "a") {
@@ -2028,7 +2045,7 @@
           if (n === undefined) {
             this.params.lastPoint.y = this.params.line - 5;
           }
-          if (this.params.lastWord[1] === "n") this.params.lastPoint = this.grR(this.params.lastPoint, 1, 5);
+          if (this.params.actualWord[1] === "n") this.params.lastPoint = this.grR(this.params.lastPoint, 1, 5);
           else
             this.params.lastPoint = this.grBP(this.params.lastPoint, 1, 5, 90);
           //   if (n === "c" || n === "g" || n === "m" || n === "ñ" || n === "l" || n === "y") this.params.lastPoint = this.grBP(this.params.lastPoint, 1, 5);
