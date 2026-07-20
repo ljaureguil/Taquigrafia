@@ -48,7 +48,7 @@
   <input type="numeric" id="isize" valaue=20></input>
 
   <textarea id="shs" style="width:90%;font-size:10px;height:fit-content"></textarea>
-  <textarea id="ts" style="width:90%;font-size:10px;height:50%;"></textarea>
+  <textarea id="ts" style="width:90%;font-size:10px;height:500px;"></textarea>
   <button onclick="printTaq()">graf taq</button>
   <canvas id="canvasbase" width="1000" height="500"
     style="position:absolute;left:8px;top:8px;background:rgba(200,250,200,.25);"></canvas>
@@ -173,6 +173,7 @@
     var taq = function (params) {
 
 
+
       if (params.color === undefined) params.color = "black"
 
       this.params = params;
@@ -194,7 +195,8 @@
 
       this.params.puntero = { x: this.params.lastPoint.x, y: this.params.lastPoint.y }
       this.params.vocal = "";
-
+      this.params.track = []
+      this.params.track.push("taq: " + s)
 
 
       ////////////////////////////
@@ -225,6 +227,7 @@
 
 
       this.prossPal = function (palabra) {
+        this.params.track.push("prossPal: " + palabra)
         this.params.temcolor = this.params.color;
         //  this.params.lastPoint.x = 20;
         ctx = canvasbase.getContext("2d");
@@ -258,6 +261,7 @@
 
 
       this.grPalSilabas = function (as) {
+        this.params.track.push("grPalSilabas: " + as)
         //  clearCanvas()
         ctx.clearRect(0, 0, canvasbase.width, canvasbase.height);
         this.params.inicw = true;
@@ -287,6 +291,8 @@
 
 
       this.paragraph2 = function (paragraph) {
+        this.params.track = [];
+        this.params.track.push("paragraph2: " + paragraph);
         ctx = canvas.getContext("2d");
         clearCanvas();
 
@@ -337,6 +343,8 @@
               this.grafSilaba(s)
               // this.params.inicw = false;
             }
+            ts.value = this.params.track.toString().replace(/,/g, "\n")
+
           }
 
           this.params.inicw = true;
@@ -357,6 +365,7 @@
 
 
       this.a_ = function (word) {
+        this.params.track.push("a_: " + word)
         var vocales = "aeiou";
         var index = word.indexOf("_")
 
@@ -366,6 +375,7 @@
           w[index] = vocales[i];
           r = w.join("");
           arc.push(r)
+
         }
 
         return arc;
@@ -423,6 +433,7 @@
       }
 
       this.grafSilaba = function (ss) {
+        this.params.track.push("grafSilaba: " + ss)
         //  alert(ss)
 
 
@@ -582,7 +593,8 @@
         }
       }
 
-      this.cgkqu_ = function (s) {//this.cgkqu_n
+      this.cgkqu_ = function (s) {
+        this.params.track.push("cgkqu_: " + s)
         //   //alert(s)
         if (s.includes("ce") || s.includes("ci")) {
           this.sc_(s);
@@ -623,6 +635,7 @@
 
       }
       this.cgkqu_n = function (s) {
+        this.params.track.push("cgkqu_n: " + s)
         // alert("borrar")
         //  //alert(s)
         if (s.includes("ce") || s.includes("ci")) {
@@ -663,7 +676,7 @@
       }
       this.bp_ = function (s) {
 
-
+        this.params.track.push("bp_: " + s)
         lineWidth = 1;
         if (s.includes("b")) lineWidth = 2;
         var p = this.params.lastPoint;
@@ -705,7 +718,7 @@
       }
 
       this.dt_ = function (s, l) {
-
+        this.params.track.push("dt_: " + s)
         lineWidth = 1;
         var params = this.params;
         if (s.includes("d")) lineWidth = 2;
@@ -727,7 +740,7 @@
       }
 
       this.fv_ = function (s) {
-
+        this.params.track.push("fv_: " + s)
         var lineWidth = 1;
 
         //   var path = new Path2D();
@@ -760,6 +773,7 @@
       }
 
       this.jch_ = function (s) {
+        this.params.track.push("jch_: " + s)
         //  alert("jch")
         lineWidth = 1;
         if (s.includes("j")) lineWidth = 2;
@@ -785,6 +799,7 @@
 
       }
       this._l = function (s) {
+        this.params.track.push("_l: " + s)
         //alert("al funcion " + s)
         lineWidth = 1;
         //  if (s.includes("ll") || s.includes("y")) lineWidth = 2;
@@ -824,7 +839,7 @@
 
       }
       this.al_ = function (s) {
-
+        this.params.track.push("al_: " + s)
 
         if (this.params.inicw) {
           this.params.lastPoint.x + 20;
@@ -844,7 +859,7 @@
 
       }
       this.ar_ = function (s) {
-
+        this.params.track.push("ar_: " + s)
         if (this.params.inicw) {
           this.params.lastPoint.x + 20;
 
@@ -858,7 +873,7 @@
 
       }
       this.lyll_ = function (s) { //
-        //  alert(s)
+        this.params.track.push("lyll_: " + s)
         lineWidth = 1;
 
         if (s.includes("ll") || s.includes("y")) lineWidth = 2;
@@ -895,7 +910,7 @@
       }
 
       this.rrr_ = function (s) {
-
+        this.params.track.push("rrr_: " + s)
         if (params.lastSimbol === "r" && s.includes("rr")) return;
 
         var ind = s.indexOf("r")
@@ -935,6 +950,7 @@
       }
 
       this.m_ = function (s) {
+        this.params.track.push("m_: " + s)
         lineWidth = 1;
         if (s.includes("mp")) lineWidth = 2;
         var p = params.lastPoint;
@@ -962,10 +978,12 @@
 
       }
       this.isVocal = function (s) {
+        this.params.track.push("isVocal :" + s)
         return this.silabas.vocales.includes(v)
       }
       this.nñ_ = function (s) {
         //  alert(s)
+        this.params.track.push("nñ_: " + s)
 
         if (s.includes("t") || s.includes("d")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 1, 180, false); return; }
         if (s.includes("p") || s.includes("b")) { this.params.lastPoint = this.cont(params.lastPoint, 5, 1, 125, false); return; }
@@ -1022,7 +1040,7 @@
       
       */
       this.bl_ = function (s) {
-
+        this.params.track.push("bl_: " + s)
         var p = params.lastPoint;
         if (params.inicw) {
           p.x += 20;
@@ -1046,7 +1064,7 @@
       }
 
       this.br_ = function (s) {
-
+        this.params.track.push("br_: " + s)
         var p = params.lastPoint;
         if (params.inicw) {
           p.x += 20;
@@ -1068,7 +1086,7 @@
       }
 
       this.cl_ = function (s) {
-
+        this.params.track.push("cl_: " + s)
         var p = params.lastPoint;// //alert(JSON.stringify(p))
         if (params.inicw) {
           p.x += 20;
@@ -1089,7 +1107,7 @@
       }
 
       this.cr_ = function (s) {
-
+        this.params.track.push("cr_: " + s)
         var p = params.lastPoint;// //alert(JSON.stringify(p))
         if (params.inicw) {
           p.x += 20;
@@ -1113,7 +1131,7 @@
       }
 
       this.dr_ = function (s) {
-
+        this.params.track.push("dr_: " + s)
         //    //alert(params.line + "\n\n" + params.size)
         var p = params.lastPoint;// //alert(JSON.stringify(p))
         if (params.inicw) {
@@ -1137,7 +1155,7 @@
 
       this.fl_ = function (s) {
         //
-
+        this.params.track.push("fl_: " + s)
         var p = params.lastPoint;
         if (params.inicw) {
           p.x += 20;
@@ -1158,7 +1176,7 @@
 
       }
       this.fr_ = function (s) {
-        //
+        this.params.track.push("fr_: " + s)
         var p = params.lastPoint;
         if (params.inicw) {
           p.x += 20;
@@ -1180,7 +1198,7 @@
       }
 
       this.gl_ = function (s) {
-
+        this.params.track.push("gl_: " + s)
         var p = params.lastPoint;// //alert(JSON.stringify(p))
         if (params.inicw) {
           p.x += 20;
@@ -1201,7 +1219,7 @@
       }
 
       this.gr_ = function (s) {
-
+        this.params.track.push("gr_: " + s)
         //    //alert(params.line + "\n\n" + params.size)
         var p = params.lastPoint;// //alert(JSON.stringify(p))
         if (params.inicw) {
@@ -1224,7 +1242,7 @@
 
       }
       this.pl_ = function (s) {
-
+        this.params.track.push("pl_: " + s)
         var p = params.lastPoint;
         if (params.inicw) {
           p.x += 20;
@@ -1246,7 +1264,7 @@
       }
 
       this.pr_ = function (s) {
-
+        this.params.track.push("pr_: " + s)
         var p = this.params.lastPoint;// //alert(JSON.stringify(p))
         if (this.params.inicw) {
           p.x += 20;
@@ -1272,7 +1290,7 @@
       }
 
       this.tl_ = function (s) {
-
+        this.params.track.push("tl_: " + s)
         //    //alert(params.line + "\n\n" + params.size)
         var p = this.params.lastPoint;// //alert(JSON.stringify(p))
         if (this.params.inicw) {
@@ -1293,7 +1311,7 @@
         this.params.lastSimbol = "t"
       }
       this.tr_ = function (s) {
-
+        this.params.track.push("tr_: " + s)
         var p = this.params.lastPoint; ////alert(JSON.stringify(p))
         if (this.params.inicw) {
           p.x += 20;
@@ -1320,6 +1338,7 @@
 
 
       this.grBP = function (inicPos, lineWidth, size) {
+        this.params.track.push("grBP: " + s)
         var p = inicPos;
         var path = new Path2D();
         path.moveTo(p.x, p.y)
@@ -1337,6 +1356,7 @@
         return p;
       }
       this.grCG = function (inicPos, lineWidth, size) {
+        this.params.track.push("grCG: " + s)
         var p = inicPos;
         var path = new Path2D();
         path.moveTo(p.x, p.y)
@@ -1358,6 +1378,7 @@
         return p
       }
       this.grDT = function (inicPos, lineWidth, size) {
+        this.params.track.push("grDT: " + s)
         var p = inicPos;
         //  //alert(this.params.lastSimbol)
         if (this.params.lastSimbol === "t" || this.params.lastSimbol === "d") {
@@ -1386,6 +1407,7 @@
         return p;
       }
       this.grFV = function (inicPos, lineWidth, size) {
+        this.params.track.push("grFV: " + s)
         var p = inicPos;
         var path = new Path2D();
         path.moveTo(p.x, p.y)
@@ -1422,6 +1444,7 @@
         }
         */
       this.grJCH = function (inicPos, lineWidth, size) {
+        this.params.track.push("grJCH: " + s)
         var p = inicPos;
         var path = new Path2D();
         if (this.params.lastSimbol === "j") { p.x += this.params.size - 1; p.y -= this.params.size / 1.5 }
@@ -1444,6 +1467,7 @@
         return p;
       }
       this.grLY = function (inicPos, lineWidth, size) {
+        this.params.track.push("grLY: " + s)
         var p = inicPos;
         if (this.params.lastSimbol === "l") {
           return p;
@@ -1469,6 +1493,7 @@
         return p;
       }
       this.grM = function (inicPos, lineWidth, size) {
+        this.params.track.push("grM: " + s)
         var p = inicPos;
         var path = new Path2D();
         path.moveTo(p.x, p.y)
@@ -1488,6 +1513,7 @@
         return p;
       }
       this.grES = function (inicPos, lineWidth, size) {
+        this.params.track.push("grES: " + s)
         var p = inicPos;
 
         var path = new Path2D();
@@ -1506,6 +1532,7 @@
         return p;
       }
       this.grH = function (inicPos, lineWidth, size) {
+        this.params.track.push("grH: " + s)
         var p = inicPos;
         // alert(99)
         var path = new Path2D();
@@ -1525,7 +1552,7 @@
       }
 
       this.grNñ = function (inicPos, lineWidth, size) {
-
+        this.params.track.push("grNñ: " + s)
         var p = inicPos;
         var path = new Path2D();
         path.moveTo(p.x, p.y)
@@ -1547,6 +1574,7 @@
         return p;
       }
       this.grR = function (inicPos, lineWidth, size) {
+        this.params.track.push("grR: " + s)
         var p = inicPos;
         if (this.params.lastSimbol === "r") {
           p.x -= (0 + this.params.size / 2); p.y += (this.params.size / 1.3);
@@ -1570,6 +1598,7 @@
         return p;
       }
       this.grSZ = function (inicPos, lineWidth, size) {
+        this.params.track.push("grSZ: " + s)
         //   //alert(" grsz")
         var p = inicPos;
         var radio = 3;
@@ -1593,6 +1622,7 @@
       }
 
       this.grInicCont = function (c) {
+        this.params.track.push("grInicCont: " + c)
         var p = this.params.lastPoint;
         p.y = this.params.line;
         var z = this.params.line;
@@ -1612,6 +1642,7 @@
 
       }
       this.grCon = function (c, s) {
+        this.params.track.push("grCon: " + c + " : " + s)
 
         var x = this.params.lastPoint.x, y = this.params.lastPoint.y;
         var z = this.params.size;
@@ -1644,6 +1675,7 @@
 
       }
       this.grDot = function (x, y, r) {
+        this.params.track.push("grDot: " + x + " : " + y + " :" + r)
         //   alert("dibujando punto")
         var path = new Path2D();
         path.moveTo(x, y)
@@ -1655,6 +1687,7 @@
 
       }
       this.cont = function (p1, size, lineWidth, angle, ccw) {
+        this.params.track.push("cont: " + s)
         // 1. Map ccw boolean directly to 1 or -1 (removes variable declaration and conditional branching)
         var color = ctx.strokeStyle;
         // this.params.color = "green"
@@ -1700,6 +1733,7 @@
       };
 
       this.grContracciones = function (inicPoint, lineWidth, size, angle, clockwise) {
+        this.params.track.push("grContracciones: " + s)
         //  // 1. Determinar el sentido del giro (derecha o izquierda)
         // const adjustedAngle = clock === "izquierda" ? -angle : angle;
         const radians = (angle * Math.PI) / 180;
@@ -1749,6 +1783,7 @@
 
 
       this.grContraccionR = function (inicPos, lineWidth, size, angle) {
+        this.params.track.push("grContraccionR: " + s)
 
         var p = inicPos;
         var path = new Path2D();
@@ -1776,6 +1811,7 @@
         return p;//pending       
       }
       this.grContraccionL = function (inicPos, lineWidth, size, angle) {
+        this.params.track.push("grContraccionL: " + s)
 
         var p = inicPos;
         var path = new Path2D();
@@ -1801,6 +1837,7 @@
         return p;
       }
       this.grContraccionN = function (inicPos, lineWidth, size, angle) {
+        this.params.track.push("grContraccionN: " + s)
         //  //alert("nnnnn")
 
         var p = inicPos;
@@ -1829,6 +1866,7 @@
         return p;//pending       
       }
       this.grContraccionFB = function (inicPos, lineWidth, size, angle) {
+        this.params.track.push("grContraccionFB: " + s)
         var p = inicPos;
         var path = new Path2D();
         path.moveTo(p.x, p.y)
@@ -1850,6 +1888,7 @@
         return p;//pending      
       }
       this.grAL = function (inicPos, lineWidth, size) {
+        this.params.track.push("grAL: " + s)
         var p = inicPos;
         //  p=this.params.lastPoint;
         var path = new Path2D();
@@ -1870,6 +1909,7 @@
 
       }
       this.grAR = function (inicPos, lineWidth, size) {//
+        this.params.track.push("grAR: " + s)
         var p = inicPos;
 
         var path = new Path2D();
@@ -1903,6 +1943,7 @@
 
 
       this.sc_ = function (s) {
+        this.params.track.push("sc_: " + s)
         //    //alert(" estamos sc_")
         var radio = 3;
         var p = params.lastPoint;
@@ -1936,6 +1977,7 @@
 
       }
       this.h_ = function (s) {
+        this.params.track.push("h_: " + s)
 
         if (params.inicw) {
 
@@ -1954,6 +1996,7 @@
         }
       }
       this.aeiou_ = function (v) {
+        this.params.track.push("aeiou_: " + s)
         /*      if(v==="a") return this.grVocales("a");
               if(v==="e") return this.grVocales("e");
               if(v==="i") return this.grVocales("i");
@@ -1962,6 +2005,7 @@
       }
 
       this.grVocales = function (s) {
+        this.params.track.push("grVocales: " + s)
         //   alert(s)
         var color = ctx.strokeStyle;
         ctx.strokeStyle = "green"
@@ -2009,6 +2053,7 @@
       }////alert(s)
 
       this.grEspeciales = function (s) {
+        this.params.track.push("grEspeciales_: " + s)
         // 1. Initialize and cache the lookup map inside the function scope on the very first run
         if (!this.grEspeciales.map) {
           const size = this.params.size;
@@ -2169,6 +2214,7 @@
             */
 
       this.cruz = function (pos, size) {
+        this.params.track.push("cruz: " + s)
 
         var m = 2
         if (size != undefined) m = m = size / 2;
