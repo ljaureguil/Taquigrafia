@@ -326,33 +326,37 @@
           if (w === "con" && e.length === 1) { this.grPalabrasInd(w); this.params.inicw = true; continue; }
           if (this.especiales.includes(w)) { this.grEspeciales(w); this.params.inicw = true; this.params.lastPoint.x += 20; continue; }
           ////////////////////////////////////////////////////////////
-          if (w.includes("ndo")) {
-            var aw = w.split("ndo");
-            e = silabearPalabra(aw[0])
+          // if (w.includes("ndo")) {
+
+          if (w.endsWith("ndo")) {
+            // var aw = w.split("ndo");
+            var aw = w.slice(0, -3)
+            e = silabearPalabra(aw)
             e.push("na");
           }
-          if (w.includes("mente")) {
 
-            var aw = w.split("mente");
-            if (aw.indexOf("mente") === aw.length - 1)
-              e = silabearPalabra(aw[0])
-            e.push("men");//aqui
+          if (w.endsWith("mente")) {
+            var wa = w.slice(0, -5)
+            e = silabearPalabra(wa)
+            e.push("men");
+            this.params.cruzend = "mente";
           }
 
-          //////////////////////////////////////////////////////
+          if (w.includes("mb")) {
+            w.replace(/mp/g, "m");
+            this.params.mp = true;
+            e = silabearPalabra(w);
+          }
+
+
+
           if (e !== undefined) {
-
             for (s of e) {
-              ///////////////////////////////////////////////////////
-
               if (s === "na" && s == e.at(-1)) this.params.extended = "n";
-
-              /////////////////////////////////////////////////////////////////
               this.grafSilaba(s)
-              // this.params.inicw = false;
             }
-
           }
+          if (this.params.cruzend === "mente" && this.params.cruzend !== undefined) { this.cruz({ x: this.params.lastPoint.x + 4, y: this.params.lastPoint.y - 8 }, 5); this.params.cruzend = "" }
 
           this.params.inicw = true;
           if (this.params.lastPoint.x > 650) {
@@ -959,9 +963,13 @@
       }
 
       this.m_ = function (s) {
+        //  alert(this.params.mp)
         this.params.track.push("m_: " + s)
-        lineWidth = 1;
-        if (s.includes("mp")) lineWidth = 2;
+        var lineWidth = 1;
+        var double = false
+        //   if (s.includes("mp") || this.params.mp) { lineWidth = 2; this.params.mp === ""; double = true; }
+        //   if (this.params.mp) { lineWidth = 1; this.params.mp === ""; double = true; }
+
         var p = params.lastPoint;
         //   var path = new Path2D();
         //   path.moveTo(p.x, p.y)
@@ -978,7 +986,7 @@
           else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
         }
-        params.lastPoint = this.grM(params.lastPoint, lineWidth, params.size)
+        params.lastPoint = this.grM(params.lastPoint, lineWidth, params.size, double)
 
         params.lastLetter = params.letter;
         params.lastSimbol = "m"
@@ -1506,12 +1514,15 @@
         ; //  //alert(JSON.stringify(params))
         return p;
       }
-      this.grM = function (inicPos, lineWidth, size) {
+      this.grM = function (inicPos, lineWidth, size, double) {
         this.params.track.push("grM: " + s)
         var p = inicPos;
         var path = new Path2D();
+
         path.moveTo(p.x, p.y)
 
+        //   if (double) { p.x += this.params.size * 2; p.y -= size / 3 }
+        //  else
         p.x += this.params.size;
         path.quadraticCurveTo(p.x - size / 2, p.y - size / 2, p.x, p.y);
 
@@ -1701,8 +1712,8 @@
 
       }
       this.cont = function (p1, size, lineWidth, angle, ccw) {//
-        this.params.track.push("cont: " + this.params.actualWord)
-        
+        this.params.track.push("cont: " + this.params.cruz);
+
         // 1. Map ccw boolean directly to 1 or -1 (removes variable declaration and conditional branching)
         var color = ctx.strokeStyle;
         // this.params.color = "green"
