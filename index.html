@@ -325,6 +325,7 @@
           if (this.vocales.includes(w) && w.length === 1) { this.grVocales(w); this.params.lastPoint.x += 20; continue; }
           if (w === "con" && e.length === 1) { this.grPalabrasInd(w); this.params.inicw = true; continue; }
           if (this.especiales.includes(w)) { this.grEspeciales(w); this.params.inicw = true; this.params.lastPoint.x += 20; continue; }
+          if (w.endsWith("y")) { w = w.slice(0, -1); e = silabearPalabra(w) }
           ////////////////////////////////////////////////////////////
           // if (w.includes("ndo")) {
 
@@ -388,6 +389,8 @@
             e.push("men");
             this.params.cruzend = "mente";
           }
+
+
 
 
 
