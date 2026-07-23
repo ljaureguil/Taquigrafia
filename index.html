@@ -54,7 +54,7 @@
     style="position:absolute;left:8px;top:8px;background:rgba(200,250,200,.25);"></canvas>
   <script>
 
-    alert("** Checar la terminacion mente, esta afectando las palabras como pendiente revisar bien esos cambios...")
+    alert("** Checar la palabra diptongo la p la pone cono contraccion b o f...\n\nchecar la letra p como en epico")
     startBtn.addEventListener('click', () => speech.on());
     stopBtn.addEventListener('click', () => speech.off());
 
@@ -339,7 +339,7 @@
             e = silabearPalabra(w);
           }
           if (w.includes("mp")) {
-            wr = w.replace(/mp/g, "m");// alert(w);
+            wr = w.replace(/mp/g, "m"); //alert(w);
             this.params.mpb = "mp";
             e = silabearPalabra(w);
           }
@@ -352,7 +352,7 @@
           }
           else
             if (w.includes("mpr")) {
-              w = w.replace(/mpr/g, "m");// alert(w);
+              wr = w.replace(/mpr/g, "m");// alert(w);
               this.params.mpb = "mpr";
               //   e = silabearPalabra(w);
             }
@@ -373,7 +373,7 @@
 
           w = wr;
           e = silabearPalabra(w);
-          //   alert("w " + w)
+          //alert("w " + w + "\n\n" + e)
 
 
           if (w.endsWith("ndo")) {
@@ -439,7 +439,7 @@
 
       }
       this.terminaciones = "cion ando endo undo mente".split(" ");
-      this.especiales = "como momento mucho mejor hoy el mucho mucha mente algo alguna algunas alguno algunos hice hiso hace hacer hora ahora mañana compañia por para tiempo fecha hacer".split(" ");
+      this.especiales = "pero porque como momento mucho mejor hoy el mucho mucha mente algo alguna algunas alguno algunos hice hiso hace hacer hora ahora mañana compañia por para tiempo fecha hacer".split(" ");
       //   if(this.especiales.includes("algunos")) alert("ok")
       this.abreviasiones = [];
       this.contraccionesInic = this.a_("pr_").concat(this.a_("tr_"));//.concat(this.a_("br_")).concat(this.a_("dr_"))
@@ -1043,6 +1043,7 @@
         params.lastSimbol = "m"
           ;
         params.inicw = false;
+        this.params.mpb = ""
 
       }
       this.isVocal = function (s) {
@@ -2134,6 +2135,7 @@
       }////alert(s)
 
       this.grEspeciales = function (s) {
+        //  alert(s)
         this.params.track.push("grEspeciales_: " + s)
         // 1. Initialize and cache the lookup map inside the function scope on the very first run
         if (!this.grEspeciales.map) {
@@ -2149,10 +2151,10 @@
             "alguno": ["cgkqu_", "go", [-size + 3, -5]],
             "algo": ["cgkqu_", "go", [-size + 3, -5]],
             "algunos": ["cgkqu_", "go", [-size + 3, -5], "sc_", "so"],
-            "por": ["bp_", "po", [-size + 3, -size + 5]],
-            "para": ["bp_", "pa", [-size + 3, -size + 5]],
-            "porque": ["bp_", "po", [-size + 3, -size + 5]],
-            "pero": ["bp_", "pe", [-size + 3, -size + 5]],
+            "por": ["bp_", "po", [-size + 7, -size + 2]],
+            "para": ["bp_", "pa", [-size + 7, -size + 5]],
+            "porque": ["bp_", "po", [-size + 7, -size + 2]],
+            "pero": ["bp_", "pe", [-size + 7, -size + 2]],
             "mañana": ["m_", "ma", [-size + 3, -7]],
             "mejor": ["m_", "me", [-size + 3, -7]],
             "mucho": ["m_", "mu", [-size + 3, -7]],
