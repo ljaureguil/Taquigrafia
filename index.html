@@ -54,7 +54,7 @@
     style="position:absolute;left:8px;top:8px;background:rgba(200,250,200,.25);"></canvas>
   <script>
 
-    alert("** hay todabia algunos detalles pero se tiene que seguir testeando...")
+    alert("** keep testing...")
     startBtn.addEventListener('click', () => speech.on());
     stopBtn.addEventListener('click', () => speech.off());
 
@@ -747,8 +747,8 @@
 
 
           if (s.includes("a")) this.params.lastPoint.y = this.params.line - this.params.size - 15;
-          if (s.includes("e") || s.includes("i")) this.params.lastPoint.y = this.params.line; - this.params.size / 1.8;
-          if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line + this.params.size / 5;
+          if (s.includes("e") || s.includes("i")) this.params.lastPoint.y = this.params.line - this.params.size - 2;
+          if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line - this.params.size / 2;
           //      alert(s + "\n\n" + this.params.lastSimbol)
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
           else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
