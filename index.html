@@ -257,10 +257,13 @@
           this.params.line += this.params.espacio;
 
         }
+
+
       }
 
 
       this.grPalSilabas = function (as) {
+        this.params.track = [];
         this.params.track.push("grPalSilabas: " + as)
         //  clearCanvas()
         ctx.clearRect(0, 0, canvasbase.width, canvasbase.height);
@@ -283,6 +286,7 @@
           this.grafSilaba(s)
 
         }
+        ts.value = this.params.track.toString().replace(/grafSilaba/g, "\ngrafSilaba").replace(/,/g, "\n")
 
       }
 
@@ -625,7 +629,7 @@
           if (methodName) {
 
             this[methodName](ss, l);
-            ts.value += "\n\n" + methodName + "  " + ss + "\n\n" + JSON.stringify(this.params.lastPoint)
+            //   ts.value += "\n\n" + methodName + "  " + ss + "\n\n" + JSON.stringify(this.params.lastPoint)
             //  return;//
           }
           //   this.params.inicw = false;
@@ -734,7 +738,7 @@
       this.bp_ = function (s) {
 
 
-        this.params.track.push("bp_: " + s)
+        this.params.track.push("bp_: " + s);//lastSibol
         lineWidth = 1;
         if (s.includes("b")) lineWidth = 2;
         var p = this.params.lastPoint;
@@ -743,14 +747,15 @@
 
 
           if (s.includes("a")) this.params.lastPoint.y = this.params.line - this.params.size - 15;
-          if (s.includes("e") || s.includes("i")) this.params.lastPoint.y = this.params.line - this.params.size - 1;
-          if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line - this.params.size / 2;
+          if (s.includes("e") || s.includes("i")) this.params.lastPoint.y = this.params.line; - this.params.size / 1.8;
+          if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line + this.params.size / 5;
           //      alert(s + "\n\n" + this.params.lastSimbol)
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
           else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
 
 
         }
+
         //   alert(s)
         if (!s.includes("p") && !this.params.inicw) {// aqui//checar
           var ls = this.params.lastSimbol; //pendiente de checar 
@@ -759,9 +764,12 @@
           else if (ls === "j") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 0, true);
           else if (ls === "c") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 90, true);
         }
-        else this.params.lastPoint = this.grBP(this.params.lastPoint, lineWidth, this.params.size);
-        //  if (s.length > 1 && s.includes("n")) this.params.lastPoint = this.grContracciones(this.params.lastPoint, 1, 4, 230);
-        //       this.params.lastSimbol = "b"
+        else {
+          if (this.params.lastSimbol === "b") { this.params.lastPoint.x += (-this.params.size + 10); this.params.lastPoint.y += (-this.params.size + 5); alert(this.params.lastSimbol); }
+          this.params.lastPoint = this.grBP(this.params.lastPoint, lineWidth, this.params.size);
+
+        }
+
         ;
         this.params.inicw = false;
 
@@ -770,23 +778,23 @@
       this.dt_ = function (s, l) {
         this.params.track.push("dt_: " + s)
         lineWidth = 1;
-        var params = this.params;
+        // var params = this.params;
         if (s.includes("d")) lineWidth = 2;
-        var p = params.lastPoint;
+        var p = this.params.lastPoint;
 
-        if (params.inicw) {
+        if (this.params.inicw) {
 
 
-          if (s.includes("a")) params.lastPoint.y = params.line - params.size - 15;
-          if (s.includes("e") || s.includes("i")) params.lastPoint.y = params.line - params.size - 2;
-          if (s.includes("o") || s.includes("u")) params.lastPoint.y = params.line - params.size / 2;
+          if (s.includes("a")) this.params.lastPoint.y = this.params.line - this.params.size - 15;
+          if (s.includes("e") || s.includes("i")) this.params.lastPoint.y = this.params.line - this.params.size - 2;
+          if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line - this.params.size / 2;
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
           else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
         }
         //   if (("men" + s) === "mente") this.cruz({ x: this.params.lastPoint.x + 2, y: this.params.lastPoint.y - 10 }, 5);
         //  else
-        params.lastPoint = this.grDT(params.lastPoint, lineWidth, params.size)
-        params.inicw = false;
+        this.params.lastPoint = this.grDT(this.params.lastPoint, lineWidth, this.params.size)
+        this.params.inicw = false;
       }
 
       this.fv_ = function (s) {
@@ -930,7 +938,7 @@
         var p = this.params.lastPoint;
 
         if (this.params.inicw) {
-          ts.value += " .." + s;
+          //    ts.value += " .." + s;
           this.params.lastPoint.x + 20;
 
           if (s.includes("a")) this.params.lastPoint.y = this.params.line - params.size / 2;
@@ -1473,21 +1481,14 @@
 
         var path = new Path2D();
         path.moveTo(p.x, p.y)
-        //    p.x += size;
-
         p.y += size;
         path.lineTo(p.x, p.y);
 
         ctx.lineWidth = lineWidth;
 
         ctx.stroke(path);
-        //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
-
-
-
-
-        ;
-        this.params.lastSimbol = "d"
+        this.params.lastSimbol = "d";
+        //     alert(JSON.stringify(p))
         return p;
       }
       this.grFV = function (inicPos, lineWidth, size) {
@@ -1535,7 +1536,8 @@
         path.moveTo(p.x, p.y)
         p.x -= size;
         p.y += size;
-        if (this.params.lastSimbol === "r") { p.x += 3; p.y += 2; }
+        if (this.params.lastSimbol === "r" || this.params.lastSimbol === "l") { p.x += 3; p.y += 2; }
+        //  if (this.params.lastSimbol === "l") { p.x += this.params.size / 4; }
         path.lineTo(p.x, p.y);
 
         ctx.lineWidth = lineWidth;
@@ -1562,6 +1564,9 @@
         path.moveTo(p.x, p.y)
         p.x += size;
         p.y -= size;
+        if (this.params.lastSimbol === "j") { p.x += this.params.size / 1.5; p.y += this.params.size / 4 }
+        if (this.params.lastSimbol === "d") { p.x += this.params.size / 1.8; p.y += this.params.size / 4 }
+
 
         path.quadraticCurveTo(p.x - size / 1.5, p.y - size / 5, p.x, p.y);
         this.params.lastSimbol = "l"
@@ -2174,7 +2179,7 @@
 
             "porque": ["this.bp_('po')", [-size + 7, -size + 2]],
 
-            "pero": ["this.this.bp_('pe')", [-size + 7, -size + 2]],
+            "pero": ["this.bp_('pe')", [-size + 7, -size + 2]],
 
             "mañana": ["this.m_('ma')", [-size + 3, -7]],
 
