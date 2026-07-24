@@ -54,7 +54,7 @@
     style="position:absolute;left:8px;top:8px;background:rgba(200,250,200,.25);"></canvas>
   <script>
 
-    alert("** Checar 'ba' inicial no la grafica")
+    alert("** hay todabia algunos detalles pero se tiene que seguir testeando...")
     startBtn.addEventListener('click', () => speech.on());
     stopBtn.addEventListener('click', () => speech.off());
 
@@ -439,7 +439,7 @@
 
       }
       this.terminaciones = "cion ando endo undo mente".split(" ");
-      this.especiales = "pero porque como momento mucho mejor hoy el mucho mucha mente algo alguna algunas alguno algunos hice hiso hace hacer hora ahora mañana compañia por para tiempo fecha hacer".split(" ");
+      this.especiales = "ayer pero porque como momento momentos mucho mejor hoy el mucho mucha mente algo alguna algunas alguno algunos hice hiso hace hacer hora ahora mañana compañia por para tiempo fecha hacer".split(" ");
       //   if(this.especiales.includes("algunos")) alert("ok")
       this.abreviasiones = [];
       this.contraccionesInic = this.a_("pr_").concat(this.a_("tr_"));//.concat(this.a_("br_")).concat(this.a_("dr_"))
@@ -751,8 +751,8 @@
 
 
         }
-
-        if (!s.includes("p")) {// aqui//checar
+        //   alert(s)
+        if (!s.includes("p") && !this.params.inicw) {// aqui//checar
           var ls = this.params.lastSimbol; //pendiente de checar 
           if (ls === "d") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 180, true);
           else if (ls === "b") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 90, true);
@@ -2152,6 +2152,97 @@
           const size = this.params.size;
           this.grEspeciales.map = {
             // format: [drawMethod, drawString, [xOffset, yOffset], extraMethod, extraString]
+            "ahora": ["this.h_('ha');", [-5, -size - 1]],//this.
+            "como": ["this.cgkqu_('co')", [-size + 5, - 3]],
+            "hora": ["this.h_", "ho", [-5, -size - 1]],
+
+            "hoy": ["this.h_('ho')", [5, -size + 4]],
+
+            "alguna": ["this.cgkqu_('ga')", [-size + 3, -5]],
+
+            "algunas": ["this.cgkqu_('ga');this.sc_('sa')", [-size + 3, -5]],
+
+            "alguno": ["this.cgkqu_('go')", [-size + 3, -5]],
+
+            "algo": ["this.cgkqu_('go')", [-size + 3, -5]],
+
+            "algunos": ["this.cgkqu_('go');sc_('so')", [-size + 3, -5]],
+
+            "por": ["this.bp_('po')", [-size + 7, -size + 2]],
+
+            "para": ["this.bp_('pa')", [-size + 7, -size + 5]],
+
+            "porque": ["this.bp_('po')", [-size + 7, -size + 2]],
+
+            "pero": ["this.this.bp_('pe')", [-size + 7, -size + 2]],
+
+            "mañana": ["this.m_('ma')", [-size + 3, -7]],
+
+            "mejor": ["this.m_('me')", [-size + 3, -7]],
+
+            "mucho": ["this.m_('mu')", [-size + 3, -7]],
+
+            "momento": ["this.m_('mo');this.m_('mo')", [-size + 3, -7]],
+
+            "momentos": ["this.m_('mo');this.m_('mo');this.sc_('so')", [-size + 3, -7]],
+
+            "mente": ["this.m_('men')", [-size + 3, -7]],//, "nñ_", "men"],
+
+            "tiempo": ["this.dt_('ti')", [4, -size - 1]],
+
+            "ayer": ["this.lyll_('ye')", [-size + 3, -5]],
+
+
+            "fecha": ["this.fv_('fe')", [-size + 7, -size + 4]],
+
+            "hacer": ["this.sc_('as')", [-5, -size + 5]],
+
+            "hice": ["this.sc_('es')", [-5, -size + 5]],
+
+            "hiso": ["this.sc_('os')", [-5, -size + 5]],
+
+            "hace": ["this.sc_('as')", [-5, -size + 5]],
+
+
+            "compañia": ["this.nñ_('ñi')", [- 3, -5]],
+            "el": ["this.grInicCont('pre')", [10, -8]]
+          };
+        }
+
+
+        // 2. Safety guard checks
+        if (!s || !this.especiales.includes(s)) return;
+        const config = this.grEspeciales.map[s];
+        if (!config) return;
+        //      alert(JSON.stringify(config))
+        //    this.params.inicw = true;
+
+        // 3. Unpack layout configurations and fire runtime drawing routines
+        const [drawMethod, offset] = config;
+        eval(drawMethod)
+        // this[drawMethod](drawStr);
+        //   alert(this[extraMethod]);
+        //   alert(extraStr)
+        //  if (extraMethod) this[extraMethod](extraStr);
+
+        // 4. Compute independent final coordinates and dispatch to cruz
+        const p = {
+          x: this.params.lastPoint.x + offset[0],
+          y: this.params.lastPoint.y + offset[1]
+        };
+
+        this.cruz(p);
+        this.params.inicw = true;
+      };
+
+      this.grEspeciales2 = function (s) {
+        //  alert(s)
+        this.params.track.push("grEspeciales_: " + s)
+        // 1. Initialize and cache the lookup map inside the function scope on the very first run
+        if (!this.grEspeciales.map) {
+          const size = this.params.size;
+          this.grEspeciales.map = {
+            // format: [drawMethod, drawString, [xOffset, yOffset], extraMethod, extraString]
             "ahora": ["h_", "ha", [-5, -size - 1]],
             "como": ["cgkqu_", "co", [-size + 5, - 3]],
             "hora": ["h_", "ho", [-5, -size - 1]],
@@ -2169,6 +2260,7 @@
             "mejor": ["m_", "me", [-size + 3, -7]],
             "mucho": ["m_", "mu", [-size + 3, -7]],
             "momento": ["m_", "mo", [-size + 3, -7], "m_", "mo"],
+            "momentos": ["m_", "mo", [-size + 3, -7], "m_", "mos"],
             "mente": ["m_", "men", [-size + 3, -7], "nñ_", "men"],
             "tiempo": ["dt_", "ti", [4, -size - 1]],
             "ayer": ["lyll_", "ye", [-size + 3, -5]],
@@ -2209,8 +2301,6 @@
         this.cruz(p);
         this.params.inicw = true;
       };
-
-
 
 
       /*
