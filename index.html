@@ -35,7 +35,7 @@
 
 <body>
 
-  <canvas id="canvas" width="1000" height="500" style="position:relative;top:0%;left:0%;"></canvas>
+  <canvas id="canvas" width="1500" height="600" style="position:relative;top:0%;left:0%;"></canvas>
   <input id="imsg" type="text" value="" oninput="this.value=this.value.toLowerCase();lj.paragraph2(this.value);"
     placeholder="Type a short paragraph here" style="width:80%;background-color: aqua;"></input>
   <input id="ion" oninput="this.value=this.value.toLowerCase();lj.prossPal(this.value);" style=" background:#f3f244"
@@ -50,11 +50,11 @@
   <textarea id="shs" style="width:90%;font-size:10px;height:fit-content"></textarea>
   <textarea id="ts" style="width:90%;font-size:10px;height:500px;"></textarea>
   <button onclick="printTaq()">graf taq</button>
-  <canvas id="canvasbase" width="1000" height="500"
+  <canvas id="canvasbase" width="1500" height="600"
     style="position:absolute;left:8px;top:8px;background:rgba(200,250,200,.25);"></canvas>
   <script>
 
-    alert("** keep testing...")
+    alert("** ya se corrigieron algunos aspectos pero todabia hay que seguir testeando...")
     startBtn.addEventListener('click', () => speech.on());
     stopBtn.addEventListener('click', () => speech.off());
 
@@ -416,7 +416,7 @@
           if (this.params.cruzend === "mente" && this.params.cruzend !== undefined) { this.cruz({ x: this.params.lastPoint.x + 4, y: this.params.lastPoint.y - 8 }, 5); this.params.cruzend = "" }
 
           this.params.inicw = true;
-          if (this.params.lastPoint.x > 650) {
+          if (this.params.lastPoint.x > canvas.width-this.params.espacio) {
             this.params.lastPoint.x = 0;
             this.params.renglon++;
 
@@ -556,7 +556,7 @@
         // 1. Map simple group names to their respective method suffixes
         //
         const groups = [
-          ['cgkq', 'cgkqu_'], ['m', 'm_'], ['bp', 'bp_'], ['s', 'sc_'],
+          ['cgkq', 'cgkqu_'], ['m', 'm_'], ['bp', 'bp_'], //['s', 'sc_'],
           ['rrr', 'rrr_'], ['nñ', 'nñ_'],/* ['lyll', 'lyll_'],*/['jch', 'jch_'],
           ['fv', 'fv_'], ['dt', 'dt_'], ['cgkqu_n', 'cgkqu_n']
         ];
@@ -567,6 +567,7 @@
             this[method](ss);
             return; // Stops the loop and exits the method
           }
+          // alert(ss)
         }
 
 
@@ -630,7 +631,7 @@
         // 2. The optimized loop
         //
         //   if (this.vocales.includes(ss) && this.params.inicw && ss.lenght === 1) { alert(l + "\n\n" + ss); this.grVocales(l) } // Skip vowels
-
+        //   alert(ss)
         for (const l of ss) {
 
           //   
@@ -638,9 +639,9 @@
           if (methodName) {
 
             this[methodName](ss, l);
-            //   ts.value += "\n\n" + methodName + "  " + ss + "\n\n" + JSON.stringify(this.params.lastPoint)
-            //  return;//
+
           }
+
           //   this.params.inicw = false;
           this.params.color = color;
           //    if (this.vocales.includes(l) && this.params.inicw) { alert(l + "\n\n" + ss); this.grVocales(l) } // Skip vowels
@@ -746,42 +747,38 @@
       }
       this.bp_ = function (s) {
 
-
         this.params.track.push("bp_: " + s);//lastSibol
         lineWidth = 1;
         if (s.includes("b")) lineWidth = 2;
         var p = this.params.lastPoint;
-
+        var ls = this.params.lastSimbol;
         if (this.params.inicw) {
-
-
           if (s.includes("a")) this.params.lastPoint.y = this.params.line - this.params.size - 15;
           if (s.includes("e") || s.includes("i")) this.params.lastPoint.y = this.params.line - this.params.size - 2;
           if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line - this.params.size / 2;
           //      alert(s + "\n\n" + this.params.lastSimbol)
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
           else if (this.vocales.includes(s[0])) { this.grVocales(s[0]) }
-
-
-        }
-
-        //   alert(s)
-        if (!s.includes("p") && !this.params.inicw) {// aqui//checar
-          var ls = this.params.lastSimbol; //pendiente de checar 
-          if (ls === "d") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 180, true);
-          else if (ls === "b") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 90, true);
-          else if (ls === "j") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 0, true);
-          else if (ls === "c") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 90, true);
-          return;
         }
         else {
-          if (this.params.lastSimbol === "b") { this.params.lastPoint.x += (-this.params.size + 10); this.params.lastPoint.y += (-this.params.size + 5); }
+
+          if (ls === "d" || ls === "j" || ls === "c") {
+            if (ls === "d") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 180, true);
+
+            if (ls === "j") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 0, true);
+            if (ls === "c") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 90, true);
+            return;
+
+          }
 
         }
-        //  alert("ok " + s);
+
+        if (ls === "b") { this.params.lastPoint.x += (-this.params.size + 10); this.params.lastPoint.y += (-this.params.size + 5); }
+
         this.params.lastPoint = this.grBP(this.params.lastPoint, lineWidth, this.params.size);//se movio del else
-        ;
+
         this.params.inicw = false;
+
 
       }
 
@@ -2055,7 +2052,7 @@
 
           if (s.includes("a")) { this.params.lastPoint.y = this.params.line - this.params.size / 1.5 }
           if (s.includes("e") || s.includes("i")) { this.params.lastPoint.y = this.params.line - 4 }
-          if (s.includes("o") || s.includes("u")) { this.params.lastPoint.y = this.params.line + 8 }
+          if (s.includes("o") || s.includes("u")) { this.params.lastPoint.y = this.params.line + 3 }
 
 
 
@@ -2071,11 +2068,12 @@
         }
 
         this.grSZ(this.params.lastPoint, 1, radio);
-        //       alert("sc_ " + JSON.stringify(this.params.lastPoint))
+        //    alert("sc_ " + s + "   " + JSON.stringify(this.params.lastPoint))
         this.params.inicw = false;
 
 
       }
+
       this.h_ = function (s) {
         this.params.track.push("h_: " + s)
 
@@ -2469,7 +2467,7 @@
       ctx.lineWidth = .5
       for (var i = 0; i < 10; i++) {
         ctx.moveTo(0, 80 * i)
-        ctx.lineTo(800, 80 * i)
+        ctx.lineTo(canvas.width, 80 * i)
         ctx.stroke();
 
 
