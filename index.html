@@ -375,6 +375,15 @@
                 }
 
 
+          /*     
+          ////////////////////////////////////////////////////////////////////////////
+          if (w.includes("nd")) {//checar para la nd
+                    wr = w.replace(/nd/g, "n")
+                    //    this.params.extended = "n";
+                    //  e=silabearPalabra(w)
+                  }
+        */
+
           w = wr;
           e = silabearPalabra(w);
           //alert("w " + w + "\n\n" + e)
@@ -387,6 +396,7 @@
             e.push("na");
           }
 
+
           if (w.endsWith("mente")) {
             var wa = w.slice(0, -5)
             e = silabearPalabra(wa)
@@ -395,15 +405,14 @@
           }
 
 
-
-
-
           if (e !== undefined) {
             for (s of e) {
-              if (s === "na" && s == e.at(-1)) this.params.extended = "n";
-              this.grafSilaba(s)
+              if (s === "na" && s == e.at(-1)) this.params.extended = "n";//No borrar ocupo checar por que se extiende
+              this.grafSilaba(s);
+              // this.params.extended=""
             }
           }
+
           if (this.params.cruzend === "mente" && this.params.cruzend !== undefined) { this.cruz({ x: this.params.lastPoint.x + 4, y: this.params.lastPoint.y - 8 }, 5); this.params.cruzend = "" }
 
           this.params.inicw = true;
@@ -763,13 +772,14 @@
           else if (ls === "b") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 90, true);
           else if (ls === "j") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 0, true);
           else if (ls === "c") params.lastPoint = this.cont(this.params.lastPoint, 5, 2, 90, true);
+          return;
         }
         else {
-          if (this.params.lastSimbol === "b") { this.params.lastPoint.x += (-this.params.size + 10); this.params.lastPoint.y += (-this.params.size + 5); alert(this.params.lastSimbol); }
-          this.params.lastPoint = this.grBP(this.params.lastPoint, lineWidth, this.params.size);
+          if (this.params.lastSimbol === "b") { this.params.lastPoint.x += (-this.params.size + 10); this.params.lastPoint.y += (-this.params.size + 5); }
 
         }
-
+        //  alert("ok " + s);
+        this.params.lastPoint = this.grBP(this.params.lastPoint, lineWidth, this.params.size);//se movio del else
         ;
         this.params.inicw = false;
 
@@ -1122,14 +1132,7 @@
         params.inicw = false;
 
       }
-      ///////////MARADOR  ...
-      /*
-         "bl", "br", "cl", "cr", "dr",
-                "fl", "fr", "gl", "gr",
-                "pl", "pr", "tl", "tr"
-      
-      
-      */
+
       this.bl_ = function (s) {
         this.params.track.push("bl_: " + s)
         var p = params.lastPoint;
