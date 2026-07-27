@@ -50,8 +50,7 @@
   <textarea id="shs" style="width:90%;font-size:10px;height:fit-content"></textarea>
   <textarea id="ts" style="width:90%;font-size:10px;height:500px;"></textarea>
   <button onclick="printTaq()">graf taq</button>
-  <canvas id="canvasbase" width="600" height="400"
-    style="position:absolute;left:8px;top:8px;background:rgba(200,250,200,.0);"></canvas>
+  <canvas id="canvasbase" width="600" height="400" style="position:absolute;left:8px;top:8px;"></canvas>
   <script>
 
     alert("** ya se corrigieron algunos aspectos pero todabia hay que seguir testeando...")
@@ -417,7 +416,7 @@
 
           this.params.inicw = true;
           //     if (this.params.lastPoint.x > canvas.width - this.params.espacio) {
-          if (this.params.lastPoint.x > canvas.width - this.params.espacio) {
+          if (this.params.lastPoint.x > canvas.width - this.params.espacio * 2) {
 
             this.params.lastPoint.x = 0;
             this.params.renglon++;
@@ -2422,14 +2421,10 @@
         ctx.strokeStyle = c;
 
       }
-
-
-
     }
 
-
     var params = {};
-    params.size = 12; //size
+    params.size = 14; //size
 
     params.inicPoint = { x: params.size, y: 80 }
     params.lastPoint = params.inicPoint;
@@ -2471,17 +2466,14 @@
       ctx.strokeStyle = "rgba(0,0,255,.25)";
       ctx.lineWidth = .5
       var lineas = lj.params.hoja.width / lj.params.espacio;
-      //   alert(JSON.stringify(lj.params.hoja))
-      //alert(lineas)
+
       for (var i = 0; i < lineas; i++) {
         ctx.moveTo(0, lj.params.espacio * i)
         ctx.lineTo(lj.params.hoja.width, lj.params.espacio * i)
         ctx.stroke();
-
-
       }
-      //    alert(JSON.stringify(lj.params))
-      //    ctx.strokeStyle = "black"
+      ctx.strokeStyle = "black"
+
     }
 
     function gets(word) {
