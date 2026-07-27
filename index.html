@@ -315,7 +315,9 @@
 
         for (var i = 0; i < ars.length; i++) {//e of ars
           //   for (let e of ars) {
+
           var e = ars[i];
+          var ee = e;
           this.params.inicw = true;
           this.params.lastSimbol = "";
           this.params.lastsi = "";
@@ -404,13 +406,30 @@
             e.push("men");
             this.params.cruzend = "mente";
           }
+          //////////////////////////////////////////////////////////////////
+          var ew = ee.join("")
+          var dip = this.getDiptongos(ew)
+          //    alert(ee + "\n" + JSON.stringify(dip))
 
+          //////////////////////////////////////////////
 
           if (e !== undefined) {
-            for (s of e) {
+            // for (s of e) {
+            for (var ii = 0; ii < e.length; ii++) {
+              var s = e[ii]
               if (s === "na" && s == e.at(-1)) this.params.extended = "n";//No borrar ocupo checar por que se extiende
               this.grafSilaba(s);
-              // this.params.extended=""
+
+              /*      if (e[ii + 1] !== undefined) {//&& dip.length > 0 && this.params.lastsi != ""
+                      var d = s + e[ii + 1];// alert(s)
+                      var di = this.getDiptongos(d); alert(JSON.stringify(di))
+                      if (di.length > 0) {
+                        alert("last simbol " + this.params.lastSimbol + "..   " + d + "\n \n" + JSON.stringify(di));
+                        di.lastSimbol = this.params.lastSimbol;
+                        this.grDiptongo(di)
+      
+                      }
+                    }*/
             }
           }
 
@@ -2436,12 +2455,105 @@
 
         }, 500);
 
-        //  ctx = canvasbase.getContext('2d')
+      }
+      this.grDiptongo = function (ob) {
+        ob.lastSimbol = this.params.lastSimbol;
+        this.params.track.push("grDiptongo: " + JSON.stringify(ob));
 
+        var xi = this.params.lastPoint.x, yi = this.params.lastPoint.y, p = { x: xi, y: yi };
+        alert("en grdopt\n\n" + JSON.stringify(ob))
+        if (ob.simbol === "c") {
+          p.x -= this.params.size / 2;
+          p.y -= 2.5;
+          this.grBP(p, 1, 5);
 
-
+          ;
+        }
+        else if (ob.simbol === "d") {
+          p.x -= 2.5;
+          p.y -= this.params.size / 2;
+          this.grBP(p, 1, 5);
+          ;
+        }
+        else if (ob.simbol === "m") {
+          p.x -= this.params.size / 1.5;
+          p.y -= 2;
+          this.grBP(p, 1, 5);
+          ;
+        }
+        else if (ob.simbol === "n") {
+          p.x -= this.params.size / 1.5;
+          p.y += 2;
+          this.grBP(p, 1, 5);
+          ;
+        }
+        else if (ob.simbol === "j") {
+          p.x -= this.params.size / 2.5;
+          p.y -= 2.5;
+          this.grBP(p, 1, 5);
+          ;
+        }
+        else if (ob.simbol === "s") {
+          p.x -= 2;
+          p.y -= 2;
+          this.grBP(p, 1, 5);
+          ;
+        }
 
       }
+
+
+      this.getDiptongos = function (palabra) {
+        this.params.track.push("getDiptongos: " + palabra);
+        // 1. Definimos las vocales independientes (con tildes y diéresis)
+        const vocales = '[aeiouáéóíúüAEIOUÁÉÓÍÚÜ]';
+
+        // 2. Expresión regular con Lookbehind negativo (?<![qQ])
+        // Busca 2 o más vocales, pero asegura que la primera NO esté precedida por 'q' o 'Q'.
+        // Si está precedida por 'q', esa primera 'u' se ignora y se evalúa a partir de la siguiente.
+        const regex = /(?<![qQ])[aeiouáéóíúüAEIOUÁÉÓÍÚÜ]{2,}/g;
+
+        const resultados = [];
+
+        // 3. Recorremos todas las coincidencias con matchAll
+        for (const coincidencia of palabra.matchAll(regex)) {
+          resultados.push({
+            vocales: coincidencia[0],
+            posicionInicio: coincidencia.index,
+            posicionFin: coincidencia.index + coincidencia[0].length - 1
+          });
+        }
+        //alert("dd")
+        return resultados;
+
+
+
+
+
+        /*     // Expresión regular para diptongos (con y sin tildes comunes)
+             // [aeoáéó][iuüíú] : Abierta + Cerrada
+             // [iuüíú][aeoáéó] : Cerrada + Abierta
+             // [iuüíú]{2}      : Dos cerradas (ej. iu, ui)
+             const regex = /[aeoáéó][iuüíú]|[iuüíú][aeoáéó]|[iuüíú]{2}/gi;
+     
+             // Guardará los objetos con el diptongo y su índice
+             const resultados = [];
+     
+             // matchAll requiere una regex con la bandera /g (global)
+             for (const coincidencia of palabra.matchAll(regex)) {
+               resultados.push({
+                 diptongo: coincidencia[0],
+                 posicionInicio: coincidencia.index,
+                 posicionFin: coincidencia.index + coincidencia[0].length - 1
+               });
+             }
+     
+             return resultados;
+     
+             */
+      }
+
+
     }
 
     var params = {};
