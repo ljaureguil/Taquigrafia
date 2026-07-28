@@ -420,16 +420,19 @@
               if (s === "na" && s == e.at(-1)) this.params.extended = "n";//No borrar ocupo checar por que se extiende
               this.grafSilaba(s);
 
-              /*      if (e[ii + 1] !== undefined) {//&& dip.length > 0 && this.params.lastsi != ""
-                      var d = s + e[ii + 1];// alert(s)
-                      var di = this.getDiptongos(d); alert(JSON.stringify(di))
-                      if (di.length > 0) {
-                        alert("last simbol " + this.params.lastSimbol + "..   " + d + "\n \n" + JSON.stringify(di));
-                        di.lastSimbol = this.params.lastSimbol;
-                        this.grDiptongo(di)
-      
-                      }
-                    }*/
+              if (e[ii + 1] !== undefined) {//&& dip.length > 0 && this.params.lastsi != ""
+                var d = s + e[ii + 1];// alert(s)
+                var di = this.getDiptongos(d);// alert(JSON.stringify(di))
+                //  var ob={};
+                // ob.diptongo=di;
+
+                if (di.length > 0) {
+                  //   alert("last simbol " + this.params.lastSimbol + "..   " + d + "\n \n" + JSON.stringify(di));
+                  //     di.lastSimbol = this.params.lastSimbol;
+                  this.grDiptongo(di)
+
+                }
+              }
             }
           }
 
@@ -2457,48 +2460,54 @@
 
       }
       this.grDiptongo = function (ob) {
-        ob.lastSimbol = this.params.lastSimbol;
+        //   ob.lastSimbol = this.params.lastSimbol;
+        var color = ctx.strokeStyle;
+        ctx.strokeStyle = "green"
+
         this.params.track.push("grDiptongo: " + JSON.stringify(ob));
+        var si = this.params.lastSimbol;
 
         var xi = this.params.lastPoint.x, yi = this.params.lastPoint.y, p = { x: xi, y: yi };
-        alert("en grdopt\n\n" + JSON.stringify(ob))
-        if (ob.simbol === "c") {
-          p.x -= this.params.size / 2;
+        //  alert("en grdopt\n\n" + JSON.stringify(ob))
+        if (si === "c") {
+          p.x -= this.params.size / 1.4;
           p.y -= 2.5;
           this.grBP(p, 1, 5);
 
           ;
         }
-        else if (ob.simbol === "d") {
+        else if (si === "d") {
           p.x -= 2.5;
           p.y -= this.params.size / 2;
           this.grBP(p, 1, 5);
           ;
         }
-        else if (ob.simbol === "m") {
-          p.x -= this.params.size / 1.5;
-          p.y -= 2;
+        else if (si === "m") {
+          p.x -= this.params.size / 1.3;
+          p.y -= 5;
           this.grBP(p, 1, 5);
           ;
         }
-        else if (ob.simbol === "n") {
-          p.x -= this.params.size / 1.5;
-          p.y += 2;
+        else if (si === "n") {
+          p.x -= this.params.size / 3;
+          p.y += 0;
           this.grBP(p, 1, 5);
           ;
         }
-        else if (ob.simbol === "j") {
-          p.x -= this.params.size / 2.5;
-          p.y -= 2.5;
+        else if (si === "j") {
+          p.x += this.params.size / 2.8;
+          p.y -= this.params.size / 1.6;
           this.grBP(p, 1, 5);
           ;
         }
-        else if (ob.simbol === "s") {
-          p.x -= 2;
-          p.y -= 2;
-          this.grBP(p, 1, 5);
+        else if (si === "s") {
+          p.x -= 4;
+          p.y -= 4;
+          this.grBP(p, 1, 8);
           ;
         }
+        //   alert(color)
+        ctx.strokeStyle = color;
 
       }
 
