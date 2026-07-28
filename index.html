@@ -55,7 +55,7 @@
   <canvas id="canvasbase" width="600" height="400" style="position:absolute;left:8px;top:8px;"></canvas>
   <script>
 
-    alert("** ya se corrigieron algunos aspectos pero todabia hay que seguir testeando...")
+    alert("** Ya estan funcionando los diptongos pero todabia hay que seguir testeando...")
     startBtn.addEventListener('click', () => speech.on());
     stopBtn.addEventListener('click', () => speech.off());
 
@@ -408,7 +408,9 @@
           }
           //////////////////////////////////////////////////////////////////
           var ew = ee.join("")
-          var dip = this.getDiptongos(ew)
+          var ddp = false;
+          var dip = this.getDiptongos(ew);
+          if (dip.length > 0) ddp = true;
           //    alert(ee + "\n" + JSON.stringify(dip))
 
           //////////////////////////////////////////////
@@ -420,15 +422,11 @@
               if (s === "na" && s == e.at(-1)) this.params.extended = "n";//No borrar ocupo checar por que se extiende
               this.grafSilaba(s);
 
-              if (e[ii + 1] !== undefined) {//&& dip.length > 0 && this.params.lastsi != ""
+              if (e[ii + 1] !== undefined && ddp) {//&& dip.length > 0 && this.params.lastsi != ""
                 var d = s + e[ii + 1];// alert(s)
-                var di = this.getDiptongos(d);// alert(JSON.stringify(di))
-                //  var ob={};
-                // ob.diptongo=di;
-
+                var di = this.getDiptongos(d);
                 if (di.length > 0) {
-                  //   alert("last simbol " + this.params.lastSimbol + "..   " + d + "\n \n" + JSON.stringify(di));
-                  //     di.lastSimbol = this.params.lastSimbol;
+
                   this.grDiptongo(di)
 
                 }
@@ -1454,7 +1452,7 @@
 
 
       this.grBP = function (inicPos, lineWidth, size) {
-        this.params.track.push("grBP: " + s)
+        this.params.track.push("grBP: " + size)
         var p = inicPos;
         var path = new Path2D();
         path.moveTo(p.x, p.y)
@@ -1473,7 +1471,7 @@
       }
 
       this.grCG = function (inicPos, lineWidth, size) {
-        this.params.track.push("grCG: " + s)
+        this.params.track.push("grCG: " + size)
         var p = inicPos;
         var path = new Path2D();
         path.moveTo(p.x, p.y)
@@ -1495,7 +1493,7 @@
         return p
       }
       this.grDT = function (inicPos, lineWidth, size) {
-        this.params.track.push("grDT: " + s)
+        this.params.track.push("grDT: " + size)
         var p = inicPos;
         //  //alert(this.params.lastSimbol)
         if (this.params.lastSimbol === "t" || this.params.lastSimbol === "d") {
@@ -1517,7 +1515,7 @@
         return p;
       }
       this.grFV = function (inicPos, lineWidth, size) {
-        this.params.track.push("grFV: " + s)
+        this.params.track.push("grFV: " + size)
         var p = inicPos;
         var path = new Path2D();
         path.moveTo(p.x, p.y)
@@ -1554,7 +1552,7 @@
         }
         */
       this.grJCH = function (inicPos, lineWidth, size) {
-        this.params.track.push("grJCH: " + s)
+        this.params.track.push("grJCH: " + size)
         var p = inicPos;
         var path = new Path2D();
         if (this.params.lastSimbol === "j") { p.x += this.params.size - 1; p.y -= this.params.size / 1.5 }
@@ -1578,7 +1576,7 @@
         return p;
       }
       this.grLY = function (inicPos, lineWidth, size) {
-        this.params.track.push("grLY: " + s)
+        this.params.track.push("grLY: " + size)
         var p = inicPos;
         if (this.params.lastSimbol === "l") {
           return p;
@@ -1607,7 +1605,7 @@
         return p;
       }
       this.grM = function (inicPos, lineWidth, size, double) {
-        this.params.track.push("grM: " + s)
+        this.params.track.push("grM: " + size)
         var p = inicPos;
         var path = new Path2D();
 
@@ -1631,7 +1629,7 @@
         return p;
       }
       this.grES = function (inicPos, lineWidth, size) {
-        this.params.track.push("grES: " + s)
+        this.params.track.push("grES: " + size)
         var p = inicPos;
 
         var path = new Path2D();
@@ -1650,7 +1648,7 @@
         return p;
       }
       this.grH = function (inicPos, lineWidth, size) {
-        this.params.track.push("grH: " + s)
+        this.params.track.push("grH: " + size)
         var p = inicPos;
         // alert(99)
         var path = new Path2D();
@@ -1670,7 +1668,7 @@
       }
 
       this.grNñ = function (inicPos, lineWidth, size) {
-        this.params.track.push("grNñ: " + s)
+        this.params.track.push("grNñ: " + size)
         var p = inicPos;
         var path = new Path2D();
         path.moveTo(p.x, p.y)
@@ -1692,7 +1690,7 @@
         return p;
       }
       this.grR = function (inicPos, lineWidth, size) {
-        this.params.track.push("grR: " + s)
+        this.params.track.push("grR: " + size)
         var p = inicPos;
         if (this.params.lastSimbol === "r") {
           p.x -= (0 + this.params.size / 2); p.y += (this.params.size / 1.3);
@@ -1716,7 +1714,7 @@
         return p;
       }
       this.grSZ = function (inicPos, lineWidth, size) {
-        this.params.track.push("grSZ: " + s)
+        this.params.track.push("grSZ: " + size)
         //   //alert(" grsz")
         var p = inicPos;
         var radio = 3;
@@ -1855,7 +1853,7 @@
       };
 
       this.grContracciones = function (inicPoint, lineWidth, size, angle, clockwise) {
-        this.params.track.push("grContracciones: " + s)
+        this.params.track.push("grContracciones: " + angle)
         //  // 1. Determinar el sentido del giro (derecha o izquierda)
         // const adjustedAngle = clock === "izquierda" ? -angle : angle;
         const radians = (angle * Math.PI) / 180;
@@ -1905,7 +1903,7 @@
 
 
       this.grContraccionR = function (inicPos, lineWidth, size, angle) {
-        this.params.track.push("grContraccionR: " + s)
+        this.params.track.push("grContraccionR: " + angle)
 
         var p = inicPos;
         var path = new Path2D();
@@ -1933,7 +1931,7 @@
         return p;//pending       
       }
       this.grContraccionL = function (inicPos, lineWidth, size, angle) {
-        this.params.track.push("grContraccionL: " + s)
+        this.params.track.push("grContraccionL: " + angle)
 
         var p = inicPos;
         var path = new Path2D();
@@ -1959,7 +1957,7 @@
         return p;
       }
       this.grContraccionN = function (inicPos, lineWidth, size, angle) {
-        this.params.track.push("grContraccionN: " + s)
+        this.params.track.push("grContraccionN: " + angle)
         //  //alert("nnnnn")
 
         var p = inicPos;
@@ -1988,7 +1986,7 @@
         return p;//pending       
       }
       this.grContraccionFB = function (inicPos, lineWidth, size, angle) {
-        this.params.track.push("grContraccionFB: " + s)
+        this.params.track.push("grContraccionFB: " + angle)
         var p = inicPos;
         var path = new Path2D();
         path.moveTo(p.x, p.y)
@@ -2010,7 +2008,7 @@
         return p;//pending      
       }
       this.grAL = function (inicPos, lineWidth, size) {
-        this.params.track.push("grAL: " + s)
+        this.params.track.push("grAL: " + size)
         var p = inicPos;
         //  p=this.params.lastPoint;
         var path = new Path2D();
@@ -2031,7 +2029,7 @@
 
       }
       this.grAR = function (inicPos, lineWidth, size) {//
-        this.params.track.push("grAR: " + s)
+        this.params.track.push("grAR: " + size)
         var p = inicPos;
 
         var path = new Path2D();
@@ -2460,6 +2458,7 @@
 
       }
       this.grDiptongo = function (ob) {
+        var e = params.size / 3
         //   ob.lastSimbol = this.params.lastSimbol;
         var color = ctx.strokeStyle;
         ctx.strokeStyle = "green"
@@ -2472,40 +2471,61 @@
         if (si === "c") {
           p.x -= this.params.size / 1.4;
           p.y -= 2.5;
-          this.grBP(p, 1, 5);
+          this.grBP(p, 1, e);
 
           ;
         }
         else if (si === "d") {
           p.x -= 2.5;
           p.y -= this.params.size / 2;
-          this.grBP(p, 1, 5);
+          this.grBP(p, 1, e);
           ;
         }
         else if (si === "m") {
           p.x -= this.params.size / 1.3;
           p.y -= 5;
-          this.grBP(p, 1, 5);
+          this.grBP(p, 1, e);
           ;
         }
         else if (si === "n") {
-          p.x -= this.params.size / 3;
-          p.y += 0;
-          this.grBP(p, 1, 5);
+          p.x -= this.params.size / 3 + e / 2;
+          p.y += e / 3;
+          this.grBP(p, 1, e);
           ;
         }
         else if (si === "j") {
           p.x += this.params.size / 2.8;
           p.y -= this.params.size / 1.6;
-          this.grBP(p, 1, 5);
+          this.grBP(p, 1, e);
           ;
         }
         else if (si === "s") {
-          p.x -= 4;
-          p.y -= 4;
-          this.grBP(p, 1, 8);
+          p.x += e;
+          p.y -= e;
+          this.grJCH(p, 1, e * 2);
           ;
         }
+
+        else if (si === "r") {
+          p.x -= params.size / 2 + e / 2;
+          p.y += params.size / 2 - e / 2;
+          this.grBP(p, 1, e);
+          ;
+        }
+        else if (si === "b") {
+          p.x -= params.size / 2 - e / 2;
+          p.y -= params.size / 2 + e / 2;
+          this.grJCH(p, 1, e);
+
+        }
+
+        else if (si === "l") {
+          p.x -= params.size / 2 + e;
+          p.y += params.size / 2 - e;
+          this.grBP(p, 1, e);
+
+        }
+        //  alert(si)
         //   alert(color)
         ctx.strokeStyle = color;
 
