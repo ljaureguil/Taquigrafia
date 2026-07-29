@@ -49,11 +49,17 @@
   <img id="bsettings"
     src="https://static.vecteezy.com/system/resources/thumbnails/022/451/244/small/settings-icon-gear-3d-render-png.png"
     style="height:30px;width:30px;border-radius:100px;object-fit: cover;" onclick="lj.settings()"></img>
+  <button onclick="chkVocabulary()">Vocabulary</button>
 
   <textarea id="shs" style="width:90%;font-size:10px;height:fit-content"></textarea>
   <textarea id="ts" style="width:90%;font-size:10px;height:500px;"></textarea>
   <canvas id="canvasbase" width="600" height="400" style="position:absolute;left:8px;top:8px;"></canvas>
   <script>
+    var vocabulary = []
+    var vocabulary = localStorage.getItem("vocabulario");
+    if (vocabulary === null) { vocabulary = []; localStorage.setItem("vocabulario", JSON.stringify(vocabulary)) }
+    else vocabulary = JSON.parse(vocabulary)
+
 
     alert("** Ya estan funcionando los diptongos pero todabia hay que seguir testeando...")
     startBtn.addEventListener('click', () => speech.on());
@@ -326,7 +332,18 @@
           this.params.actualWordSil = e;
           this.params.silIndex = i;
 
-          var w = e.join("")
+          var w = e.join("");
+          var iv = false;
+          for (v of vocabulary) { if (v.palabra === w){ v.n++; iv = true} }
+          if (!iv) {
+            var o = {};
+            o.palabra = w;
+            o.n = 1;
+            vocabulary.push(o);
+//checar despues
+        //    localStorage.setItem("vocabulario",JSON.stringify(vocabulary))
+          }
+
 
           if (w === "y") { this.grDot(this.params.lastPoint.x, this.params.line - 2, 2); this.params.lastPoint.x += 20; continue; }//this.grVocales("i");
           if (this.vocales.includes(w) && w.length === 1) { this.grVocales(w); this.params.lastPoint.x += 20; continue; }
@@ -414,12 +431,13 @@
           //    alert(ee + "\n" + JSON.stringify(dip))
 
           //////////////////////////////////////////////
-
+          //   alert()
           if (e !== undefined) {
             // for (s of e) {
             for (var ii = 0; ii < e.length; ii++) {
               var s = e[ii]
-              if (s === "na" && s == e.at(-1)) this.params.extended = "n";//No borrar ocupo checar por que se extiende
+              //   if (s === "na" && s == e.at(-1)) this.params.extended = "n";//No borrar ocupo checar por que se extiende
+              if (this.params.actualWord.includes("nd") && ii === e.length - 1) this.params.extended = "n";//No borrar ocupo checar por que se extiende
               this.grafSilaba(s);
 
               if (e[ii + 1] !== undefined && ddp) {//&& dip.length > 0 && this.params.lastsi != ""
@@ -815,7 +833,7 @@
         if (this.params.inicw) {
 
 
-          if (s.includes("a")) this.params.lastPoint.y = this.params.line - this.params.size - 15;
+          if (s.includes("a")) this.params.lastPoint.y = this.params.line - this.params.size * 1.5;
           if (s.includes("e") || s.includes("i")) this.params.lastPoint.y = this.params.line - this.params.size - 2;
           if (s.includes("o") || s.includes("u")) this.params.lastPoint.y = this.params.line - this.params.size / 2;
           if (this.params.vocal != "") { this.grVocales(this.params.vocal); this.params.vocal = ""; }
@@ -932,9 +950,9 @@
         if (this.params.inicw) {
           this.params.lastPoint.x + 20;
 
-          if (s[0] === "a") this.params.lastPoint.y = this.params.line - 15;
+          if (s[0] === "a") this.params.lastPoint.y = this.params.line - this.params.size / 2;
           if (s[0] === "e" || s[0] === "i") this.params.lastPoint.y = this.params.line - 3;
-          if (s[0] === "o" || s[0] === "u") this.params.lastPoint.y = this.params.line + 15;
+          if (s[0] === "o" || s[0] === "u") this.params.lastPoint.y = this.params.line + this.params.size / 3;
 
         }
         //   //alert(JSON.stringify(this.params.lastPoint))
@@ -1531,7 +1549,7 @@
         return p;
       }
       /*  this.grH = function (inicPos, lineWidth, size) {
-  
+   
           alert(JSON.stringify(params))
           var p = inicPos;
           var path = new Path2D();
@@ -1539,14 +1557,14 @@
           //  p.x += params.size;
           p.y += params.size;
           path.quadraticCurveTo(p.x - 35, p.y + 15, p.x, p.y);
-  
+   
           ctx.lineWidth = lineWidth;
-  
+   
           ctx.stroke(path);
           //this.taqPalabras[this.taqPalabras.length - 1].path.addPath(path)
-  
-  
-  
+   
+   
+   
           this.params.lastSimbol = "h"
           return p;
         }
@@ -2461,7 +2479,7 @@
         var e = params.size / 3
         //   ob.lastSimbol = this.params.lastSimbol;
         var color = ctx.strokeStyle;
-        ctx.strokeStyle = "green"
+        ctx.strokeStyle = "red"
 
         this.params.track.push("grDiptongo: " + JSON.stringify(ob));
         var si = this.params.lastSimbol;
@@ -2555,31 +2573,6 @@
         //alert("dd")
         return resultados;
 
-
-
-
-
-        /*     // Expresión regular para diptongos (con y sin tildes comunes)
-             // [aeoáéó][iuüíú] : Abierta + Cerrada
-             // [iuüíú][aeoáéó] : Cerrada + Abierta
-             // [iuüíú]{2}      : Dos cerradas (ej. iu, ui)
-             const regex = /[aeoáéó][iuüíú]|[iuüíú][aeoáéó]|[iuüíú]{2}/gi;
-     
-             // Guardará los objetos con el diptongo y su índice
-             const resultados = [];
-     
-             // matchAll requiere una regex con la bandera /g (global)
-             for (const coincidencia of palabra.matchAll(regex)) {
-               resultados.push({
-                 diptongo: coincidencia[0],
-                 posicionInicio: coincidencia.index,
-                 posicionFin: coincidencia.index + coincidencia[0].length - 1
-               });
-             }
-     
-             return resultados;
-     
-             */
       }
 
 
@@ -2640,6 +2633,10 @@
       ctx.strokeStyle = "black"
       ctx.closePath();
 
+    }
+
+    function chkVocabulary() {
+      ts.value = JSON.stringify(vocabulary).replace(/,/g, "\n")
     }
 
 
