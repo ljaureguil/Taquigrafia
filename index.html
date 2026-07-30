@@ -334,14 +334,14 @@
 
           var w = e.join("");
           var iv = false;
-          for (v of vocabulary) { if (v.palabra === w){ v.n++; iv = true} }
+          for (v of vocabulary) { if (v.palabra === w) { v.n++; iv = true } }
           if (!iv) {
             var o = {};
             o.palabra = w;
             o.n = 1;
             vocabulary.push(o);
-//checar despues
-        //    localStorage.setItem("vocabulario",JSON.stringify(vocabulary))
+            //checar despues
+            //    localStorage.setItem("vocabulario",JSON.stringify(vocabulary))
           }
 
 
@@ -493,7 +493,7 @@
 
       }
       this.terminaciones = "cion ando endo undo mente".split(" ");
-      this.especiales = "ayer pero porque como momento momentos mucho mejor hoy el mucho mucha mente algo alguna algunas alguno algunos hice hiso hace hacer hora ahora mañana compañia por para tiempo fecha hacer".split(" ");
+      this.especiales = "forma formas fechas muchos otro otra mejores ayer pero porque como momento momentos mucho mejor hoy el mucho mucha mente algo alguna algunas alguno algunos hice hiso hace hacer hora ahora mañana compañia por para tiempo fecha hacer".split(" ");
       //   if(this.especiales.includes("algunos")) alert("ok")
       this.abreviasiones = [];
       this.contraccionesInic = this.a_("pr_").concat(this.a_("tr_"));//.concat(this.a_("br_")).concat(this.a_("dr_"))
@@ -2226,8 +2226,10 @@
             "mañana": ["this.m_('ma')", [-size + 3, -7]],
 
             "mejor": ["this.m_('me')", [-size + 3, -7]],
+            "mejores": ["this.m_('me');this.sc_('so')", [-size + 3, -7]],
 
             "mucho": ["this.m_('mu')", [-size + 3, -7]],
+            "muchos": ["this.m_('mu');this.sc_('so')", [-size + 3, -7]],
 
             "momento": ["this.m_('mo');this.m_('mo')", [-size + 3, -7]],
 
@@ -2241,6 +2243,10 @@
 
 
             "fecha": ["this.fv_('fe')", [-size + 7, -size + 4]],
+            "fechas": ["this.fv_('fe');this.sc_('so')", [-size + 7, -size + 4]],
+
+            "forma": ["this.fv_('fo')", [-size + 7, -size + 4]],
+            "formas": ["this.fv_('fo');this.sc_('so')", [-size + 7, -size + 4]],
 
             "hacer": ["this.sc_('as')", [-5, -size + 5]],
 
@@ -2252,7 +2258,11 @@
 
 
             "compañia": ["this.nñ_('ñi')", [- 3, -5]],
-            "el": ["this.grInicCont('pre')", [10, -8]]
+            "el": ["this.grInicCont('pre')", [10, -8]],
+            "otro": ["this.tr_('tro');", [+3, -size - 2]],
+            "otra": ["this.tr_('tra');", [+3, -size - 2]],
+
+
           };
         }
 
@@ -2541,6 +2551,14 @@
           p.x -= params.size / 2 + e;
           p.y += params.size / 2 - e;
           this.grBP(p, 1, e);
+
+        }
+
+
+        else if (si === "f") {
+          p.x -= params.size / 1.6;
+          p.y -= params.size / 2.1;
+          this.grJCH(p, 1, e);
 
         }
         //  alert(si)
